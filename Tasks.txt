@@ -6,3 +6,4 @@ Sert: Query()
 
 Need:
 - Tombstone struct
+-interface should specify constants. In particular,  quotient filter class should specify the arr, Q and R.
