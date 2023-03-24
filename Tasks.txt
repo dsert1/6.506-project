@@ -1,0 +1,8 @@
+Tasks:
+
+Quaye: Delete()
+Taylor: Insert()
+Sert: Query()
+
+Need:
+- Tombstone struct
