@@ -2,18 +2,15 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "quotient_filter_element.h"
 
-struct QuotientFilterElement {
-    int value;
-    bool is_occupied;
-    bool is_continuation;
-    bool is_shifted;
-};
+// struct QuotientFilterElement {
+//     int value;
+//     bool is_occupied;
+//     bool is_continuation;
+//     bool is_shifted;
+// };
 
-struct FingerprintPair {
-    int fr; // fingerprint remainder
-    int fq; // fingerprint quotient
-};
 
 class QuotientFilter {
     private:
@@ -23,6 +20,7 @@ class QuotientFilter {
         int r; // size of remainder. q+r = sizeof([insert value type])
         int (*hashFunction)(int);
         FingerprintPair fingerprintQuotient(int value);
+        int findRunStartForBucket(int bucket)
         void shiftElementsDown(int start);
     
     public:

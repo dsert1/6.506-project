@@ -9,6 +9,11 @@ QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initi
 }
 
 void QuotientFilter::insertElement(int value) {
+    FingerprintPair f = fingerprintQuotient(value)
+
+    // Set occupied bit to 1
+
+    // may_contain scan
 
 }
 
@@ -17,7 +22,6 @@ void QuotientFilter::deleteElement(int value) {
     FingerprintPair f = fingerprintQuotient(value);
     if (table[f.fq].is_occupied) {
         // insert a tombstone
-        table[f.fq].is_occupied = false;
         int start = f.fq;
         while (start < size) {
             if (table[start].value == f.fr) {
@@ -31,11 +35,62 @@ void QuotientFilter::deleteElement(int value) {
 }
 
 bool QuotientFilter::query(int value) {
+    // get value fingerprint
+    FingerprintPair f = fingerprintQuotient(value);
+    
+    // check if the item is in the table
+    if (table[f.fq].is_occupied) {
+        // search for fingerprint remainder in table
+        int start = f.fq;
 
+        // look for value in the run
+        while (start < size) {
+            if (table[start].value == f.fr) {
+                return true; // found value!
+            }
+            if (!table[start].is_continuation) {
+                return false; // not found
+            }
+            start++;
+        }
+    }
+    return false; // not found
 }
 
 bool QuotientFilter::mayContain(int value) {
+    FingerprintPair f = fingerprintQuotient(value);
 
+    // Check for item in table
+    if (!table[f.fq].is_occupied) {
+        return false;
+    }
+
+}
+
+/* Helper function; 
+*/
+int findRunStartForBucket(int bucket) {
+
+    // Backtrack to beginning of cluster
+    int bucket = f.fq;
+    while (table[b].is_shifted) {
+        bucket--;
+    }
+
+    // Find the run for fq
+    int bucket_slot = bucket;
+    while (bucket != f.fq) {
+        // Skip to the next run
+        while (table[bucket_slot].is_continuation) {
+            bucket_slot++;
+        }
+        // Find the next bucket
+        do {
+            bucket++;
+        }
+        while (!table[bucket].is_occupied);
+    }
+    
 }
 
 FingerprintPair QuotientFilter::fingerprintQuotient(int value) {
