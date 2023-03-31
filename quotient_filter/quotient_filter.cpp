@@ -2,19 +2,49 @@
 #include <cmath>
 
 QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
-    QuotientFilter::size = 0;
-    QuotientFilter::q = q;
-    QuotientFilter::r = r;
-    QuotientFilter::hashFunction = hashFunction;
+    this->size = 0;
+    this->q = q;
+    this->r = r;
+    this->hashFunction = hashFunction;
+
+    this->table_size = (1 << q);
+    this->table = calloc(sizeof(QuotientFilterElement), this->table_size);
+}
+
+QuotientFilter::~QuotientFilter() {
+    free(this->table);
 }
 
 void QuotientFilter::insertElement(int value) {
-    FingerprintPair f = fingerprintQuotient(value)
+    // make sure table isn't full
+    if (this->size == this->table_size) {
+        return;
+    }
+
+    FingerprintPair f = fingerprintQuotient(value);
+    bool originally_occupied = table[f.fq].is_occupied;
 
     // Set occupied bit to 1
+    table[f.fq].is_occupied = 1;
 
-    // may_contain scan
+    // Find the beginning of the run
+    int target_slot = findRunStartForBucket(f.fq);
 
+    // Scan to end of run
+    if (originally_occupied) {
+        do {
+            target_slot = (target_slot + 1) % table_size;
+        } while (table[target_slot].is_continuation);
+    }
+    
+    // shift following runs
+    shiftElementsUp(target_slot);
+
+    // insert element
+    table[target_slot].value = value;
+    table[target_slot].is_continuation = originally_occupied;
+    table[target_slot].is_shifted = (target_slot == f.fq);
+    this->size += 1;
 }
 
 void QuotientFilter::deleteElement(int value) {
@@ -58,47 +88,61 @@ bool QuotientFilter::query(int value) {
 }
 
 bool QuotientFilter::mayContain(int value) {
-    FingerprintPair f = fingerprintQuotient(value);
+    /* This is actually essentially the query function;
+        if anything we might be able to rewrite that to use
+        findRunStartForBucket (lets you avoid some of the value comparisons) */
 
-    // Check for item in table
-    if (!table[f.fq].is_occupied) {
-        return false;
-    }
-
+    return query(value);
 }
 
-/* Helper function; 
+/* Helper function; assumes that the target bucket is occupied
 */
-int findRunStartForBucket(int bucket) {
+int findRunStartForBucket(int target_bucket) {
+    // Check for item in table
+    if (!table[target_bucket].is_occupied) {
+        return -1;
+    }
 
     // Backtrack to beginning of cluster
-    int bucket = f.fq;
-    while (table[b].is_shifted) {
-        bucket--;
+    int bucket = target_bucket;
+    while (table[bucket].is_shifted) {
+        bucket = (bucket - 1) % table_size;
     }
 
     // Find the run for fq
-    int bucket_slot = bucket;
-    while (bucket != f.fq) {
+    int run_start = bucket;
+    while (bucket != target_bucket) {
         // Skip to the next run
-        while (table[bucket_slot].is_continuation) {
-            bucket_slot++;
+        while (table[run_start].is_continuation) {
+            run_start = (run_start + 1) % table_size;
         }
         // Find the next bucket
         do {
-            bucket++;
+            bucket = (bucket + 1) % table_size;
         }
         while (!table[bucket].is_occupied);
     }
-    
+
+    return run_start;
 }
 
 FingerprintPair QuotientFilter::fingerprintQuotient(int value) {
-    int hash = QuotientFilter::hashFunction(value);
+    int hash = this->hashFunction(value);
     FingerprintPair res;
-    res.fq = hash >> QuotientFilter::r;
-    res.fr = hash % static_cast<int>(std::pow(2, QuotientFilter::r));
+    res.fq = hash >> this->r;
+    res.fr = hash % (1 << this->r);
     return res;
+}
+
+// Returns the first slot after the cluster containing the given slot
+int QuotientFilter::findEndOfCluster(int slot) {
+    int current_slot = slot;
+
+    while (table[current_slot].is_shifted) {
+        current_slot = (current_slot + 1) % table_size;
+    }
+
+    return current_slot;
 }
 
 void QuotientFilter::shiftElementsDown(int start) {
@@ -108,3 +152,21 @@ void QuotientFilter::shiftElementsDown(int start) {
         currPointer++;
     }
 }
+
+void QuotientFilter::shiftElementsUp(int start) {
+    int end = findEndOfCluster(start);
+    // Make sure the end of one cluster isn't the start of another
+    while (table[end].is_occupied) {
+        end = findEndOfCluster(end);
+    }
+
+    // end should now point to an open position
+    while (end != start) {
+        int target = (end - 1) % table_size;
+        table[end].value = table[target].value;
+        table[end].is_continuation = table[target].is_continuation;
+        table[end].is_shifted = true;
+        end = target;
+    }    
+}
+// Potential optimization: only move the elements at the beginnings of runs to the end?
