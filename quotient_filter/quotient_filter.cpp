@@ -50,18 +50,47 @@ void QuotientFilter::insertElement(int value) {
 void QuotientFilter::deleteElement(int value) {
     // Step 1: Figure out value finger print
     FingerprintPair f = fingerprintQuotient(value);
-    if (table[f.fq].is_occupied) {
-        // insert a tombstone
-        int start = f.fq;
-        while (start < size) {
-            if (table[start].value == f.fr) {
-                shiftElementsDown(start+1);
-                break;
-            }
-            start++;
-        }
-    }
 
+    //Step 2: If that location's finger print is occupied, check to see if you can find fr
+    if (table[f.fq].is_occupied) {
+        //Mark it as unoccupied
+        table[f.fq].is_occupied = false;
+
+        // Try to find the beginning of the cluster by walking backward
+        int startOfCluster = f.fq;
+        while (table[startOfCluster].is_shifted) {
+            startOfCluster--;
+        }
+
+        //Using bits in the Quotient filter element, try to narrow down a range to look for fr
+        int s = startOfCluster;
+        int b = startOfCluster;
+        while (b != f.fq){
+            advanceToNextRun(&s);
+            advanceToNextBucket(&b);
+        }
+
+        //Now we look for fr in that run and delete if found. We shift all elements in the run down
+        int startOfRun = s;
+        while (table[s].is_continuation) {
+            if (table[s].value == f.fr) {
+                shiftElementsDown(s+1);
+            }
+        }
+
+    }
+}
+
+void QuotientFilter::advanceToNextRun(int * s) {
+    while (table[*s].is_continuation) {
+        *s = *(s) + 1;
+    }
+}
+
+void QuotientFilter::advanceToNextBucket(int * b) {
+    while (!table[*b].is_occupied) {
+        *b = *(b) + 1;
+    }
 }
 
 bool QuotientFilter::query(int value) {
@@ -97,7 +126,7 @@ bool QuotientFilter::mayContain(int value) {
 
 /* Helper function; assumes that the target bucket is occupied
 */
-int findRunStartForBucket(int target_bucket) {
+int QuotientFilter::findRunStartForBucket(int target_bucket) {
     // Check for item in table
     if (!table[target_bucket].is_occupied) {
         return -1;
@@ -147,10 +176,21 @@ int QuotientFilter::findEndOfCluster(int slot) {
 
 void QuotientFilter::shiftElementsDown(int start) {
     int currPointer = start;
-    while (currPointer < size && table[currPointer].is_occupied) {
-        table[currPointer-1] = table[currPointer];
+    while (currPointer < size && table[currPointer].is_shifted) {
+        //If within the same run, shift value over only
+        table[currPointer-1].value = table[currPointer].value;
+
+        //If encounter different run, check that we haven't shifted an element to its correct bucket
+        if (!table[currPointer].is_continuation) {
+            table[currPointer-1].is_continuation = false;
+            FingerprintPair f = fingerprintQuotient(table[currPointer].value);
+            table[currPointer-1].is_shifted = f.fq == currPointer-1;
+        }
         currPointer++;
     }
+    //Make sure that for the gap created from deletion, we set the bits appropriately to indicate that it is empty
+    table[currPointer-1].is_continuation = false;
+
 }
 
 void QuotientFilter::shiftElementsUp(int start) {

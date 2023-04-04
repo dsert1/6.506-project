@@ -4,13 +4,6 @@
 #include <stdbool.h>
 #include "quotient_filter_element.h"
 
-// struct QuotientFilterElement {
-//     int value;
-//     bool is_occupied;
-//     bool is_continuation;
-//     bool is_shifted;
-// };
-
 
 class QuotientFilter {
     private:
@@ -26,6 +19,8 @@ class QuotientFilter {
         int findEndOfCluster(int slot);
         void shiftElementsDown(int start);
         void shiftElementsUp(int start);
+        void advanceToNextBucket(int * start);
+        void advanceToNextRun(int * start);
     
     public:
         QuotientFilter(int q, int r, int (*hashFunction)(int));
