@@ -1,12 +1,12 @@
 #include "quotient_filter.h"
 #include <cmath>
 
-QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
+QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
     this->q = q;
-    this->r = r;
     this->hashFunction = hashFunction;
 
+    this->r = sizeof(int) - q;
     this->table_size = (1 << q);
     this->table = calloc(sizeof(QuotientFilterElement), this->table_size);
 }

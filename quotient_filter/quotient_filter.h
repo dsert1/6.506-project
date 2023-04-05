@@ -23,7 +23,7 @@ class QuotientFilter {
         void advanceToNextRun(int * start);
     
     public:
-        QuotientFilter(int q, int r, int (*hashFunction)(int));
+        QuotientFilter(int q, int (*hashFunction)(int));
         ~QuotientFilter();
 
         void insertElement(int value);
