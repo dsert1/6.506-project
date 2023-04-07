@@ -12,14 +12,16 @@ class QuotientFilterGraveyard {
         int r;
         int table_size;
         int (*hashFunction)(int);
+
         FingerprintPair fingerprintQuotient(int value);
         void shiftElementsDown(int start);
         void advanceToNextRun(int * start);
         void advanceToNextBucket(int * start);
     
     public:
-        QuotientFilterGraveyard(int q, int r, int (*hashFunction)(int));
+        QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
+
         void insertElement(int value);
         void deleteElement(int value);
         bool query(int value);
