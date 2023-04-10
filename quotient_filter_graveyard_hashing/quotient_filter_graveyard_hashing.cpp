@@ -7,7 +7,7 @@ QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int r, int (*hashFunctio
     this->hashFunction = hashFunction;
 
     this->table_size = (1 << q);
-    this->table = calloc(sizeof(QuotientFilterElement), this->table_size);
+    this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
 
 QuotientFilterGraveyard::~QuotientFilterGraveyard() {
@@ -36,5 +36,4 @@ void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
 }
 
 bool QuotientFilterGraveyard::query(int value) {
-
 }

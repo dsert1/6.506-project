@@ -8,7 +8,7 @@ QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initi
     this->hashFunction = hashFunction;
 
     this->table_size = (1 << q);
-    this->table = calloc(sizeof(QuotientFilterElement), this->table_size);
+    this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
 
 QuotientFilter::~QuotientFilter() {
@@ -72,11 +72,20 @@ void QuotientFilter::deleteElement(int value) {
 
         //Now we look for fr in that run and delete if found. We shift all elements in the run down
         int startOfRun = s;
+        int deletePointIndex;
+        int deletePointBucket;
         while (table[s].is_continuation) {
             if (table[s].value == f.fr) {
-                shiftElementsDown(s+1);
+                deletePointIndex = s+1;
             }
         }
+        if (table[deletePointIndex].is_continuation) { //shares the same run as the bucket you deleted so should be fine
+            deletePointBucket = b;
+        } else {
+            deletePointBucket = b+1;
+        }
+
+        shiftElementsDown(deletePointIndex, deletePointBucket);
 
     }
 }
@@ -174,8 +183,9 @@ int QuotientFilter::findEndOfCluster(int slot) {
     return current_slot;
 }
 
-void QuotientFilter::shiftElementsDown(int start) {
-    int currPointer = start;
+void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
+    int currPointer = startIndex;
+    int currBucket = startBucket;
     while (currPointer < size && table[currPointer].is_shifted) {
         //If within the same run, shift value over only
         table[currPointer-1].value = table[currPointer].value;
@@ -183,13 +193,11 @@ void QuotientFilter::shiftElementsDown(int start) {
         //If encounter different run, check that we haven't shifted an element to its correct bucket
         if (!table[currPointer].is_continuation) {
             table[currPointer-1].is_continuation = false;
-            FingerprintPair f = fingerprintQuotient(table[currPointer].value);
-            table[currPointer-1].is_shifted = f.fq == currPointer-1;
+            table[currPointer-1].is_shifted = !(currBucket == currPointer-1);
+            currBucket++;
         }
         currPointer++;
     }
-    //Make sure that for the gap created from deletion, we set the bits appropriately to indicate that it is empty
-    table[currPointer-1].is_continuation = false;
 
 }
 

@@ -7,22 +7,22 @@
 
 class QuotientFilter {
     private:
-        QuotientFilterElement* table;
-        int size; // number of elements contained
-        int q; // size of the quotient
-        int r; // size of remainder. q+r = sizeof([insert value type])
-        int table_size; // size of the table
-        int (*hashFunction)(int);
 
         FingerprintPair fingerprintQuotient(int value);
         int findRunStartForBucket(int bucket);
         int findEndOfCluster(int slot);
-        void shiftElementsDown(int start);
+        void shiftElementsDown(int startIndex, int startBucket);
         void shiftElementsUp(int start);
         void advanceToNextBucket(int * start);
         void advanceToNextRun(int * start);
     
     public:
+        int size; // number of elements contained
+        QuotientFilterElement* table;
+        int q; // size of the quotient
+        int r; // size of remainder. q+r = sizeof([insert value type])
+        int table_size; // size of the table
+        int (*hashFunction)(int);
         QuotientFilter(int q, int r, int (*hashFunction)(int));
         ~QuotientFilter();
 
