@@ -28,17 +28,57 @@ void QuotientFilterGraveyard::insertElement(int value) {
     table[f.fq].is_occupied = 1;
 
     // if there's a valid tombstone for a new run:
-        // insert element
-        // update adjacent tombstones
+    int target_slot = f.fq;
+    bool tombstone_check_placeholder = false;
+    if (tombstone_check_placeholder) {
+        int pred = target.predecessorFq;
+        int succ = target.successorFq;
+        bool valid_for_insertion;
+        if (succ > pred) {
+            valid_for_insertion = pred < f.fq && f.fq < succ;
+        } else {
+            // accounting for the case of wrapping around the end of the array
+            valid_for_insertion = (pred < f.fq && f.fq < this->table_size) ||
+                                  (0 < f.fq && f.fq < succ);
+        }
 
-    // otherwise:
-        // Find the beginning of run
-        // Scan to end of run if existing
-        // Update adjacent tombstones if new
-        // Shift following runs (can shift into tombstones)
-        // insert element
+        if (valid_for_insertion) {
+            // TODO: Mark as no longer being a tombstone
+            table[target_slot].value = f.fr;
+            table[target_slot].is_continuation = 0;
+            table[target_slot].is_shifted = 0;
+            this->size += 1;
 
-    // increment size
+            updateAdjacentTombstonesInsert(f.fq);
+            return;
+        }
+    }
+
+    // no valid tombstone:
+
+    // Find the beginning of the run
+    target_slot = findRunStartForBucket(f.fq);
+
+    // Scan to end of run
+    if (originally_occupied) {
+        do {
+            target_slot = (target_slot + 1) % table_size;
+            tombstone_check_placeholder = false;
+        } while (table[target_slot].is_continuation && !tombstone_check_placeholder);
+    }
+
+    // shift following runs
+    shiftElementsUp(target_slot);
+    if (!originally_occupied) {
+        updateAdjacentTombstonesInsert(target_slot);
+    }
+
+    // insert element
+    // TODO: Mark as no longer being a tombstone
+    table[target_slot].value = f.fr;
+    table[target_slot].is_continuation = originally_occupied;
+    table[target_slot].is_shifted = (target_slot == f.fq);
+    this->size += 1;
 }
 
 int max(int value1, int value2){
@@ -162,6 +202,86 @@ void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
     // std::cout << "b after " << *b << "\n";
 }
 
+// Updates the predecessors and successors of tombstones adjacent to a newly created run.
+void QuotientFilterGraveyard::updateAdjacentTombstonesInsert(int newRun) {
+    int target_slot = (newRun + 1) % this->table_size;
+    bool tombstone_check_placeholder = false;
+    while (tombstone_check_placeholder) {
+        table[target_slot].predecessorFq = newRun;
+        target_slot = (target_slot + 1) % this->table_size;
+    }
+
+    target_slot = (newRun - 1) % this->table_size;
+    tombstone_check_placeholder = false;
+    while (tombstone_check_placeholder) {
+        table[target_slot].successorFq = newRun;
+        target_slot = (target_slot - 1) % this->table_size;
+    }
+}
+
+/* Helper function; assumes that the target bucket is occupied
+*/
+int QuotientFilter::findRunStartForBucket(int target_bucket) {
+    // Check for item in table
+    if (!table[target_bucket].is_occupied) {
+        return -1;
+    }
+
+    // Backtrack to beginning of cluster
+    int bucket = target_bucket;
+    while (table[bucket].is_shifted) {
+        bucket = (bucket - 1) % table_size;
+    }
+
+    // Find the run for fq
+    int run_start = bucket;
+    while (bucket != target_bucket) {
+        // Skip to the next run
+        while (table[run_start].is_continuation) {
+            run_start = (run_start + 1) % table_size;
+        }
+        // Find the next bucket
+        do {
+            bucket = (bucket + 1) % table_size;
+        }
+        while (!table[bucket].is_occupied);
+    }
+
+    return run_start;
+}
+
+/* Returns the first slot after the cluster containing the given slot
+ * (i.e. guaranteed to return a different slot, assuming the table isn't full)
+*/
+int QuotientFilter::findEndOfCluster(int slot) {
+    int current_slot = slot;
+
+    do {
+        current_slot = (current_slot + 1) % table_size;
+    }
+    while (table[current_slot].is_shifted);
+
+    return current_slot;
+}
+
+void QuotientFilter::shiftElementsUp(int start) {
+    int end = findEndOfCluster(start);
+    // Make sure the end of one cluster isn't the start of another
+    bool tombstone_check_placeholder = false;
+    while (table[end].is_occupied && !tombstone_check_placeholder) {
+        end = findEndOfCluster(end);
+    }
+
+    // end should now point to an open position
+    while (end != start) {
+        int target = (end - 1) % table_size;
+        // TODO: Mark as no longer being a tombstone
+        table[end].value = table[target].value;
+        table[end].is_continuation = table[target].is_continuation;
+        table[end].is_shifted = true;
+        end = target;
+    }
+}
 
 bool QuotientFilterGraveyard::query(int value) {
     FingerprintPair f = fingerprintQuotient(value);
