@@ -16,7 +16,29 @@ QuotientFilterGraveyard::~QuotientFilterGraveyard() {
 }
 
 void QuotientFilterGraveyard::insertElement(int value) {
+    // make sure table isn't full
+    if (this->size == this->table_size) {
+        return;
+    }
 
+    FingerprintPair f = fingerprintQuotient(value);
+    bool originally_occupied = table[f.fq].is_occupied;
+
+    // set occupied bit to 1
+    table[f.fq].is_occupied = 1;
+
+    // if there's a valid tombstone for a new run:
+        // insert element
+        // update adjacent tombstones
+
+    // otherwise:
+        // Find the beginning of run
+        // Scan to end of run if existing
+        // Update adjacent tombstones if new
+        // Shift following runs (can shift into tombstones)
+        // insert element
+
+    // increment size
 }
 
 int max(int value1, int value2){
