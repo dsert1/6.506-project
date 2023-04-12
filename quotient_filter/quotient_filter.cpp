@@ -1,5 +1,6 @@
 #include "quotient_filter.h"
 #include <cmath>
+#include <iostream>
 
 QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
@@ -29,6 +30,7 @@ void QuotientFilter::insertElement(int value) {
 
     // Find the beginning of the run
     int target_slot = findRunStartForBucket(f.fq);
+    // int target_slot=0;
 
     // Scan to end of run
     if (originally_occupied) {
@@ -50,11 +52,13 @@ void QuotientFilter::insertElement(int value) {
 void QuotientFilter::deleteElement(int value) {
     // Step 1: Figure out value finger print
     FingerprintPair f = fingerprintQuotient(value);
-
+    // std::cout << "fq: " << f.fq << " fr: " << f.fr  << "\n";
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
-        //Mark it as unoccupied
-        table[f.fq].is_occupied = false;
+        //Mark it as unoccupied if there aren't other elements there
+        if (table[f.fq].value == f.fr) {
+            table[f.fq].is_occupied = false;
+        }
 
         // Try to find the beginning of the cluster by walking backward
         int startOfCluster = f.fq;
@@ -69,23 +73,32 @@ void QuotientFilter::deleteElement(int value) {
             advanceToNextRun(&s);
             advanceToNextBucket(&b);
         }
-
+        std::cout << "s: " << s << " b: " << b  << "\n";
         //Now we look for fr in that run and delete if found. We shift all elements in the run down
         int startOfRun = s;
         int deletePointIndex;
         int deletePointBucket;
-        while (table[s].is_continuation) {
-            if (table[s].value == f.fr) {
-                deletePointIndex = s+1;
+        do {
+            if (table[startOfRun].value == f.fr) {
+                deletePointIndex = startOfRun+1;
             }
+            startOfRun++;
         }
-        if (table[deletePointIndex].is_continuation) { //shares the same run as the bucket you deleted so should be fine
-            deletePointBucket = b;
-        } else {
-            deletePointBucket = b+1;
-        }
+        while (table[startOfRun].is_continuation);
 
-        shiftElementsDown(deletePointIndex, deletePointBucket);
+        //Check if element found before shifting down
+        if (table[deletePointIndex-1].value == f.fr) {
+            // std::cout << "deletePointIndex: " << deletePointIndex << "\n";
+            // if (table[deletePointIndex].is_continuation) { //shares the same run as the bucket you deleted so should be fine
+            deletePointBucket = b;
+            // } else {
+            //     deletePointBucket = b+1;
+            // }
+            // std::cout << "deletePointBucket: " << deletePointBucket << "\n";
+            shiftElementsDown(deletePointIndex, deletePointBucket);
+            this->size--;
+        }
+        std::cout  << "DONE"<<"\n";
 
     }
 }
@@ -187,15 +200,18 @@ void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
     int currPointer = startIndex;
     int currBucket = startBucket;
     while (currPointer < size && table[currPointer].is_shifted) {
+        std::cout << "currPointer: " << currPointer << " currBucket: " << currPointer <<"\n";
         //If within the same run, shift value over only
         table[currPointer-1].value = table[currPointer].value;
-
         //If encounter different run, check that we haven't shifted an element to its correct bucket
         if (!table[currPointer].is_continuation) {
+            currBucket++;
             table[currPointer-1].is_continuation = false;
             table[currPointer-1].is_shifted = !(currBucket == currPointer-1);
-            currBucket++;
+        } else {
+            table[currPointer-1].is_continuation = !(currBucket==currPointer-1);
         }
+        table[currPointer-1].is_occupied = currBucket == currPointer-1;
         currPointer++;
     }
 

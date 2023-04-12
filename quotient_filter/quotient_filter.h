@@ -8,12 +8,10 @@
 class QuotientFilter {
     private:
 
-        FingerprintPair fingerprintQuotient(int value);
         int findRunStartForBucket(int bucket);
         int findEndOfCluster(int slot);
         void shiftElementsDown(int startIndex, int startBucket);
         void shiftElementsUp(int start);
-        void advanceToNextBucket(int * start);
         void advanceToNextRun(int * start);
     
     public:
@@ -30,4 +28,6 @@ class QuotientFilter {
         void deleteElement(int value);
         bool query(int value);
         bool mayContain(int value);
+        FingerprintPair fingerprintQuotient(int value);
+        void advanceToNextBucket(int * start);
 };
