@@ -1,5 +1,6 @@
 #include "quotient_filter.h"
 // #include "quotient_filter_element.h"
+// #include <boost/python.hpp>
 #include <iostream>
 
 int identity(int x) {
@@ -68,7 +69,7 @@ void testQuery()  {
 
 int main () {
     std::cout << "Started Delete" << "\n";
-    testDeleteOnly();
+    testQuery();
     std::cout << "Ended Delete" << "\n";
 
 }
