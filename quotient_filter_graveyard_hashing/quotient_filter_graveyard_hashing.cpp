@@ -1,11 +1,11 @@
 #include "quotient_filter_graveyard_hashing.h"
 
-QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int r, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
+QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
     this->q = q;
-    this->r = r;
     this->hashFunction = hashFunction;
 
+    this->r = sizeof(int) - q;
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
@@ -25,13 +25,13 @@ void QuotientFilterGraveyard::deleteElement(int value) {
 
 void QuotientFilterGraveyard::advanceToNextRun(int * s) {
     while (table[*s].is_continuation) {
-        *s = *(s) + 1;
+        *s = (*(s) + 1) % this->table_size;
     }
 }
 
 void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
     while (!table[*b].is_occupied) {
-        *b = *(b) + 1;
+        *b = (*(b) + 1) % this_table_size;
     }
 }
 

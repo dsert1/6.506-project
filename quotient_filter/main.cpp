@@ -15,7 +15,7 @@ int identity(int x) {
 
 
 void testDeleteOnly(){
-    QuotientFilter g = QuotientFilter(4,4, &identity); 
+    QuotientFilter g = QuotientFilter(4,&identity); 
     QuotientFilterElement* start = g.table;
     int elements[10] = {10,20,5,7,18,33};
     *start = QuotientFilterElement(10,true,false,false);
@@ -49,7 +49,7 @@ void testDeleteOnly(){
 
 int main () {
     std::cout << "Started Delete" << "\n";
-    testDeleteOnly();
-    std::cout << "Finished Delete";
+    // testDeleteOnly();
+    std::cout << sizeof(int) << "\n";
 
 }

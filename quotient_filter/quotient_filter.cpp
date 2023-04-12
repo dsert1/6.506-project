@@ -2,12 +2,12 @@
 #include <cmath>
 #include <iostream>
 
-QuotientFilter::QuotientFilter(int q, int r, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
+QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
     this->q = q;
-    this->r = r;
     this->hashFunction = hashFunction;
 
+    this->r = sizeof(int) - q; //May want to multiply by 8 since sizeof gives no. of bytes
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
@@ -43,7 +43,7 @@ void QuotientFilter::insertElement(int value) {
     shiftElementsUp(target_slot);
 
     // insert element
-    table[target_slot].value = value;
+    table[target_slot].value = f.fr;
     table[target_slot].is_continuation = originally_occupied;
     table[target_slot].is_shifted = (target_slot == f.fq);
     this->size += 1;
@@ -185,13 +185,16 @@ FingerprintPair QuotientFilter::fingerprintQuotient(int value) {
     return res;
 }
 
-// Returns the first slot after the cluster containing the given slot
+/* Returns the first slot after the cluster containing the given slot
+ * (i.e. guaranteed to return a different slot, assuming the table isn't full)
+*/
 int QuotientFilter::findEndOfCluster(int slot) {
     int current_slot = slot;
 
-    while (table[current_slot].is_shifted) {
+    do {
         current_slot = (current_slot + 1) % table_size;
     }
+    while (table[current_slot].is_shifted);
 
     return current_slot;
 }
