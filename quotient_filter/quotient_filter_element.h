@@ -5,12 +5,12 @@ struct FingerprintPair {
 
 class QuotientFilterElement {
     public:
-        int value;
+        long long int value;
         bool is_occupied;
         bool is_continuation;
         bool is_shifted;
         bool isTombstone;
 
-        QuotientFilterElement(int value, bool is_occupied, bool is_continuation, bool is_shifted);
+        QuotientFilterElement(long long int value, bool is_occupied, bool is_continuation, bool is_shifted);
         
 };

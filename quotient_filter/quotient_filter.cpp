@@ -7,7 +7,8 @@ QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a
     this->q = q;
     this->hashFunction = hashFunction;
 
-    this->r = 8 - q; //May want to multiply by 8 since sizeof gives no. of bytes
+    this->r = sizeof(long long int)*8 - q; //May want to multiply by 8 since sizeof gives no. of bytes
+    std::cout << r;
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
@@ -56,9 +57,7 @@ void QuotientFilter::deleteElement(int value) {
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
         //Mark it as unoccupied if there aren't other elements there
-        // if (table[f.fq].value == f.fr) {
         table[f.fq].is_occupied = false;
-        // }
 
         // Try to find the beginning of the cluster by walking backward
         int startOfCluster = f.fq;
@@ -240,7 +239,7 @@ int QuotientFilter::findEndOfCluster(int slot) {
 void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
     int currPointer = startIndex;
     int currBucket = startBucket;
-    while (currPointer < size && table[currPointer].is_shifted) {
+    while (currPointer < table_size && table[currPointer].is_shifted) {
         std::cout << "currPointer: " << currPointer << " currBucket: " << currPointer <<"\n";
         //If within the same run, shift value over only
         table[currPointer-1].value = table[currPointer].value;
