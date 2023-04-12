@@ -5,4 +5,5 @@ QuotientFilterElement::QuotientFilterElement(int value, bool is_occupied, bool i
     this->is_occupied = is_occupied;
     this->is_continuation = is_continuation;
     this->is_shifted = is_shifted;
+    this->isTombstone = false;
 }

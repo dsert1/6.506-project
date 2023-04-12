@@ -7,7 +7,7 @@ QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a
     this->q = q;
     this->hashFunction = hashFunction;
 
-    this->r = sizeof(int) - q; //May want to multiply by 8 since sizeof gives no. of bytes
+    this->r = 8 - q; //May want to multiply by 8 since sizeof gives no. of bytes
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
@@ -56,9 +56,9 @@ void QuotientFilter::deleteElement(int value) {
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
         //Mark it as unoccupied if there aren't other elements there
-        if (table[f.fq].value == f.fr) {
-            table[f.fq].is_occupied = false;
-        }
+        // if (table[f.fq].value == f.fr) {
+        table[f.fq].is_occupied = false;
+        // }
 
         // Try to find the beginning of the cluster by walking backward
         int startOfCluster = f.fq;
@@ -69,7 +69,7 @@ void QuotientFilter::deleteElement(int value) {
         //Using bits in the Quotient filter element, try to narrow down a range to look for fr
         int s = startOfCluster;
         int b = startOfCluster;
-        while (b != f.fq){
+        while (b != f.fq && b<table_size){
             advanceToNextRun(&s);
             advanceToNextBucket(&b);
         }
@@ -88,13 +88,7 @@ void QuotientFilter::deleteElement(int value) {
 
         //Check if element found before shifting down
         if (table[deletePointIndex-1].value == f.fr) {
-            // std::cout << "deletePointIndex: " << deletePointIndex << "\n";
-            // if (table[deletePointIndex].is_continuation) { //shares the same run as the bucket you deleted so should be fine
             deletePointBucket = b;
-            // } else {
-            //     deletePointBucket = b+1;
-            // }
-            // std::cout << "deletePointBucket: " << deletePointBucket << "\n";
             shiftElementsDown(deletePointIndex, deletePointBucket);
             this->size--;
         }
@@ -104,39 +98,83 @@ void QuotientFilter::deleteElement(int value) {
 }
 
 void QuotientFilter::advanceToNextRun(int * s) {
-    while (table[*s].is_continuation) {
+    do {
         *s = *(s) + 1;
     }
+    while (*s < table_size && table[*s].is_continuation);
 }
 
 void QuotientFilter::advanceToNextBucket(int * b) {
-    while (!table[*b].is_occupied) {
+    std::cout << "b before " << *b << "\n";
+    do {
         *b = *(b) + 1;
     }
+    while (*b < table_size && !table[*b].is_occupied);
+    std::cout << "b after " << *b << "\n";
 }
 
 bool QuotientFilter::query(int value) {
     // get value fingerprint
     FingerprintPair f = fingerprintQuotient(value);
-    
+    std:: cout << "fq: " << f.fq << " fr: " << f.fr << "\n";
     // check if the item is in the table
     if (table[f.fq].is_occupied) {
-        // search for fingerprint remainder in table
-        int start = f.fq;
+        //If item in bucket already, return true
+        if (table[f.fq].value == f.fr) {
+            return true;
+        } else {  //Otherwise, find the correct run
+            int startOfCluster = f.fq;
+            while (table[startOfCluster].is_shifted) {
+                startOfCluster--;
+            }
 
-        // look for value in the run
-        while (start < size) {
-            if (table[start].value == f.fr) {
-                return true; // found value!
+            std:: cout << "Start of cluster: " << startOfCluster << "\n";
+            int s = startOfCluster;
+            int b = startOfCluster;
+            while (b != f.fq){
+                advanceToNextRun(&s);
+                advanceToNextBucket(&b);
+                // std:: cout << "s: " << s << " b: " << b << "\n";
             }
-            if (!table[start].is_continuation) {
-                return false; // not found
+            std:: cout << "s: " << s << " b: " << b << "\n";
+            //Once you locate the run containing item, look through to find it
+            do {
+                if (table[s].value == f.fr) {
+                    return true;
+                }
+                s++;
             }
-            start++;
+            while (table[s].is_continuation);
         }
     }
     return false; // not found
 }
+
+// bool QuotientFilter::query(int value) {
+//     // get value fingerprint
+//     FingerprintPair f = fingerprintQuotient(value);
+    
+//     // check if the item is in the table
+//     if (table[f.fq].is_occupied) {
+//         //Search for t he  beginning of cluster  
+//         // Try to find the beginning of the cluster by walking backward
+
+//         // search for fingerprint remainder in table
+//         int start = f.fq;
+
+//         // look for value in the run
+//         while (start < size) {
+//             if (table[start].value == f.fr) {
+//                 return true; // found value!
+//             }
+//             if (!table[start].is_continuation) {
+//                 return false; // not found
+//             }
+//             start++;
+//         }
+//     }
+//     return false; // not found
+// }
 
 bool QuotientFilter::mayContain(int value) {
     /* This is actually essentially the query function;
@@ -211,10 +249,10 @@ void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
             currBucket++;
             table[currPointer-1].is_continuation = false;
             table[currPointer-1].is_shifted = !(currBucket == currPointer-1);
+            table[currPointer-1].is_occupied = currBucket == currPointer-1;
         } else {
             table[currPointer-1].is_continuation = !(currBucket==currPointer-1);
         }
-        table[currPointer-1].is_occupied = currBucket == currPointer-1;
         currPointer++;
     }
 
