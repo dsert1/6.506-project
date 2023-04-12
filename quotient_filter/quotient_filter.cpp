@@ -31,7 +31,6 @@ void QuotientFilter::insertElement(int value) {
 
     // Find the beginning of the run
     int target_slot = findRunStartForBucket(f.fq);
-    // int target_slot=0;
 
     // Scan to end of run
     if (originally_occupied) {
@@ -258,7 +257,7 @@ void QuotientFilter::shiftElementsUp(int start) {
         table[end].is_continuation = table[target].is_continuation;
         table[end].is_shifted = true;
         end = target;
-    }    
+    }
 }
 
 
