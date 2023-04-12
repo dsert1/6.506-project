@@ -7,7 +7,7 @@ class TombstoneElement : public QuotientFilterElement {
         int successorFq;
     
     public:
-        TombstoneElement(int predecessorFq, int successorFq, int is_continuation, int is_shifted, int is_occupied);
+        TombstoneElement(int predecessorFq, int successorFq, int is_continuation, int is_shifted);
 
 
 };

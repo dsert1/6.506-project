@@ -30,9 +30,7 @@ void QuotientFilterGraveyard::advanceToNextRun(int * s) {
 }
 
 void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
-    while (!table[*b].is_occupied) {
-        *b = (*(b) + 1) % this_table_size;
-    }
+
 }
 
 bool QuotientFilterGraveyard::query(int value) {
