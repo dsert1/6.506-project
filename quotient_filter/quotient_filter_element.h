@@ -3,6 +3,11 @@ struct FingerprintPair {
     int fr;
 };
 
+struct PredSucPair {
+    int predecessor;
+    int successor;
+};
+
 class QuotientFilterElement {
     public:
         long long int value;
