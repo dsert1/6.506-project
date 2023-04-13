@@ -21,17 +21,76 @@ void QuotientFilterGraveyard::insertElement(int value) {
 void QuotientFilterGraveyard::deleteElement(int value) {
     //Step 1: Figure out value finger print
     FingerprintPair f = fingerprintQuotient(value);
-}
 
-void QuotientFilterGraveyard::advanceToNextRun(int * s) {
-    while (table[*s].is_continuation) {
-        *s = (*(s) + 1) % this->table_size;
+    //Step 2: If that location's ffingerprint is occupied, insert tombstone and keep moving
+    if (table[f.fq].is_occupied) {
+
+        table[f.fq].is_occupied = false;
+        int startOfCluster = f.fq;
+        while (table[startOfCluster].is_shifted) {
+            startOfCluster--;
+        }
+
+        //Using bits in the Quotient filter element, locate the run of fr
+        int s = startOfCluster;
+        int b = startOfCluster;
+        int prev_b = startOfCluster; //need to remember predecessor bucket
+        while (b != f.fq && b<table_size){
+            advanceToNextRun(&s);
+            prev_b = b;
+            advanceToNextBucket(&b);
+        }
+
+        //Place a tombstone at the end of the run within which it exists
+        int startOfRun = s;
+        int deletePointIndex;
+        int deletePointBucket;
+        do {
+            if (table[startOfRun].value == f.fr) {
+                deletePointIndex = startOfRun+1;
+            }
+            startOfRun++;
+        }
+        while (table[startOfRun].is_continuation);
+
+        //Check if the element is found before inserting tombstone at the end of run
+        if (table[deletePointIndex-1].value == f.fr) {
+            deletePointBucket = b;
+            shiftTombstoneDown(deletePointIndex, prev_b);
+            this->size--;
+        }
     }
 }
 
-void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
+void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int predecessorOfTombstone) {
+    int currPointer =  afterTombstoneLocation;
+    while (currPointer < table_size && table[currPointer].is_continuation) {
+        table[currPointer-1].value = table[currPointer].value;
+        if (table[currPointer].isTombstone) {
+            break;
+        }
+    }
+    table[currPointer-1].value = computeValue(predecessorOfTombstone, predecessorOfTombstone+1);
+}
+
+long long int computeValue(int predecessor, int successor) {
 
 }
+
+void QuotientFilterGraveyard::advanceToNextRun(int * s) {
+    do {
+        *s = *(s) + 1;
+    }
+    while (*s < table_size && table[*s].is_continuation);
+}
+
+void QuotientFilterGraveyard::advanceToNextBucket(int * b) {
+    do {
+        *b = *(b) + 1;
+    }
+    while (*b < table_size && !table[*b].is_occupied);
+}
+
 
 bool QuotientFilterGraveyard::query(int value) {
 }
