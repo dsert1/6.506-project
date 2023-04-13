@@ -14,7 +14,7 @@ class QuotientFilterGraveyard {
         int (*hashFunction)(int);
 
         FingerprintPair fingerprintQuotient(int value);
-        void shiftElementsDown(int start);
+        void shiftTombstoneDown(int start, int predecessor);
         void advanceToNextRun(int * start);
         void advanceToNextBucket(int * start);
     
