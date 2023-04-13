@@ -77,6 +77,10 @@ long long int computeValue(int predecessor, int successor) {
 
 }
 
+PredSucPair computePredSuc(int value){
+
+}
+
 void QuotientFilterGraveyard::advanceToNextRun(int * s) {
     do {
         *s = *(s) + 1;
