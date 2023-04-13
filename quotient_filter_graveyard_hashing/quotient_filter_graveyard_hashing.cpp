@@ -70,14 +70,14 @@ void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int
             break;
         }
     }
-    table[currPointer-1].value = computeValue(predecessorOfTombstone, predecessorOfTombstone+1);
+    table[currPointer-1].value = encodeValue(predecessorOfTombstone, predecessorOfTombstone+1);
 }
 
-long long int computeValue(int predecessor, int successor) {
+long long int encodeValue(int predecessor, int successor) {
 
 }
 
-PredSucPair computePredSuc(int value){
+PredSucPair decodeValue(int value){
 
 }
 
