@@ -6,6 +6,7 @@
 
 class QuotientFilterGraveyard {
     private:
+    public:
         QuotientFilterElement* table;
         int size;
         int q;
@@ -18,7 +19,6 @@ class QuotientFilterGraveyard {
         void advanceToNextRun(int * start);
         void advanceToNextBucket(int * start);
     
-    public:
         QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
 
@@ -26,4 +26,6 @@ class QuotientFilterGraveyard {
         void deleteElement(int value);
         bool query(int value);
         bool mayContain(int value);
+        long long int encodeValue(int predecessor, int successor);
+        PredSucPair decodeValue(long long int value);
 };
