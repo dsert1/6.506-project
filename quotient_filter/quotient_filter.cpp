@@ -7,8 +7,8 @@ QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a
     this->q = q;
     this->hashFunction = hashFunction;
 
-    this->r = sizeof(long long int)*8 - q; //May want to multiply by 8 since sizeof gives no. of bytes
-    std::cout << r;
+    this->r = sizeof(long long int)*8 - q; //multiply by 8 since sizeof gives no. of bits og: sizeof(long long int)*8 - q
+    // std::cout << r;
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
 }
@@ -56,13 +56,17 @@ void QuotientFilter::deleteElement(int value) {
     // std::cout << "fq: " << f.fq << " fr: " << f.fr  << "\n";
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
-        //Mark it as unoccupied if there aren't other elements there
-        table[f.fq].is_occupied = false;
+        std:: cout << "fq: " << f.fq << " fr: " << f.fr << "\n";
+        //Check to make sure there aren't other members of the run before setting to false!!
+        int nextItem = (f.fq + 1)%table_size;
+        if (!table[nextItem].is_continuation) {
+            table[f.fq].is_occupied = false;
+        }
 
         // Try to find the beginning of the cluster by walking backward
         int startOfCluster = f.fq;
         while (table[startOfCluster].is_shifted) {
-            startOfCluster--;
+            startOfCluster = ((startOfCluster-1)%table_size + table_size)%table_size;
         }
 
         //Using bits in the Quotient filter element, try to narrow down a range to look for fr
@@ -72,44 +76,50 @@ void QuotientFilter::deleteElement(int value) {
             advanceToNextRun(&s);
             advanceToNextBucket(&b);
         }
-        std::cout << "s: " << s << " b: " << b  << "\n";
+
+        std::cout << "startOfRun: " << s << " bucket: " << b  << "\n";
         //Now we look for fr in that run and delete if found. We shift all elements in the run down
         int startOfRun = s;
         int deletePointIndex;
         int deletePointBucket;
+        bool found = false;
         do {
             if (table[startOfRun].value == f.fr) {
-                deletePointIndex = startOfRun+1;
+                deletePointIndex = (startOfRun+1)%table_size;
+                found = true;
             }
-            startOfRun++;
+            startOfRun = (startOfRun+1)%table_size;
         }
         while (table[startOfRun].is_continuation);
 
+        std::cout << "startIndexOfShifting: " << deletePointIndex << " beforeStart: " << -1%table_size << " startBucketOfShifting: " << b  << "\n";
         //Check if element found before shifting down
-        if (table[deletePointIndex-1].value == f.fr) {
+        if (found) {
+            std:: cout << "HERE" << "\n";
             deletePointBucket = b;
             shiftElementsDown(deletePointIndex, deletePointBucket);
             this->size--;
         }
-        std::cout  << "DONE"<<"\n";
+
+        // std::cout  << "DONE"<<"\n";
 
     }
 }
 
 void QuotientFilter::advanceToNextRun(int * s) {
     do {
-        *s = *(s) + 1;
+        *s = (*(s) + 1)%table_size;
     }
-    while (*s < table_size && table[*s].is_continuation);
+    while (table[*s].is_continuation);
 }
 
 void QuotientFilter::advanceToNextBucket(int * b) {
     std::cout << "b before " << *b << "\n";
     do {
-        *b = *(b) + 1;
+        *b = (*(b) + 1)%table_size;
     }
-    while (*b < table_size && !table[*b].is_occupied);
-    std::cout << "b after " << *b << "\n";
+    while (!table[*b].is_occupied);
+    // std::cout << "b after " << *b << "\n";
 }
 
 bool QuotientFilter::query(int value) {
@@ -124,7 +134,7 @@ bool QuotientFilter::query(int value) {
         } else {  //Otherwise, find the correct run
             int startOfCluster = f.fq;
             while (table[startOfCluster].is_shifted) {
-                startOfCluster--;
+                startOfCluster = ((startOfCluster-1)%table_size + table_size)%table_size;
             }
 
             std:: cout << "Start of cluster: " << startOfCluster << "\n";
@@ -135,45 +145,19 @@ bool QuotientFilter::query(int value) {
                 advanceToNextBucket(&b);
                 // std:: cout << "s: " << s << " b: " << b << "\n";
             }
-            std:: cout << "s: " << s << " b: " << b << "\n";
+            // std:: cout << "s: " << s << " b: " << b << "\n";
             //Once you locate the run containing item, look through to find it
             do {
                 if (table[s].value == f.fr) {
                     return true;
                 }
-                s++;
+                s = (s+1)%table_size;
             }
             while (table[s].is_continuation);
         }
     }
     return false; // not found
 }
-
-// bool QuotientFilter::query(int value) {
-//     // get value fingerprint
-//     FingerprintPair f = fingerprintQuotient(value);
-    
-//     // check if the item is in the table
-//     if (table[f.fq].is_occupied) {
-//         //Search for t he  beginning of cluster  
-//         // Try to find the beginning of the cluster by walking backward
-
-//         // search for fingerprint remainder in table
-//         int start = f.fq;
-
-//         // look for value in the run
-//         while (start < size) {
-//             if (table[start].value == f.fr) {
-//                 return true; // found value!
-//             }
-//             if (!table[start].is_continuation) {
-//                 return false; // not found
-//             }
-//             start++;
-//         }
-//     }
-//     return false; // not found
-// }
 
 bool QuotientFilter::mayContain(int value) {
     /* This is actually essentially the query function;
@@ -239,20 +223,23 @@ int QuotientFilter::findEndOfCluster(int slot) {
 void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
     int currPointer = startIndex;
     int currBucket = startBucket;
-    while (currPointer < table_size && table[currPointer].is_shifted) {
-        std::cout << "currPointer: " << currPointer << " currBucket: " << currPointer <<"\n";
+    int prevPointer = ((currPointer-1)%table_size + table_size)%table_size;
+    while (table[currPointer].is_shifted) {
+        std::cout << "currPointer: " << currPointer << " currBucket: " << currBucket << " prevPointer: " << prevPointer <<"\n";
         //If within the same run, shift value over only
-        table[currPointer-1].value = table[currPointer].value;
+        table[prevPointer].value = table[currPointer].value;
+        table[prevPointer].is_shifted = !(currBucket == prevPointer);
+        table[prevPointer].is_occupied = currBucket == prevPointer;
         //If encounter different run, check that we haven't shifted an element to its correct bucket
         if (!table[currPointer].is_continuation) {
+            std::cout << "HERE 2" << "\n";
             currBucket++;
-            table[currPointer-1].is_continuation = false;
-            table[currPointer-1].is_shifted = !(currBucket == currPointer-1);
-            table[currPointer-1].is_occupied = currBucket == currPointer-1;
+            table[prevPointer].is_continuation = false;
         } else {
-            table[currPointer-1].is_continuation = !(currBucket==currPointer-1);
+            table[prevPointer].is_continuation = !(currBucket==prevPointer);
         }
-        currPointer++;
+        currPointer = (currPointer + 1)%table_size;
+        prevPointer = ((currPointer-1)%table_size + table_size)%table_size;
     }
 
 }
