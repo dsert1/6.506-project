@@ -3,8 +3,10 @@
 echo "==== Building Tests ===="
 cmake -S . -B build
 cmake --build build
-cd build
-echo
-echo "==== Running Tests ===="
-ctest
-cd ..
+if [ $? -eq 0 ]; then
+  cd build
+  echo
+  echo "==== Running Tests ===="
+  ctest
+  cd ..
+fi
