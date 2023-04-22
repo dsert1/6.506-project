@@ -10,12 +10,12 @@ struct PredSucPair {
 
 class QuotientFilterElement {
     public:
-        long long int value;
+        unsigned long long int value;
         bool is_occupied;
         bool is_continuation;
         bool is_shifted;
         bool isTombstone;
 
-        QuotientFilterElement(long long int value, bool is_occupied, bool is_continuation, bool is_shifted);
+        QuotientFilterElement(unsigned long long int value, bool is_occupied, bool is_continuation, bool is_shifted);
         
 };
