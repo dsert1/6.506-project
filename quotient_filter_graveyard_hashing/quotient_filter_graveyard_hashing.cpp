@@ -79,6 +79,7 @@ void QuotientFilterGraveyard::deleteElement(int value) {
         if (found) {
             shiftTombstoneDown(deletePointIndex, predecessorBucket);
             this->size--;
+            redistributeTombstones();
         }
     }
 }
@@ -181,4 +182,52 @@ FingerprintPair QuotientFilterGraveyard::fingerprintQuotient(int value) {
     res.fq = hash >> this->r;
     res.fr = hash % (1 << this->r);
     return res;
+}
+
+void QuotientFilterGraveyard::shiftRunUp(int * bucketPos, int * runStart) {
+    int fillInPointer = *bucketPos;
+    do {
+        table[fillInPointer] = table[*runStart];
+        fillInPointer++;
+        *(runStart) = *((runStart) + 1)%table_size;
+    }
+    while (table[*runStart].is_continuation && !table[*runStart].isTombstone);
+
+    //Allow 1 tombStone buffer because we know at least one thing needs to be moved
+    *(runStart) = *(runStart) + 1;
+    table[*runStart].isTombstone = true;
+    table[*runStart].is_occupied = true;
+}
+
+
+void QuotientFilterGraveyard::redistributeTombstones() {
+    //Start looping through from the beginning.
+    float load_factor =  size/(double)table_size;
+    if (load_factor > REDISTRIBUTE_UPPER_LIMIT ||  load_factor <= REDISTRIBUTE_LOWER_LIMIT) {
+        int b = 0;
+        int s = 0;
+        if (table[b].isTombstone) {
+
+            //Truncate the run to the back of the list if it is a tombstone
+            do {
+                table[b].isTombstone = false;
+                table[b].is_continuation = false;
+                b++;
+            }
+            while (table[b].isTombstone  && b<table_size);
+        }
+        //Move elements around and truncate tombstones
+        b = 0;
+        while (true) {
+            advanceToNextBucket(&b);
+            advanceToNextRun(&s);
+            if (b != s) { //Shift the run there if it is not occupied
+                shiftRunUp(&b,&s);
+            }
+            if (s==0) {
+                break;
+            }
+        }
+    }
+
 }

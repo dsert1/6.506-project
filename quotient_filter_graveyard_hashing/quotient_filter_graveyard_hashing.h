@@ -6,6 +6,8 @@
 
 class QuotientFilterGraveyard {
     private:
+        float REDISTRIBUTE_UPPER_LIMIT = 0.6;
+        float REDISTRIBUTE_LOWER_LIMIT = 0.15;
     public:
         QuotientFilterElement* table;
         int size;
@@ -28,4 +30,6 @@ class QuotientFilterGraveyard {
         bool mayContain(int value);
         long long int encodeValue(int predecessor, int successor);
         PredSucPair decodeValue(long long int value);
+        void shiftRunUp(int * bucketPos, int * runStart);
+        void redistributeTombstones();
 };
