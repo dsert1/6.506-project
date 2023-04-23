@@ -17,9 +17,9 @@ if [ $? -eq 0 ]; then
   echo
   echo "==== Running Tests ===="
   if [ $verbose -eq 1 ]; then
-    ctest -V
+    ctest --output-on-failure -V
   else
-    ctest
+    ctest --output-on-failure
   fi
   cd ..
 fi
