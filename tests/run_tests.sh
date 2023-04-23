@@ -1,5 +1,14 @@
 #!/bin/bash
 
+verbose=0
+while getopts "v" OPTION
+do
+  case $OPTION in
+    v) verbose=1
+    ;;
+  esac
+done
+
 echo "==== Building Tests ===="
 cmake -S . -B build
 cmake --build build
@@ -7,6 +16,10 @@ if [ $? -eq 0 ]; then
   cd build
   echo
   echo "==== Running Tests ===="
-  ctest
+  if [ $verbose -eq 1 ]; then
+    ctest -V
+  else
+    ctest
+  fi
   cd ..
 fi
