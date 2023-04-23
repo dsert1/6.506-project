@@ -20,6 +20,10 @@ class QuotientFilterGraveyard {
         void shiftTombstoneDown(int start, int predecessor);
         void advanceToNextRun(int * start);
         void advanceToNextBucket(int * start);
+        void updateAdjacentTombstonesInsert(int newRun);
+        int findRunStartForBucket(int target_bucket);
+        int findEndOfCluster(int slot);
+        void shiftElementsUp(int start);
     
         QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
