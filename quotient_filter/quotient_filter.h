@@ -9,7 +9,7 @@ class QuotientFilter {
     private:
         FingerprintPair fingerprintQuotient(int value);
         int findRunStartForBucket(int bucket);
-        int findEndOfCluster(int slot);
+        int findFirstEmptySlot(int slot);
         void shiftElementsDown(int startIndex, int startBucket);
         void shiftElementsUp(int start);
         void advanceToNextBucket(int * start);

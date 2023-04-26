@@ -1,11 +1,11 @@
 struct FingerprintPair {
-    int fq;
-    int fr;
+    uint32_t fq;
+    uint32_t fr;
 };
 
 struct PredSucPair {
-    int predecessor;
-    int successor;
+    uint32_t predecessor;
+    uint32_t successor;
 };
 
 class QuotientFilterElement {
