@@ -275,7 +275,3 @@ void QuotientFilter::shiftElementsUp(int start) {
         end = target;
     }
 }
-
-
-
-// Potential optimization: only move the elements at the beginnings of runs to the end?
