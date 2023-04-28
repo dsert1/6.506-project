@@ -1,11 +1,28 @@
 #!/bin/bash
 
+usage() {
+  echo "Usage: $0 [-T <bool>] [-v]" 1>&2;
+  exit 1;
+}
+
 verbose=0
-while getopts "v" OPTION
+while getopts "T:v" OPTION
 do
   case $OPTION in
-    v) verbose=1
-    ;;
+    v)
+      verbose=1
+      ;;
+    T)
+      t=${OPTARG}
+      if [ $t == true ] || [ $t == false ]; then
+        cmake -DVALIDATE_TABLE:BOOL=$t build
+      else
+        usage
+      fi
+      ;;
+    *)
+      usage
+      ;;
   esac
 done
 

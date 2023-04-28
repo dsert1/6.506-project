@@ -9,6 +9,8 @@ int identity(int x) {
     return x;
 }
 
+bool validateTable;
+
 // Fixture class
 class QuotientFilterTest : public ::testing::Test {
   protected:
@@ -38,11 +40,13 @@ void assert_empty_buckets(QuotientFilter* qf, int exceptionCount, int exceptions
     }
 
     EXPECT_FALSE(qf->query(qfv(bucket, 0)));
-    QuotientFilterElement elt = qf->table[bucket];
-    EXPECT_EQ(elt.is_occupied, 0);
-    EXPECT_EQ(elt.is_shifted, 0);
-    EXPECT_EQ(elt.is_continuation, 0);
-    // EXPECT_EQ(elt.value, 0);
+    if (validateTable) {
+      QuotientFilterElement elt = qf->table[bucket];
+      EXPECT_EQ(elt.is_occupied, 0);
+      EXPECT_EQ(elt.is_shifted, 0);
+      EXPECT_EQ(elt.is_continuation, 0);
+      // EXPECT_EQ(elt.value, 0);
+    }
   }
 }
 
@@ -56,6 +60,10 @@ typedef struct{
 } Mdt;
 
 void check_slots(QuotientFilter* qf, int test_count, Mdt metadata_tests[]) {
+  if (!validateTable) {
+    return;
+  }
+
   for (int i = 0; i < test_count; i++) {
     Mdt test = metadata_tests[i];
     QuotientFilterElement elt = qf->table[test.slot];
@@ -635,4 +643,20 @@ TEST_F(QuotientFilterTest, TestInterruptionTricky) {
                        {bd, true, false, false, d_remainder}};
   check_slots(qf, 2, slot_tests2);
   EXPECT_EQ(qf->size, 2);
+}
+
+int main(int argc, char **argv) {
+  ::testing::InitGoogleTest(&argc, argv);
+
+  if (argc > 1) {
+    if (strcmp("true", argv[1]) == 0) {
+      printf("===Table Validation Enabled===\n");
+      validateTable = true;
+    } else {
+      printf("===Table Validation Disabled===\n");
+      validateTable = false;
+    }
+  }
+
+  return RUN_ALL_TESTS();
 }

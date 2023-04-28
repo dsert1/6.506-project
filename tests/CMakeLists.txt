@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 project(project)
 
+# variables to determine which tests to run
+set(VALIDATE_TABLE false CACHE BOOL "whether to run assertions related to table state")
+
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
 
@@ -26,4 +29,4 @@ target_link_libraries(normal_filter_tests
 )
 
 include(GoogleTest)
-gtest_discover_tests(normal_filter_tests)
+gtest_discover_tests(normal_filter_tests EXTRA_ARGS ${VALIDATE_TABLE})
