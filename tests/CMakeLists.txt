@@ -17,16 +17,25 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 add_subdirectory(../quotient_filter qf_build)
+add_subdirectory(../quotient_filter_graveyard_hashing qfg_build)
 
 enable_testing()
 
 add_executable(
   normal_filter_tests $<TARGET_OBJECTS:QuotientFilter> normal_filter_tests.cc
 )
+add_executable(
+  graveyard_filter_tests $<TARGET_OBJECTS:QuotientFilterGraveyard> graveyard_filter_tests.cc
+)
 target_link_libraries(normal_filter_tests
   QuotientFilter
+  GTest::gtest_main
+)
+target_link_libraries(graveyard_filter_tests
+  QuotientFilterGraveyard
   GTest::gtest_main
 )
 
 include(GoogleTest)
 gtest_discover_tests(normal_filter_tests EXTRA_ARGS ${VALIDATE_TABLE})
+gtest_discover_tests(graveyard_filter_tests EXTRA_ARGS ${VALIDATE_TABLE})
