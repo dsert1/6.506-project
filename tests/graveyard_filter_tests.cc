@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../quotient_filter/quotient_filter.h"
+#include "../quotient_filter_graveyard_hashing/quotient_filter_graveyard_hashing.h"
 #include <bitset>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
@@ -12,12 +12,12 @@ int identity(int x) {
 bool validateTable;
 
 // Fixture class
-class QuotientFilterTest : public ::testing::Test {
+class GraveyardFilterTest : public ::testing::Test {
   protected:
-    QuotientFilter* qf;
+    QuotientFilterGraveyard* qf;
 
     void SetUp() override {
-      qf = new QuotientFilter(4, &identity);
+      qf = new QuotientFilterGraveyard(4, &identity);
     }
 
     // void TearDown() override {}
@@ -31,7 +31,7 @@ int qfv(int q, int r) {
 
 // Checks to see that all buckets are empty, except for the given exceptions
 // exceptions should be sorted
-void assert_empty_buckets(QuotientFilter* qf, int exceptionCount, int exceptions[]) {
+void assert_empty_buckets(QuotientFilterGraveyard* qf, int exceptionCount, int exceptions[]) {
   int ce = 0;
   for (int bucket = 0; bucket < 16; bucket++) {
     if (ce < exceptionCount && exceptions[ce] == bucket) {
@@ -59,7 +59,7 @@ typedef struct{
   uint64_t value;
 } Mdt;
 
-void check_slots(QuotientFilter* qf, int test_count, Mdt metadata_tests[]) {
+void check_slots(QuotientFilterGraveyard* qf, int test_count, Mdt metadata_tests[]) {
   if (!validateTable) {
     return;
   }
@@ -76,7 +76,7 @@ void check_slots(QuotientFilter* qf, int test_count, Mdt metadata_tests[]) {
 }
 
 // debug printing
-void scan_table(QuotientFilter* qf) {
+void scan_table(QuotientFilterGraveyard* qf) {
   for (int b = 0; b < 16; b++) {
     QuotientFilterElement elt = qf->table[b];
     std::cerr << "[table debug]" << b << ": " <<
@@ -89,7 +89,7 @@ void scan_table(QuotientFilter* qf) {
 ///////// Empty Filter Tests
 
 // Checks that the quotient filter is initalized with expected values
-TEST_F(QuotientFilterTest, FilterConstruction) {
+TEST_F(GraveyardFilterTest, FilterConstruction) {
   EXPECT_EQ(qf->size, 0);
   EXPECT_EQ(qf->q, 4);
   EXPECT_EQ(qf->r, 28);
@@ -97,7 +97,7 @@ TEST_F(QuotientFilterTest, FilterConstruction) {
 }
 
 // Testing contents of a filter with no elements inserted
-TEST_F(QuotientFilterTest, EmptyFilter) {
+TEST_F(GraveyardFilterTest, EmptyFilter) {
   assert_empty_buckets(qf, 0, NULL);
 }
 
@@ -106,7 +106,7 @@ TEST_F(QuotientFilterTest, EmptyFilter) {
 ///////// Single Element Tests
 
 // Testing contents of a filter with a single element inserted
-TEST_F(QuotientFilterTest, SingleElementInsert) {
+TEST_F(GraveyardFilterTest, SingleElementInsert) {
   int test_bucket = 9;
   int test_remainder = 2;
 
@@ -122,7 +122,7 @@ TEST_F(QuotientFilterTest, SingleElementInsert) {
 }
 
 // Testing deleting elements in a filter with a single element
-TEST_F(QuotientFilterTest, SingleElementDelete) {
+TEST_F(GraveyardFilterTest, SingleElementDelete) {
   int test_bucket = 2;
   int test_remainder = 193;
 
@@ -139,7 +139,7 @@ TEST_F(QuotientFilterTest, SingleElementDelete) {
 ///////// Two Element Tests
 
 // Testing inserting two separated elements
-TEST_F(QuotientFilterTest, TwoSeparateElementsInsert) {
+TEST_F(GraveyardFilterTest, TwoSeparateElementsInsert) {
   int first_bucket = 0;
   int first_remainder = 92;
   int second_bucket = 11;
@@ -159,7 +159,7 @@ TEST_F(QuotientFilterTest, TwoSeparateElementsInsert) {
 }
 
 // Testing deleting two separated elements
-TEST_F(QuotientFilterTest, TwoSeparateElementsDelete) {
+TEST_F(GraveyardFilterTest, TwoSeparateElementsDelete) {
   int first_bucket = 3;
   int first_remainder = 5;
   int second_bucket = 5;
@@ -181,7 +181,7 @@ TEST_F(QuotientFilterTest, TwoSeparateElementsDelete) {
 }
 
 // Testing inserting two adjacent elements
-TEST_F(QuotientFilterTest, TwoAdjacentElementsInsert) {
+TEST_F(GraveyardFilterTest, TwoAdjacentElementsInsert) {
   int first_bucket = 8;
   int first_remainder = 3;
   int second_bucket = 9;
@@ -202,7 +202,7 @@ TEST_F(QuotientFilterTest, TwoAdjacentElementsInsert) {
 }
 
 // Testing deleting two adjacent elements
-TEST_F(QuotientFilterTest, TwoAdjacentElementsDelete) {
+TEST_F(GraveyardFilterTest, TwoAdjacentElementsDelete) {
   int first_bucket = 12;
   int first_remainder = 12;
   int second_bucket = 13;
@@ -228,7 +228,7 @@ TEST_F(QuotientFilterTest, TwoAdjacentElementsDelete) {
 ///////// Run Tests
 
 // Inserting elements to create one run
-TEST_F(QuotientFilterTest, SingleRunInsert) {
+TEST_F(GraveyardFilterTest, SingleRunInsert) {
   int bucket = 7;
   int remainders[] = {102, 39, 5920};
   int not_remainder = 555;
@@ -254,7 +254,7 @@ TEST_F(QuotientFilterTest, SingleRunInsert) {
 }
 
 // Deleting elements from a run in the order they were inserted
-TEST_F(QuotientFilterTest, SingleRunDelete) {
+TEST_F(GraveyardFilterTest, SingleRunDelete) {
   int bucket = 10;
   int remainders[] = {0, 15, 6};
 
@@ -285,7 +285,7 @@ TEST_F(QuotientFilterTest, SingleRunDelete) {
 }
 
 // Deleting elements from a run opposite the order they were inserted
-TEST_F(QuotientFilterTest, SingleRunDeleteReverse) {
+TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   int bucket = 2;
   int remainders[] = {998, 2, 534};
 
@@ -316,7 +316,7 @@ TEST_F(QuotientFilterTest, SingleRunDeleteReverse) {
 }
 
 // Testing a run that wraps around the array
-TEST_F(QuotientFilterTest, SingleRunWrapAround) {
+TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
   int remainders[] = {360, 720, 1080, 1440};
 
   for (int i = 0; i < 4; i++) {
@@ -354,7 +354,7 @@ TEST_F(QuotientFilterTest, SingleRunWrapAround) {
 ///////// Cluster Tests
 
 // Inserting elements in order to create cluster of two runs
-TEST_F(QuotientFilterTest, DoubleRunInsert) {
+TEST_F(GraveyardFilterTest, DoubleRunInsert) {
   int first_bucket = 4;
   int remainders[] = {1010, 202, 333, 4040};
 
@@ -383,7 +383,7 @@ TEST_F(QuotientFilterTest, DoubleRunInsert) {
 }
 
 // Inserting elements to create cluster of two runs in reverse order
-TEST_F(QuotientFilterTest, DoubleRunInsertReverse) {
+TEST_F(GraveyardFilterTest, DoubleRunInsertReverse) {
   int first_bucket = 9;
   int remainders[] = {9303, 1233, 7452, 2345};
 
@@ -411,7 +411,7 @@ TEST_F(QuotientFilterTest, DoubleRunInsertReverse) {
 }
 
 // Inserting elements to create cluster of two runs in an interleaved order
-TEST_F(QuotientFilterTest, DoubleRunInsertInterleaved) {
+TEST_F(GraveyardFilterTest, DoubleRunInsertInterleaved) {
   int buckets[] = {15, 14, 14, 15};
   int remainders[] = {1111, 22, 333, 4};
 
@@ -434,7 +434,7 @@ TEST_F(QuotientFilterTest, DoubleRunInsertInterleaved) {
 }
 
 // Deleting cluster of two runs, starting with the first run
-TEST_F(QuotientFilterTest, DoubleRunDelete) {
+TEST_F(GraveyardFilterTest, DoubleRunDelete) {
   int first_bucket = 0;
   int remainders[] = {314, 159, 265, 358};
 
@@ -464,7 +464,7 @@ TEST_F(QuotientFilterTest, DoubleRunDelete) {
 }
 
 // Deleting cluster of two runs, starting with the second run
-TEST_F(QuotientFilterTest, DoubleRunDeleteReverse) {
+TEST_F(GraveyardFilterTest, DoubleRunDeleteReverse) {
   int first_bucket = 8;
   int remainders[] = {5245, 0, 1123, 56};
 
@@ -493,7 +493,7 @@ TEST_F(QuotientFilterTest, DoubleRunDeleteReverse) {
 }
 
 // General test with longer runs
-TEST_F(QuotientFilterTest, DoubleRunLonger) {
+TEST_F(GraveyardFilterTest, DoubleRunLonger) {
   int first_bucket = 13;
   int remainders[] = {123, 456, 789, 12, 345, 678, 901, 234, 567, 890};
 
@@ -546,7 +546,7 @@ TEST_F(QuotientFilterTest, DoubleRunLonger) {
 }
 
 // Testing with runs overlapping a cluster
-TEST_F(QuotientFilterTest, TestInterruptionSimple) {
+TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   int first_bucket = 3;
   int remainders[] = {103, 194, 128, 349, 301, 392};
   int b_remainder = 222;
@@ -595,7 +595,7 @@ TEST_F(QuotientFilterTest, TestInterruptionSimple) {
 }
 
 // Testing the invariant-threatening example
-TEST_F(QuotientFilterTest, TestInterruptionTricky) {
+TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
   int first_bucket = 12;
   int remainders[] = {103, 194, 128, 192, 349, 301, 392};
   int b_remainder = 222;
