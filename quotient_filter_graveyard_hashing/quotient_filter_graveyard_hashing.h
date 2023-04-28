@@ -6,7 +6,7 @@
 
 class QuotientFilterGraveyard {
     private:
-        float REDISTRIBUTE_UPPER_LIMIT = 0.6;
+        float REDISTRIBUTE_UPPER_LIMIT = 0.60;
         float REDISTRIBUTE_LOWER_LIMIT = 0.15;
     public:
         QuotientFilterElement* table;
@@ -17,13 +17,17 @@ class QuotientFilterGraveyard {
         int (*hashFunction)(int);
 
         FingerprintPair fingerprintQuotient(int value);
-        void shiftTombstoneDown(int start, int predecessor);
+        void shiftTombstoneDown(int start, int predecessor, int successor);
         void advanceToNextRun(int * start);
         void advanceToNextBucket(int * start);
         void updateAdjacentTombstonesInsert(int newRun);
         int findRunStartForBucket(int target_bucket);
         int findEndOfCluster(int slot);
         void shiftElementsUp(int start);
+        RunInfo findEndOfRunOrStartOfTombstones(int runStart, int bucketStart);
+        int moveUpRunsInCluster(int nextItem);
+        int startOfCopy(int startOfMove);
+        int correctStartOfCopyLoc(int startOfMove, int bucketOfToBeCopied);
     
         QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
@@ -34,6 +38,8 @@ class QuotientFilterGraveyard {
         bool mayContain(int value);
         long long int encodeValue(int predecessor, int successor);
         PredSucPair decodeValue(long long int value);
-        void shiftRunUp(int * bucketPos, int * runStart);
+        // void shiftRunUp(int * bucketPos, int * runStart);
+        void shiftRunUp(int startOfShift);
         void redistributeTombstones();
+        void resetTombstoneSuccessors(int bucket);
 };

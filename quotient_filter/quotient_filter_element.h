@@ -13,6 +13,14 @@ struct PredSucPair {
     int successor;
 };
 
+
+struct RunInfo {
+    int predecessor;
+    int successor;
+    bool isEndOfCluster;
+    int endOfRunOrStartOfTombstones;
+};
+
 class QuotientFilterElement {
     public:
         unsigned long long int value;
@@ -20,7 +28,7 @@ class QuotientFilterElement {
         bool is_continuation;
         bool is_shifted;
         bool isTombstone;
-
-        QuotientFilterElement(unsigned long long int value, bool is_occupied, bool is_continuation, bool is_shifted);
+        bool isEndOfCluster;
+        QuotientFilterElement(unsigned long long int value, bool is_occupied, bool is_continuation, bool is_shifted, bool is_end_of_cluster);
         
 };

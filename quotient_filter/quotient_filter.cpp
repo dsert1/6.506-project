@@ -92,7 +92,7 @@ void QuotientFilter::deleteElement(int value) {
             }
             startOfRun = (startOfRun+1)%table_size;
         }
-        while (table[startOfRun].is_continuation);
+        while (table[startOfRun].is_continuation && !found);
 
         //Check if element found before deleting and shifting
         if (found) {
