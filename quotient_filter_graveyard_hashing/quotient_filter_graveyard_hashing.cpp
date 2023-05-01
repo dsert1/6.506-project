@@ -7,6 +7,7 @@
  * -> New flag for tombstone(D)
  * -> Correct setting of bits(D)
  * -> make sure that we don't swap into an earlier bucket ins hiftrun(D)
+ * -> Correct how we get bucket of run we are copying(D)
  * -> Hash functions
  * -> Testing and fixing of any bugs
  * -> Fix insert method to use the new boolean flag
@@ -425,6 +426,13 @@ int QuotientFilterGraveyard::correctStartOfCopyLoc(int start, int toBeCopiedBuck
     return start;
 }
 
+int QuotientFilterGraveyard::findNextBucket(int start){
+    while (!table[start].is_occupied && table[start].is_shifted) {
+        start = (start + 1)%table_size;
+    }
+    return start;
+}
+
 //Redistribute in the cluster
 int QuotientFilterGraveyard::moveUpRunsInCluster(int startOfMove){
     int startOfElements = startOfCopy(startOfMove);
@@ -444,7 +452,7 @@ int QuotientFilterGraveyard::moveUpRunsInCluster(int startOfMove){
             table[currIndex] = table[startOfElements]; //insert the single tombstone
             currIndex = (currIndex+1)%table_size;
             startOfElements = startOfCopy(startOfElements);
-            bucketOfElements = decodeValue(table[currIndex].value).successor;
+            bucketOfElements = findNextBucket(bucketOfElements);
             currIndex = correctStartOfCopyLoc(currIndex, bucketOfElements);
         }
     }

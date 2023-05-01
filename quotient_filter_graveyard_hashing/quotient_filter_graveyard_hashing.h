@@ -28,7 +28,7 @@ class QuotientFilterGraveyard {
         int moveUpRunsInCluster(int nextItem);
         int startOfCopy(int startOfMove);
         int correctStartOfCopyLoc(int startOfMove, int bucketOfToBeCopied);
-    
+        int findNextBucket(int start);
         QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
 
