@@ -1,3 +1,4 @@
+#include <stdint.h>
 struct FingerprintPair {
     uint32_t fq;
     uint32_t fr;
@@ -8,15 +9,10 @@ struct PredSucPair {
     uint32_t successor;
 };
 
-struct PredSucPair {
-    int predecessor;
-    int successor;
-};
-
 
 struct RunInfo {
-    int predecessor;
-    int successor;
+    uint32_t predecessor;
+    uint32_t successor;
     bool isEndOfCluster;
     int endOfRunOrStartOfTombstones;
 };

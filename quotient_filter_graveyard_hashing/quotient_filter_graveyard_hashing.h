@@ -31,7 +31,7 @@ class QuotientFilterGraveyard {
         int findNextBucket(int start);
         QuotientFilterGraveyard(int q, int (*hashFunction)(int));
         ~QuotientFilterGraveyard();
-
+        bool isEmptySlot(int slot, int bucket);
         void insertElement(int value);
         void deleteElement(int value);
         bool query(int value);

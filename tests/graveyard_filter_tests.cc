@@ -38,7 +38,6 @@ void assert_empty_buckets(QuotientFilterGraveyard* qf, int exceptionCount, int e
       ce++;
       continue;
     }
-
     EXPECT_FALSE(qf->query(qfv(bucket, 0)));
     if (validateTable) {
       QuotientFilterElement elt = qf->table[bucket];
@@ -88,7 +87,7 @@ void scan_table(QuotientFilterGraveyard* qf) {
 
 ///////// Empty Filter Tests
 
-// Checks that the quotient filter is initalized with expected values
+//Checks that the quotient filter is initalized with expected values
 TEST_F(GraveyardFilterTest, FilterConstruction) {
   EXPECT_EQ(qf->size, 0);
   EXPECT_EQ(qf->q, 4);
@@ -116,12 +115,12 @@ TEST_F(GraveyardFilterTest, SingleElementInsert) {
 
   EXPECT_TRUE(qf->query(qfv(test_bucket, test_remainder)));
   EXPECT_FALSE(qf->query(qfv(test_bucket, test_remainder + 1)));
-  Mdt slot_tests[] = {{test_bucket, true, false, false, test_remainder}};
+  Mdt slot_tests[] = {{test_bucket, true, false, false, (uint64_t)test_remainder}};
   check_slots(qf, 1, slot_tests);
   EXPECT_EQ(qf->size, 1);
 }
 
-// Testing deleting elements in a filter with a single element
+// // Testing deleting elements in a filter with a single element
 TEST_F(GraveyardFilterTest, SingleElementDelete) {
   int test_bucket = 2;
   int test_remainder = 193;
@@ -136,7 +135,7 @@ TEST_F(GraveyardFilterTest, SingleElementDelete) {
 
 
 
-///////// Two Element Tests
+// ///////// Two Element Tests
 
 // Testing inserting two separated elements
 TEST_F(GraveyardFilterTest, TwoSeparateElementsInsert) {
@@ -152,13 +151,13 @@ TEST_F(GraveyardFilterTest, TwoSeparateElementsInsert) {
 
   EXPECT_TRUE(qf->query(qfv(first_bucket, first_remainder)));
   EXPECT_TRUE(qf->query(qfv(second_bucket, second_remainder)));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, first_remainder},
-                      {second_bucket, true, false, false, second_remainder}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)first_remainder},
+                      {second_bucket, true, false, false, (uint64_t)second_remainder}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
 
-// Testing deleting two separated elements
+// // Testing deleting two separated elements
 TEST_F(GraveyardFilterTest, TwoSeparateElementsDelete) {
   int first_bucket = 3;
   int first_remainder = 5;
@@ -180,7 +179,7 @@ TEST_F(GraveyardFilterTest, TwoSeparateElementsDelete) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// Testing inserting two adjacent elements
+// // Testing inserting two adjacent elements
 TEST_F(GraveyardFilterTest, TwoAdjacentElementsInsert) {
   int first_bucket = 8;
   int first_remainder = 3;
@@ -195,13 +194,13 @@ TEST_F(GraveyardFilterTest, TwoAdjacentElementsInsert) {
 
   EXPECT_TRUE(qf->query(qfv(first_bucket, first_remainder)));
   EXPECT_TRUE(qf->query(qfv(second_bucket, second_remainder)));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, first_remainder},
-                      {second_bucket, true, false, false, second_remainder}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)first_remainder},
+                      {second_bucket, true, false, false, (uint64_t)second_remainder}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
 
-// Testing deleting two adjacent elements
+// // Testing deleting two adjacent elements
 TEST_F(GraveyardFilterTest, TwoAdjacentElementsDelete) {
   int first_bucket = 12;
   int first_remainder = 12;
@@ -225,9 +224,9 @@ TEST_F(GraveyardFilterTest, TwoAdjacentElementsDelete) {
 
 
 
-///////// Run Tests
+// ///////// Run Tests
 
-// Inserting elements to create one run
+// // Inserting elements to create one run
 TEST_F(GraveyardFilterTest, SingleRunInsert) {
   int bucket = 7;
   int remainders[] = {102, 39, 5920};
@@ -246,14 +245,14 @@ TEST_F(GraveyardFilterTest, SingleRunInsert) {
   for (int i = 0; i < 3; i ++) {
     EXPECT_TRUE(qf->query(qfv(bucket, remainders[i])));
   }
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]},
-                      {rb3, false, true, true, remainders[2]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]},
+                      {rb3, false, true, true, (uint64_t)remainders[2]}};
   check_slots(qf, 3, slot_tests);
   EXPECT_EQ(qf->size, 3);
 }
 
-// Deleting elements from a run in the order they were inserted
+// // Deleting elements from a run in the order they were inserted
 TEST_F(GraveyardFilterTest, SingleRunDelete) {
   int bucket = 10;
   int remainders[] = {0, 15, 6};
@@ -271,8 +270,8 @@ TEST_F(GraveyardFilterTest, SingleRunDelete) {
   EXPECT_TRUE(qf->query(qfv(bucket, remainders[2])));
   int expected_buckets[] = {bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[1]},
-                      {rb2, false, true, true, remainders[2]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[1]},
+                      {rb2, false, true, true, (uint64_t)remainders[2]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 
@@ -284,7 +283,7 @@ TEST_F(GraveyardFilterTest, SingleRunDelete) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// Deleting elements from a run opposite the order they were inserted
+// // Deleting elements from a run opposite the order they were inserted
 TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   int bucket = 2;
   int remainders[] = {998, 2, 534};
@@ -302,8 +301,8 @@ TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   EXPECT_FALSE(qf->query(qfv(bucket, remainders[2])));
   int expected_buckets[] = {bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 
@@ -315,7 +314,7 @@ TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// Testing a run that wraps around the array
+// // Testing a run that wraps around the array
 TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
   int remainders[] = {360, 720, 1080, 1440};
 
@@ -326,10 +325,10 @@ TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
 
   int expected_buckets[] = {0, 1, 14, 15};
   assert_empty_buckets(qf, 4, expected_buckets);
-  Mdt slot_tests[] = {{14, true, false, false, remainders[0]},
-                      {15, false, true, true, remainders[1]},
-                      {0, false, true, true, remainders[2]},
-                      {1, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{14, true, false, false, (uint64_t)remainders[0]},
+                      {15, false, true, true, (uint64_t)remainders[1]},
+                      {0, false, true, true, (uint64_t)remainders[2]},
+                      {1, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 
@@ -351,9 +350,9 @@ TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
 
 
 
-///////// Cluster Tests
+// ///////// Cluster Tests
 
-// Inserting elements in order to create cluster of two runs
+// // Inserting elements in order to create cluster of two runs
 TEST_F(GraveyardFilterTest, DoubleRunInsert) {
   int first_bucket = 4;
   int remainders[] = {1010, 202, 333, 4040};
@@ -374,15 +373,15 @@ TEST_F(GraveyardFilterTest, DoubleRunInsert) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
   EXPECT_FALSE(qf->query(qfv(first_bucket, remainders[2])));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[0]},
-                      {rb2, true, true, true, remainders[1]},
-                      {rb3, false, true, false, remainders[2]},
-                      {rb4, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, true, true, true, (uint64_t)remainders[1]},
+                      {rb3, false, true, false, (uint64_t)remainders[2]},
+                      {rb4, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
 
-// Inserting elements to create cluster of two runs in reverse order
+// // Inserting elements to create cluster of two runs in reverse order
 TEST_F(GraveyardFilterTest, DoubleRunInsertReverse) {
   int first_bucket = 9;
   int remainders[] = {9303, 1233, 7452, 2345};
@@ -402,15 +401,15 @@ TEST_F(GraveyardFilterTest, DoubleRunInsertReverse) {
   for (int i = 0; i < 4; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[2]},
-                      {rb2, true, true, true, remainders[3]},
-                      {rb3, false, true, false, remainders[0]},
-                      {rb4, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[2]},
+                      {rb2, true, true, true, (uint64_t)remainders[3]},
+                      {rb3, false, true, false, (uint64_t)remainders[0]},
+                      {rb4, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
 
-// Inserting elements to create cluster of two runs in an interleaved order
+// // Inserting elements to create cluster of two runs in an interleaved order
 TEST_F(GraveyardFilterTest, DoubleRunInsertInterleaved) {
   int buckets[] = {15, 14, 14, 15};
   int remainders[] = {1111, 22, 333, 4};
@@ -425,15 +424,15 @@ TEST_F(GraveyardFilterTest, DoubleRunInsertInterleaved) {
   for (int i = 0; i < 4; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests[] = {{14, true, false, false, remainders[1]},
-                      {15, true, true, true, remainders[2]},
-                      {0, false, true, false, remainders[0]},
-                      {1, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{14, true, false, false, (uint64_t)remainders[1]},
+                      {15, true, true, true, (uint64_t)remainders[2]},
+                      {0, false, true, false, (uint64_t)remainders[0]},
+                      {1, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
 
-// Deleting cluster of two runs, starting with the first run
+// // Deleting cluster of two runs, starting with the first run
 TEST_F(GraveyardFilterTest, DoubleRunDelete) {
   int first_bucket = 0;
   int remainders[] = {314, 159, 265, 358};
@@ -457,13 +456,13 @@ TEST_F(GraveyardFilterTest, DoubleRunDelete) {
 
   int expected_buckets[] = {rb2, rb3};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{rb2, true, false, false, remainders[2]},
-                      {rb3, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{rb2, true, false, false, (uint64_t)remainders[2]},
+                      {rb3, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
 
-// Deleting cluster of two runs, starting with the second run
+// // Deleting cluster of two runs, starting with the second run
 TEST_F(GraveyardFilterTest, DoubleRunDeleteReverse) {
   int first_bucket = 8;
   int remainders[] = {5245, 0, 1123, 56};
@@ -486,13 +485,13 @@ TEST_F(GraveyardFilterTest, DoubleRunDeleteReverse) {
 
   int expected_buckets[] = {first_bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
 
-// General test with longer runs
+// // General test with longer runs
 TEST_F(GraveyardFilterTest, DoubleRunLonger) {
   int first_bucket = 13;
   int remainders[] = {123, 456, 789, 12, 345, 678, 901, 234, 567, 890};
@@ -512,16 +511,16 @@ TEST_F(GraveyardFilterTest, DoubleRunLonger) {
   for (int i = 0; i < 10; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                      {b[1], false, true, true, remainders[1]},
-                      {b[2], false, true, true, remainders[4]},
-                      {b[3], true, true, true, remainders[5]},
-                      {b[4], false, true, true, remainders[9]},
-                      {b[5], false, true, false, remainders[2]},
-                      {b[6], false, true, true, remainders[3]},
-                      {b[7], false, true, true, remainders[6]},
-                      {b[8], false, true, true, remainders[7]},
-                      {b[9], false, true, true, remainders[8]}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, (uint64_t)remainders[1]},
+                      {b[2], false, true, true, (uint64_t)remainders[4]},
+                      {b[3], true, true, true, (uint64_t)remainders[5]},
+                      {b[4], false, true, true, (uint64_t)remainders[9]},
+                      {b[5], false, true, false, (uint64_t)remainders[2]},
+                      {b[6], false, true, true, (uint64_t)remainders[3]},
+                      {b[7], false, true, true, (uint64_t)remainders[6]},
+                      {b[8], false, true, true, (uint64_t)remainders[7]},
+                      {b[9], false, true, true, (uint64_t)remainders[8]}};
   check_slots(qf, 10, slot_tests1);
 
   qf->deleteElement(qfv(buckets[1], remainders[1]));
@@ -534,18 +533,18 @@ TEST_F(GraveyardFilterTest, DoubleRunLonger) {
       EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
     }
   }
-  Mdt slot_tests2[] = {{b[0], true, false, false, remainders[0]},
-                      {b[1], false, true, true, remainders[5]},
-                      {b[2], false, true, true, remainders[9]},
-                      {b[3], true, false, false, remainders[2]},
-                      {b[4], false, true, true, remainders[3]},
-                      {b[5], false, true, true, remainders[6]},
-                      {b[6], false, true, true, remainders[8]}};
+  Mdt slot_tests2[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, (uint64_t)remainders[5]},
+                      {b[2], false, true, true, (uint64_t)remainders[9]},
+                      {b[3], true, false, false, (uint64_t)remainders[2]},
+                      {b[4], false, true, true, (uint64_t)remainders[3]},
+                      {b[5], false, true, true, (uint64_t)remainders[6]},
+                      {b[6], false, true, true, (uint64_t)remainders[8]}};
   check_slots(qf, 7, slot_tests2);
   EXPECT_EQ(qf->size, 7);
 }
 
-// Testing with runs overlapping a cluster
+// // Testing with runs overlapping a cluster
 TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   int first_bucket = 3;
   int remainders[] = {103, 194, 128, 349, 301, 392};
@@ -572,14 +571,14 @@ TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   qf->insertElement(qfv(bd, d_remainder));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
 
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                       {b[1], true, true, true, remainders[1]},
-                       {b[2], true, true, true, remainders[2]},
-                       {b[3], true, true, false, b_remainder},
-                       {b[4], false, true, false, remainders[3]},
-                       {b[5], false, true, true, remainders[4]},
-                       {b[6], false, true, true, remainders[5]},
-                       {b[7], false, true, false, d_remainder}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, (uint64_t)remainders[1]},
+                       {b[2], true, true, true, (uint64_t)remainders[2]},
+                       {b[3], true, true, false, (uint64_t)b_remainder},
+                       {b[4], false, true, false, (uint64_t)remainders[3]},
+                       {b[5], false, true, true, (uint64_t)remainders[4]},
+                       {b[6], false, true, true, (uint64_t)remainders[5]},
+                       {b[7], false, true, false, (uint64_t)d_remainder}};
   check_slots(qf, 8, slot_tests1);
   EXPECT_EQ(qf->size, 8);
 
@@ -588,13 +587,13 @@ TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   }
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
-  Mdt slot_tests2[] = {{bb, true, false, false, b_remainder},
-                       {bd, true, false, false, d_remainder}};
+  Mdt slot_tests2[] = {{bb, true, false, false, (uint64_t)b_remainder},
+                       {bd, true, false, false, (uint64_t)d_remainder}};
   check_slots(qf, 2, slot_tests2);
   EXPECT_EQ(qf->size, 2);
 }
 
-// Testing the invariant-threatening example
+// // Testing the invariant-threatening example
 TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
   int first_bucket = 12;
   int remainders[] = {103, 194, 128, 192, 349, 301, 392};
@@ -621,15 +620,15 @@ TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
   qf->insertElement(qfv(bb, b_remainder));
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
 
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                       {b[1], true, true, true, remainders[1]},
-                       {b[2], true, true, true, remainders[2]},
-                       {b[3], true, true, true, remainders[3]},
-                       {b[4], false, true, false, b_remainder},
-                       {b[5], false, true, false, remainders[4]},
-                       {b[6], false, true, true, remainders[5]},
-                       {b[7], false, true, true, remainders[6]},
-                       {b[8], false, true, false, d_remainder}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, (uint64_t)remainders[1]},
+                       {b[2], true, true, true, (uint64_t)remainders[2]},
+                       {b[3], true, true, true, (uint64_t)remainders[3]},
+                       {b[4], false, true, false, (uint64_t)b_remainder},
+                       {b[5], false, true, false, (uint64_t)remainders[4]},
+                       {b[6], false, true, true, (uint64_t)remainders[5]},
+                       {b[7], false, true, true, (uint64_t)remainders[6]},
+                       {b[8], false, true, false, (uint64_t)d_remainder}};
   check_slots(qf, 9, slot_tests1);
   EXPECT_EQ(qf->size, 9);
 
@@ -639,8 +638,8 @@ TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
   }
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
-  Mdt slot_tests2[] = {{bb, true, false, false, b_remainder},
-                       {bd, true, false, false, d_remainder}};
+  Mdt slot_tests2[] = {{bb, true, false, false, (uint64_t)b_remainder},
+                       {bd, true, false, false, (uint64_t)d_remainder}};
   check_slots(qf, 2, slot_tests2);
   EXPECT_EQ(qf->size, 2);
 }

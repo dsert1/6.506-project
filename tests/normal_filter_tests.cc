@@ -116,7 +116,7 @@ TEST_F(QuotientFilterTest, SingleElementInsert) {
 
   EXPECT_TRUE(qf->query(qfv(test_bucket, test_remainder)));
   EXPECT_FALSE(qf->query(qfv(test_bucket, test_remainder + 1)));
-  Mdt slot_tests[] = {{test_bucket, true, false, false, test_remainder}};
+  Mdt slot_tests[] = {{test_bucket, true, false, false, (uint64_t)test_remainder}};
   check_slots(qf, 1, slot_tests);
   EXPECT_EQ(qf->size, 1);
 }
@@ -152,8 +152,8 @@ TEST_F(QuotientFilterTest, TwoSeparateElementsInsert) {
 
   EXPECT_TRUE(qf->query(qfv(first_bucket, first_remainder)));
   EXPECT_TRUE(qf->query(qfv(second_bucket, second_remainder)));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, first_remainder},
-                      {second_bucket, true, false, false, second_remainder}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)first_remainder},
+                      {second_bucket, true, false, false, (uint64_t)second_remainder}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
@@ -195,8 +195,8 @@ TEST_F(QuotientFilterTest, TwoAdjacentElementsInsert) {
 
   EXPECT_TRUE(qf->query(qfv(first_bucket, first_remainder)));
   EXPECT_TRUE(qf->query(qfv(second_bucket, second_remainder)));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, first_remainder},
-                      {second_bucket, true, false, false, second_remainder}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)first_remainder},
+                      {second_bucket, true, false, false, (uint64_t)second_remainder}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
@@ -246,9 +246,9 @@ TEST_F(QuotientFilterTest, SingleRunInsert) {
   for (int i = 0; i < 3; i ++) {
     EXPECT_TRUE(qf->query(qfv(bucket, remainders[i])));
   }
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]},
-                      {rb3, false, true, true, remainders[2]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]},
+                      {rb3, false, true, true, (uint64_t)remainders[2]}};
   check_slots(qf, 3, slot_tests);
   EXPECT_EQ(qf->size, 3);
 }
@@ -271,8 +271,8 @@ TEST_F(QuotientFilterTest, SingleRunDelete) {
   EXPECT_TRUE(qf->query(qfv(bucket, remainders[2])));
   int expected_buckets[] = {bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[1]},
-                      {rb2, false, true, true, remainders[2]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[1]},
+                      {rb2, false, true, true, (uint64_t)remainders[2]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 
@@ -302,8 +302,8 @@ TEST_F(QuotientFilterTest, SingleRunDeleteReverse) {
   EXPECT_FALSE(qf->query(qfv(bucket, remainders[2])));
   int expected_buckets[] = {bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 
@@ -326,10 +326,10 @@ TEST_F(QuotientFilterTest, SingleRunWrapAround) {
 
   int expected_buckets[] = {0, 1, 14, 15};
   assert_empty_buckets(qf, 4, expected_buckets);
-  Mdt slot_tests[] = {{14, true, false, false, remainders[0]},
-                      {15, false, true, true, remainders[1]},
-                      {0, false, true, true, remainders[2]},
-                      {1, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{14, true, false, false, (uint64_t)remainders[0]},
+                      {15, false, true, true, (uint64_t)remainders[1]},
+                      {0, false, true, true, (uint64_t)remainders[2]},
+                      {1, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 
@@ -374,10 +374,10 @@ TEST_F(QuotientFilterTest, DoubleRunInsert) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
   EXPECT_FALSE(qf->query(qfv(first_bucket, remainders[2])));
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[0]},
-                      {rb2, true, true, true, remainders[1]},
-                      {rb3, false, true, false, remainders[2]},
-                      {rb4, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, true, true, true, (uint64_t)remainders[1]},
+                      {rb3, false, true, false, (uint64_t)remainders[2]},
+                      {rb4, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
@@ -402,10 +402,10 @@ TEST_F(QuotientFilterTest, DoubleRunInsertReverse) {
   for (int i = 0; i < 4; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[2]},
-                      {rb2, true, true, true, remainders[3]},
-                      {rb3, false, true, false, remainders[0]},
-                      {rb4, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[2]},
+                      {rb2, true, true, true, (uint64_t)remainders[3]},
+                      {rb3, false, true, false, (uint64_t)remainders[0]},
+                      {rb4, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
@@ -425,10 +425,10 @@ TEST_F(QuotientFilterTest, DoubleRunInsertInterleaved) {
   for (int i = 0; i < 4; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests[] = {{14, true, false, false, remainders[1]},
-                      {15, true, true, true, remainders[2]},
-                      {0, false, true, false, remainders[0]},
-                      {1, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{14, true, false, false, (uint64_t)remainders[1]},
+                      {15, true, true, true, (uint64_t)remainders[2]},
+                      {0, false, true, false, (uint64_t)remainders[0]},
+                      {1, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 4, slot_tests);
   EXPECT_EQ(qf->size, 4);
 }
@@ -457,8 +457,8 @@ TEST_F(QuotientFilterTest, DoubleRunDelete) {
 
   int expected_buckets[] = {rb2, rb3};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{rb2, true, false, false, remainders[2]},
-                      {rb3, false, true, true, remainders[3]}};
+  Mdt slot_tests[] = {{rb2, true, false, false, (uint64_t)remainders[2]},
+                      {rb3, false, true, true, (uint64_t)remainders[3]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
@@ -486,8 +486,8 @@ TEST_F(QuotientFilterTest, DoubleRunDeleteReverse) {
 
   int expected_buckets[] = {first_bucket, rb2};
   assert_empty_buckets(qf, 2, expected_buckets);
-  Mdt slot_tests[] = {{first_bucket, true, false, false, remainders[0]},
-                      {rb2, false, true, true, remainders[1]}};
+  Mdt slot_tests[] = {{first_bucket, true, false, false, (uint64_t)remainders[0]},
+                      {rb2, false, true, true, (uint64_t)remainders[1]}};
   check_slots(qf, 2, slot_tests);
   EXPECT_EQ(qf->size, 2);
 }
@@ -512,16 +512,16 @@ TEST_F(QuotientFilterTest, DoubleRunLonger) {
   for (int i = 0; i < 10; i ++) {
     EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
   }
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                      {b[1], false, true, true, remainders[1]},
-                      {b[2], false, true, true, remainders[4]},
-                      {b[3], true, true, true, remainders[5]},
-                      {b[4], false, true, true, remainders[9]},
-                      {b[5], false, true, false, remainders[2]},
-                      {b[6], false, true, true, remainders[3]},
-                      {b[7], false, true, true, remainders[6]},
-                      {b[8], false, true, true, remainders[7]},
-                      {b[9], false, true, true, remainders[8]}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, (uint64_t)remainders[1]},
+                      {b[2], false, true, true, (uint64_t)remainders[4]},
+                      {b[3], true, true, true, (uint64_t)remainders[5]},
+                      {b[4], false, true, true, (uint64_t)remainders[9]},
+                      {b[5], false, true, false, (uint64_t)remainders[2]},
+                      {b[6], false, true, true, (uint64_t)remainders[3]},
+                      {b[7], false, true, true, (uint64_t)remainders[6]},
+                      {b[8], false, true, true, (uint64_t)remainders[7]},
+                      {b[9], false, true, true, (uint64_t)remainders[8]}};
   check_slots(qf, 10, slot_tests1);
 
   qf->deleteElement(qfv(buckets[1], remainders[1]));
@@ -534,13 +534,13 @@ TEST_F(QuotientFilterTest, DoubleRunLonger) {
       EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
     }
   }
-  Mdt slot_tests2[] = {{b[0], true, false, false, remainders[0]},
-                      {b[1], false, true, true, remainders[5]},
-                      {b[2], false, true, true, remainders[9]},
-                      {b[3], true, false, false, remainders[2]},
-                      {b[4], false, true, true, remainders[3]},
-                      {b[5], false, true, true, remainders[6]},
-                      {b[6], false, true, true, remainders[8]}};
+  Mdt slot_tests2[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, (uint64_t)remainders[5]},
+                      {b[2], false, true, true, (uint64_t)remainders[9]},
+                      {b[3], true, false, false, (uint64_t)remainders[2]},
+                      {b[4], false, true, true, (uint64_t)remainders[3]},
+                      {b[5], false, true, true, (uint64_t)remainders[6]},
+                      {b[6], false, true, true, (uint64_t)remainders[8]}};
   check_slots(qf, 7, slot_tests2);
   EXPECT_EQ(qf->size, 7);
 }
@@ -572,14 +572,14 @@ TEST_F(QuotientFilterTest, TestInterruptionSimple) {
   qf->insertElement(qfv(bd, d_remainder));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
 
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                       {b[1], true, true, true, remainders[1]},
-                       {b[2], true, true, true, remainders[2]},
-                       {b[3], true, true, false, b_remainder},
-                       {b[4], false, true, false, remainders[3]},
-                       {b[5], false, true, true, remainders[4]},
-                       {b[6], false, true, true, remainders[5]},
-                       {b[7], false, true, false, d_remainder}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, (uint64_t)remainders[1]},
+                       {b[2], true, true, true, (uint64_t)remainders[2]},
+                       {b[3], true, true, false, (uint64_t)b_remainder},
+                       {b[4], false, true, false, (uint64_t)remainders[3]},
+                       {b[5], false, true, true, (uint64_t)remainders[4]},
+                       {b[6], false, true, true, (uint64_t)remainders[5]},
+                       {b[7], false, true, false, (uint64_t)d_remainder}};
   check_slots(qf, 8, slot_tests1);
   EXPECT_EQ(qf->size, 8);
 
@@ -588,8 +588,8 @@ TEST_F(QuotientFilterTest, TestInterruptionSimple) {
   }
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
-  Mdt slot_tests2[] = {{bb, true, false, false, b_remainder},
-                       {bd, true, false, false, d_remainder}};
+  Mdt slot_tests2[] = {{bb, true, false, false, (uint64_t)b_remainder},
+                       {bd, true, false, false, (uint64_t)d_remainder}};
   check_slots(qf, 2, slot_tests2);
   EXPECT_EQ(qf->size, 2);
 }
@@ -621,15 +621,15 @@ TEST_F(QuotientFilterTest, TestInterruptionTricky) {
   qf->insertElement(qfv(bb, b_remainder));
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
 
-  Mdt slot_tests1[] = {{b[0], true, false, false, remainders[0]},
-                       {b[1], true, true, true, remainders[1]},
-                       {b[2], true, true, true, remainders[2]},
-                       {b[3], true, true, true, remainders[3]},
-                       {b[4], false, true, false, b_remainder},
-                       {b[5], false, true, false, remainders[4]},
-                       {b[6], false, true, true, remainders[5]},
-                       {b[7], false, true, true, remainders[6]},
-                       {b[8], false, true, false, d_remainder}};
+  Mdt slot_tests1[] = {{b[0], true, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, (uint64_t)remainders[1]},
+                       {b[2], true, true, true, (uint64_t)remainders[2]},
+                       {b[3], true, true, true, (uint64_t)remainders[3]},
+                       {b[4], false, true, false, (uint64_t)b_remainder},
+                       {b[5], false, true, false, (uint64_t)remainders[4]},
+                       {b[6], false, true, true, (uint64_t)remainders[5]},
+                       {b[7], false, true, true, (uint64_t)remainders[6]},
+                       {b[8], false, true, false, (uint64_t)d_remainder}};
   check_slots(qf, 9, slot_tests1);
   EXPECT_EQ(qf->size, 9);
 
@@ -639,8 +639,8 @@ TEST_F(QuotientFilterTest, TestInterruptionTricky) {
   }
   EXPECT_TRUE(qf->query(qfv(bb, b_remainder)));
   EXPECT_TRUE(qf->query(qfv(bd, d_remainder)));
-  Mdt slot_tests2[] = {{bb, true, false, false, b_remainder},
-                       {bd, true, false, false, d_remainder}};
+  Mdt slot_tests2[] = {{bb, true, false, false, (uint64_t)b_remainder},
+                       {bd, true, false, false, (uint64_t)d_remainder}};
   check_slots(qf, 2, slot_tests2);
   EXPECT_EQ(qf->size, 2);
 }
