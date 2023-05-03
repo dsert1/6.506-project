@@ -11,6 +11,7 @@
  * -> Hash functions
  * -> Testing and fixing of any bugs(D)
  * -> Fix insert method to use the new boolean flag(D)
+ * -> Have redistribute be the three different ideas: insert between runs, og and third variant
 **/
 QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
@@ -149,6 +150,7 @@ void QuotientFilterGraveyard::deleteElement(int value) {
                 table[f.fq].is_occupied = false;
                 //If run was shifted, it may affect the tombstones in the run where its actual bucket is located
                 if (table[s].is_shifted) {
+                    std::cout << "MADE IT HERE FOR DELETING " << f.fq<<"\n";
                     resetTombstoneSuccessors(f.fq);
                 }
             }
@@ -184,8 +186,10 @@ void QuotientFilterGraveyard::resetTombstoneSuccessors(int bucket) {
         if (newSuccessorFound && tombstoneFound) {
             break;
         }
-        curr = (curr+1)%table_size;
+        curr = (curr-1)%table_size;
     }
+
+    std::cout << "TOMBSTONE FOUND AT " << startOfTombstones << "\n";
 
     //Step 2: If tombstone found, reset their values
     if (tombstoneFound) {
@@ -219,9 +223,14 @@ void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int
         prevPointer = currPointer;
         currPointer = (currPointer + 1)%table_size;
     }
-    std::cout << "Successor  Bucket At End: " << successorBucket << "\n";
+    //Set successor appropriately if all tombstones
+    if (table[currPointer].isTombstone && table[currPointer].is_continuation) {
+        PredSucPair res = decodeValue(table[currPointer].value);
+        successorBucket = res.successor;
+    }
+    // std::cout << "Successor  Bucket At End: " << successorBucket << "\n";
     table[prevPointer].value = encodeValue(tombstonePrededcessorBucket, successorBucket);
-    std::cout << "ENCODED VALUE: " << table[prevPointer].value << "\n";
+    // std::cout << "ENCODED VALUE: " << table[prevPointer].value << "\n";
     table[prevPointer].isTombstone = true;
     table[prevPointer].is_continuation = true;
     //If successor was never updated, then we are at the end of the cluster
@@ -444,6 +453,7 @@ RunInfo QuotientFilterGraveyard::findEndOfRunOrStartOfTombstones(int runStart, i
     return res;
 }
 
+
 int QuotientFilterGraveyard::startOfCopy(int start){
     while (table[start].isTombstone && table[start].is_shifted) {
         start = (start + 1)%table_size;
@@ -451,9 +461,8 @@ int QuotientFilterGraveyard::startOfCopy(int start){
     return start;
 }
 
-
 int QuotientFilterGraveyard::correctStartOfCopyLoc(int start, int toBeCopiedBucket) {
-    while (start < toBeCopiedBucket && table[start].is_shifted) {
+    while (start < toBeCopiedBucket && table[start].is_shifted) { //make sure you are still in the cluster!
         start = (start + 1)%table_size;
     }
     return start;
@@ -466,62 +475,107 @@ int QuotientFilterGraveyard::findNextBucket(int start){
     return start;
 }
 
-//Redistribute in the cluster
-int QuotientFilterGraveyard::moveUpRunsInCluster(int startOfMove){
-    int startOfElements = startOfCopy(startOfMove);
-    int bucketOfElements = decodeValue(table[startOfMove].value).successor;
-    //move start point of where to copy by making sure that the run to copy's bucket is at least as large as start point
-    int currIndex = correctStartOfCopyLoc(startOfMove, bucketOfElements); 
-    while (table[currIndex].is_shifted) {
-        while (!table[startOfElements].isTombstone && table[startOfElements].is_shifted) { //make sure we stay within the same cluster
-            table[currIndex] = table[startOfElements];
-            table[startOfElements].isTombstone = true;
-            currIndex = (currIndex+1)%table_size;
-            startOfElements = (startOfElements+1)%table_size;
-        }
-        if (!table[startOfElements].is_shifted) { //reached end of cluster
-            break;
-        } else {
-            table[currIndex] = table[startOfElements]; //insert the single tombstone
-            currIndex = (currIndex+1)%table_size;
-            startOfElements = startOfCopy(startOfElements);
-            bucketOfElements = findNextBucket(bucketOfElements);
-            currIndex = correctStartOfCopyLoc(currIndex, bucketOfElements);
-        }
+
+// bool QuotientFilterGraveyard::runIsAllTombstones(int startOfRun) {
+//     if (table[startOfRun].isTombstone) {
+//         PredSucPair res = decodeValue(table[startOfRun].value);
+//         return res.predecessor == startOfRun;
+//     }
+//     return false;
+// }
+
+int QuotientFilterGraveyard::findClusterStart(int pos) {
+    while(table[pos].is_shifted) { //walk backwards to start of cluster
+        pos = (pos-1 + table_size)%table_size;
     }
-    //increment here to set to currIndex
-    return (bucketOfElements+1)%table_size;
+    return pos;
 }
 
+//Redistribute in the cluster
+// int QuotientFilterGraveyard::moveUpRunsInCluster(int startOfMove){
+//     int startOfElements = startOfCopy(startOfMove);
+//     int bucketOfElements = decodeValue(table[startOfMove].value).successor;
+//     //move start point of where to copy by making sure that the run to copy's bucket is at least as large as start point
+//     int currIndex = correctStartOfCopyLoc(startOfElements, bucketOfElements); 
+//     while (table[currIndex].is_shifted) {
+//         while (!table[startOfElements].isTombstone && table[startOfElements].is_shifted) { //make sure we stay within the same cluster
+//             table[currIndex] = table[startOfElements];
+//             table[startOfElements].isTombstone = true;
+//             currIndex = (currIndex+1)%table_size;
+//             startOfElements = (startOfElements+1)%table_size;
+//         }
+//         if (!table[startOfElements].is_shifted) { //reached end of cluster
+//             break;
+//         } else {
+//             table[currIndex] = table[startOfElements]; //insert the single tombstone
+//             currIndex = (currIndex+1)%table_size;
+//             startOfElements = startOfCopy(startOfElements);
+//             bucketOfElements = findNextBucket(bucketOfElements);
+//             currIndex = correctStartOfCopyLoc(currIndex, bucketOfElements);
+//         }
+//     }
+//     //increment here to set to currIndex
+//     return bucketOfElements+1;
+// }
+
+
+int QuotientFilterGraveyard::startOfWrite(int start) {
+    while (!table[start].isTombstone) {
+        start = (start + 1)%table_size;
+    }
+    return start;
+}
+
+//Redistribute in the cluster
+int QuotientFilterGraveyard::reorganizeCluster(int startOfCluster){
+    return 0;
+}
+
+
+// void QuotientFilterGraveyard::redistributeTombstones() {
+//     //Start looping through from the beginning.
+//     float load_factor =  size/(double)table_size;
+//     if (load_factor > REDISTRIBUTE_UPPER_LIMIT || load_factor <= REDISTRIBUTE_LOWER_LIMIT) {
+//         int initialStart = findClusterStart(0);
+//         int currStart = initialStart; //find start of cluster 
+//         do {
+//             int startOfCurrRun = findRunStartForBucket(currBucket);
+//             RunInfo endOfCurrRun;
+//             if (startOfCurrRun != -1 || runIsAllTombstones(currBucket)) {
+//                 endOfCurrRun = findEndOfRunOrStartOfTombstones(startOfCurrRun, currBucket);
+//                 int nextItem = (endOfCurrRun.endOfRunOrStartOfTombstones + 1)%table_size;
+//                 //Case 1: We have a tombstone there, move up the cluster elements
+//                 if (table[endOfCurrRun.endOfRunOrStartOfTombstones].isTombstone) {
+//                     if (table[nextItem].isTombstone && !endOfCurrRun.isEndOfCluster) { // move up the runs in the cluster
+//                         currBucket = moveUpRunsInCluster(nextItem);
+//                         continue;
+//                     }
+//                 } else { //Case 2: We have no tombstones
+//                     if (endOfCurrRun.isEndOfCluster && !table[nextItem].is_occupied) { //insert a tombstone there if empty slot there
+//                         table[nextItem].is_continuation = true;
+//                         table[nextItem].isEndOfCluster = true;
+//                         table[nextItem].isTombstone = true;
+//                     }
+//                     //Otherwise do nothing
+//                 }
+//             } 
+//             currBucket++;
+//         }
+//         while (currStart != initialStart);
+//     }
+// }
 void QuotientFilterGraveyard::redistributeTombstones() {
-    //Start looping through from the beginning.
     float load_factor =  size/(double)table_size;
     if (load_factor > REDISTRIBUTE_UPPER_LIMIT || load_factor <= REDISTRIBUTE_LOWER_LIMIT) {
-        int currBucket = 0; 
-        int maxBucketNum = 1<<q;
-        while (currBucket < maxBucketNum) {
-            int startOfCurrRun = findRunStartForBucket(currBucket);
-            RunInfo endOfCurrRun;
-            if (startOfCurrRun != -1) {
-                endOfCurrRun = findEndOfRunOrStartOfTombstones(startOfCurrRun, currBucket);
-                int nextItem = (endOfCurrRun.endOfRunOrStartOfTombstones + 1)%table_size;
-                //Case 1: We have a tombstone there, recursively move up the cluster elements
-                if (table[endOfCurrRun.endOfRunOrStartOfTombstones].isTombstone) {
-                    if (table[nextItem].isTombstone && !endOfCurrRun.isEndOfCluster) { // Recursively move up the runs in the cluster
-                        currBucket = moveUpRunsInCluster(nextItem);
-                        continue;
-                    }
-                } else { //Case 2: We have no tombstones
-                    if (endOfCurrRun.isEndOfCluster && !table[nextItem].is_occupied) { //insert a tombstone there if empty slot there
-                        table[nextItem].is_continuation = true;
-                        table[nextItem].isEndOfCluster = true;
-                        table[nextItem].isTombstone = true;
-                    }
-                    //Otherwise do nothing
-                }
-            } 
-            currBucket++;
+
+        //Process each cluster as its own entity
+        int initialStart = findClusterStart(0);
+        int currCluster = initialStart; //find start of cluster 
+        do {
+            int endOfCluster = reorganizeCluster(currCluster);
+            currCluster = endOfCluster+1;
         }
+        while (currCluster != initialStart);
     }
 }
 

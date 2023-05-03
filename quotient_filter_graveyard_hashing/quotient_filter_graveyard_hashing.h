@@ -25,7 +25,10 @@ class QuotientFilterGraveyard {
         int findEndOfCluster(int slot);
         void shiftElementsUp(int start);
         RunInfo findEndOfRunOrStartOfTombstones(int runStart, int bucketStart);
-        int moveUpRunsInCluster(int nextItem);
+        bool runIsAllTombstones(int startOfRun);
+        int findClusterStart(int pos);
+        int reorganizeCluster(int nextItem);
+        int startOfWrite(int start);
         int startOfCopy(int startOfMove);
         int correctStartOfCopyLoc(int startOfMove, int bucketOfToBeCopied);
         int findNextBucket(int start);
