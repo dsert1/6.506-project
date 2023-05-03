@@ -13,13 +13,14 @@
  * -> Fix insert method to use the new boolean flag(D)
  * -> Have redistribute be the three different ideas: insert between runs, og and third variant
 **/
-QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
+QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy=no_redistribution) { //Initialize a table of size 2^(q)
     this->size = 0;
     this->q = q;
     this->hashFunction = hashFunction;
     this->r = sizeof(int)*8 - q; //og : sizeof(int) - q
     this->table_size = (1 << q);
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
+    this->redistributionPolicy = policy;
 }
 
 QuotientFilterGraveyard::~QuotientFilterGraveyard() {

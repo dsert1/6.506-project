@@ -15,7 +15,8 @@ class QuotientFilterGraveyard {
         int r;
         int table_size;
         int (*hashFunction)(int);
-
+        RedistributionPolicy redistributionPolicy;
+         
         FingerprintPair fingerprintQuotient(int value);
         void shiftTombstoneDown(int start, int predecessor, int successor);
         void advanceToNextRun(int * start);
@@ -32,7 +33,7 @@ class QuotientFilterGraveyard {
         int startOfCopy(int startOfMove);
         int correctStartOfCopyLoc(int startOfMove, int bucketOfToBeCopied);
         int findNextBucket(int start);
-        QuotientFilterGraveyard(int q, int (*hashFunction)(int));
+        QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy);
         ~QuotientFilterGraveyard();
         bool isEmptySlot(int slot, int bucket);
         void insertElement(int value);
@@ -46,3 +47,7 @@ class QuotientFilterGraveyard {
         void redistributeTombstones();
         void resetTombstoneSuccessors(int bucket);
 };
+
+enum RedistributionPolicy{
+    no_redistribution, between_runs, between_runs_insert, evenly_distribute
+}
