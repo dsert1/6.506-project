@@ -43,6 +43,7 @@ void assert_empty_buckets(QuotientFilterGraveyard* qf, int exceptionCount, int e
       ce++;
       continue;
     }
+
     EXPECT_FALSE(qf->query(qfv(bucket, 0)));
     if (validateTable) {
       QuotientFilterElement elt = qf->table[bucket];
@@ -96,7 +97,7 @@ void scan_table(QuotientFilterGraveyard* qf) {
 
 ///////// Empty Filter Tests
 
-//Checks that the quotient filter is initalized with expected values
+// Checks that the quotient filter is initalized with expected values
 TEST_F(GraveyardFilterTest, FilterConstruction) {
   EXPECT_EQ(qf->size, 0);
   EXPECT_EQ(qf->q, 4);
@@ -129,7 +130,7 @@ TEST_F(GraveyardFilterTest, SingleElementInsert) {
   EXPECT_EQ(qf->size, 1);
 }
 
-// // Testing deleting elements in a filter with a single element
+// Testing deleting elements in a filter with a single element
 TEST_F(GraveyardFilterTest, SingleElementDelete) {
   int test_bucket = 2;
   int test_remainder = 193;
@@ -147,7 +148,7 @@ TEST_F(GraveyardFilterTest, SingleElementDelete) {
 
 
 
-// ///////// Two Element Tests
+///////// Two Element Tests
 
 // Testing inserting two separated elements
 TEST_F(GraveyardFilterTest, TwoSeparateElementsInsert) {
@@ -169,7 +170,7 @@ TEST_F(GraveyardFilterTest, TwoSeparateElementsInsert) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// // Testing deleting two separated elements
+// Testing deleting two separated elements
 TEST_F(GraveyardFilterTest, TwoSeparateElementsDelete) {
   int first_bucket = 3;
   int first_remainder = 5;
@@ -196,7 +197,7 @@ TEST_F(GraveyardFilterTest, TwoSeparateElementsDelete) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// // Testing inserting two adjacent elements
+// Testing inserting two adjacent elements
 TEST_F(GraveyardFilterTest, TwoAdjacentElementsInsert) {
   int first_bucket = 8;
   int first_remainder = 3;
@@ -217,7 +218,7 @@ TEST_F(GraveyardFilterTest, TwoAdjacentElementsInsert) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// // Testing deleting two adjacent elements
+// Testing deleting two adjacent elements
 TEST_F(GraveyardFilterTest, TwoAdjacentElementsDelete) {
   int first_bucket = 12;
   int first_remainder = 12;
@@ -246,9 +247,9 @@ TEST_F(GraveyardFilterTest, TwoAdjacentElementsDelete) {
 
 
 
-// ///////// Run Tests
+///////// Run Tests
 
-// // Inserting elements to create one run
+// Inserting elements to create one run
 TEST_F(GraveyardFilterTest, SingleRunInsert) {
   int bucket = 7;
   int remainders[] = {102, 39, 5920};
@@ -274,7 +275,7 @@ TEST_F(GraveyardFilterTest, SingleRunInsert) {
   EXPECT_EQ(qf->size, 3);
 }
 
-// // Deleting elements from a run in the order they were inserted
+// Deleting elements from a run in the order they were inserted
 TEST_F(GraveyardFilterTest, SingleRunDelete) {
   int bucket = 10;
   int remainders[] = {0, 15, 6};
@@ -311,7 +312,7 @@ TEST_F(GraveyardFilterTest, SingleRunDelete) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// // Deleting elements from a run opposite the order they were inserted
+// Deleting elements from a run opposite the order they were inserted
 TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   int bucket = 2;
   int remainders[] = {998, 2, 534};
@@ -348,7 +349,7 @@ TEST_F(GraveyardFilterTest, SingleRunDeleteReverse) {
   EXPECT_EQ(qf->size, 0);
 }
 
-// // Testing a run that wraps around the array
+// Testing a run that wraps around the array
 TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
   int remainders[] = {360, 720, 1080, 1440};
 
@@ -394,9 +395,9 @@ TEST_F(GraveyardFilterTest, SingleRunWrapAround) {
 
 
 
-// ///////// Cluster Tests
+///////// Cluster Tests
 
-// // Inserting elements in order to create cluster of two runs
+// Inserting elements in order to create cluster of two runs
 TEST_F(GraveyardFilterTest, DoubleRunInsert) {
   int first_bucket = 4;
   int remainders[] = {1010, 202, 333, 4040};
@@ -425,7 +426,7 @@ TEST_F(GraveyardFilterTest, DoubleRunInsert) {
   EXPECT_EQ(qf->size, 4);
 }
 
-// // Inserting elements to create cluster of two runs in reverse order
+// Inserting elements to create cluster of two runs in reverse order
 TEST_F(GraveyardFilterTest, DoubleRunInsertReverse) {
   int first_bucket = 9;
   int remainders[] = {9303, 1233, 7452, 2345};
@@ -453,7 +454,7 @@ TEST_F(GraveyardFilterTest, DoubleRunInsertReverse) {
   EXPECT_EQ(qf->size, 4);
 }
 
-// // Inserting elements to create cluster of two runs in an interleaved order
+// Inserting elements to create cluster of two runs in an interleaved order
 TEST_F(GraveyardFilterTest, DoubleRunInsertInterleaved) {
   int buckets[] = {15, 14, 14, 15};
   int remainders[] = {1111, 22, 333, 4};
@@ -476,7 +477,7 @@ TEST_F(GraveyardFilterTest, DoubleRunInsertInterleaved) {
   EXPECT_EQ(qf->size, 4);
 }
 
-// // Deleting cluster of two runs, starting with the first run
+// Deleting cluster of two runs, starting with the first run
 TEST_F(GraveyardFilterTest, DoubleRunDelete) {
   int first_bucket = 0;
   int remainders[] = {314, 159, 265, 358};
@@ -507,7 +508,7 @@ TEST_F(GraveyardFilterTest, DoubleRunDelete) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// // Deleting cluster of two runs, starting with the second run
+// Deleting cluster of two runs, starting with the second run
 TEST_F(GraveyardFilterTest, DoubleRunDeleteReverse) {
   int first_bucket = 8;
   int remainders[] = {5245, 0, 1123, 56};
@@ -538,7 +539,7 @@ TEST_F(GraveyardFilterTest, DoubleRunDeleteReverse) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// // General test with longer runs
+// General test with longer runs
 TEST_F(GraveyardFilterTest, DoubleRunLonger) {
   int first_bucket = 13;
   int remainders[] = {123, 456, 789, 12, 345, 678, 901, 234, 567, 890};
@@ -595,7 +596,7 @@ TEST_F(GraveyardFilterTest, DoubleRunLonger) {
   EXPECT_EQ(qf->size, 7);
 }
 
-// // Testing with runs overlapping a cluster
+// Testing with runs overlapping a cluster
 TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   int first_bucket = 3;
   int remainders[] = {103, 194, 128, 349, 301, 392};
@@ -650,7 +651,7 @@ TEST_F(GraveyardFilterTest, TestInterruptionSimple) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// // Testing the invariant-threatening example
+// Testing the invariant-threatening example
 TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
   int first_bucket = 12;
   int remainders[] = {103, 194, 128, 192, 349, 301, 392};
