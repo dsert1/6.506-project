@@ -6,8 +6,7 @@
 
 class QuotientFilterGraveyard {
     private:
-        float REDISTRIBUTE_UPPER_LIMIT = 0.60;
-        float REDISTRIBUTE_LOWER_LIMIT = 0.15;
+        int REBUILD_WINDOW_SIZE;
     public:
         QuotientFilterElement* table;
         int size;
@@ -16,38 +15,40 @@ class QuotientFilterGraveyard {
         int table_size;
         int (*hashFunction)(int);
         RedistributionPolicy redistributionPolicy;
+        int opCount;
          
         FingerprintPair fingerprintQuotient(int value);
         void shiftTombstoneDown(int start, int predecessor, int successor);
-        void advanceToNextRun(int * start);
-        void advanceToNextBucket(int * start);
         void updateAdjacentTombstonesInsert(int newRun);
         int findRunStartForBucket(int target_bucket);
         int findEndOfCluster(int slot);
+        int findEndOfRun(int slot);
         void shiftElementsUp(int start);
-        RunInfo findEndOfRunOrStartOfTombstones(int runStart, int bucketStart);
-        bool runIsAllTombstones(int startOfRun);
+        bool isEmptySlot(int slot, int bucket);
+
         int findClusterStart(int pos);
         int reorganizeCluster(int nextItem);
+        int reorganizeCluster2(int nextItem, int endOfCluster);
         int startOfWrite(int start);
         int startOfCopy(int startOfMove);
-        int correctStartOfCopyLoc(int startOfMove, int bucketOfToBeCopied);
-        int findNextBucket(int start);
+        int correctStartOfWrite(int startOfMove, int bucketOfToBeCopied);
+
+        long long int encodeValue(int predecessor, int successor);
+        PredSucPair decodeValue(long long int value);
+        void redistributeTombstonesBetweenRuns();
+        void redistributeTombstonesBetweenRunsInsert();
+        void redistributeTombstonesBetweenRunsEvenlyDistribute();
+        void resetTombstoneSuccessors(int bucket);
+
         QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy);
         ~QuotientFilterGraveyard();
-        bool isEmptySlot(int slot, int bucket);
+
         void insertElement(int value);
         void deleteElement(int value);
         bool query(int value);
         bool mayContain(int value);
-        long long int encodeValue(int predecessor, int successor);
-        PredSucPair decodeValue(long long int value);
-        // void shiftRunUp(int * bucketPos, int * runStart);
-        void shiftRunUp(int startOfShift);
-        void redistributeTombstones();
-        void resetTombstoneSuccessors(int bucket);
 };
 
 enum RedistributionPolicy{
     no_redistribution, between_runs, between_runs_insert, evenly_distribute
-}
+};
