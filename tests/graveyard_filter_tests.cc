@@ -694,6 +694,7 @@ TEST_F(GraveyardFilterTest, TestInterruptionTricky) {
 
   for (int i = 0; i < 7; i ++) {
     if (i != 3) {
+      EXPECT_TRUE(qf->query(qfv(buckets[i], remainders[i])));
       qf->deleteElement(qfv(buckets[i], remainders[i]));
     }
   }

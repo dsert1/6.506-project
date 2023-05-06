@@ -51,6 +51,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
         PredSucPair ps = decodeValue(table[target_slot].value);
         int pred = ps.predecessor;
         int succ = ps.successor;
+        printf("insertion tombstone test: pred %d, bucket %d, succ %d\n", pred, f.fq, succ);
 
         bool valid_for_insertion;
         if (succ > pred) {
@@ -80,7 +81,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
 
     // otherwise:
     // Find the beginning of the run
-    target_slot = findRunStartForBucket(f.fq);
+    target_slot = findRunStartForBucket(f.fq, true);
 
     // Scan to end of run
     if (originally_occupied) {
@@ -279,6 +280,10 @@ void QuotientFilterGraveyard::updateAdjacentTombstonesInsert(int newRun) {
 /* Helper function; assumes that the target bucket is occupied
 */
 int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket) {
+    return this->findRunStartForBucket(target_bucket, false);
+}
+
+int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_at_tombstones){
     // Check for item in table
     if (!table[target_bucket].is_occupied) {
         return -1;
@@ -294,18 +299,31 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket) {
     // std::cout << "Bucket after " << bucket << "\n";
     // Find the run for fq
     int run_start = bucket;
+    int next_bucket = bucket;
     while (bucket != target_bucket) {
         // std::cout << "Bucket: " <<bucket << " Run start: " << run_start << "\n";
-        // Skip to the next run
-        do {
-            run_start = (run_start + 1) % table_size;
-        }
-        while (table[run_start].is_continuation);
         // Find the next bucket
         do {
-            bucket = (bucket + 1) % table_size;
+            next_bucket = (next_bucket + 1) % table_size;
         }
-        while (!table[bucket].is_occupied);
+        while (!table[next_bucket].is_occupied);
+
+        // Skip to the next run
+        if (!(stop_at_tombstones && next_bucket == target_bucket)) {
+            do {
+                run_start = (run_start + 1) % table_size;
+            }
+            while (table[run_start].is_continuation);
+        }
+        // If permitted, can stop at a tombstone of the predecessor run
+        else if (!table[run_start].isTombstone) {
+            do {
+                run_start = (run_start + 1) % table_size;
+            }
+            while (table[run_start].is_continuation && !table[run_start].isTombstone);
+        }
+
+        bucket = next_bucket;
     }
     // std::cout << "Bucket: " <<bucket << " Run start: " << run_start << "\n";
     return run_start;
