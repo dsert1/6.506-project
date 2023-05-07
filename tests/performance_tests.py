@@ -3,13 +3,15 @@ from contextlib import contextmanager
 import unittest
 import random
 import time
+import hashlib
 
 quotient_filter = cdll.LoadLibrary("./quotient_filter.so")
 
 @CFUNCTYPE(c_int, c_int)
 def hashFunction(value):
-    # TODO: replace with our hash fn
-    return value % 100
+    hash_obj = hashlib.sha256()
+    hash_obj.update(value.encode())
+    return hash_obj.hexdigest()
 
 # define quotient filter using ctypes
 class QuotientFilter(object):
