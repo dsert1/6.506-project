@@ -112,6 +112,8 @@
         "typeindex": "cpp",
         "unordered_set": "cpp",
         "valarray": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "__memory": "cpp",
+        "filesystem": "cpp"
     }
 }
