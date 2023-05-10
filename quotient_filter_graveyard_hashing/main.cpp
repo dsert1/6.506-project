@@ -69,7 +69,7 @@ void assert_empty_buckets(QuotientFilterGraveyard* qf, int exceptionCount, int e
 }
 
 void testQuery() {
-    QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity);
+    QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, between_runs);
     int first_bucket = 0;
     int remainders[] = {314, 159, 265, 358};
 
@@ -122,7 +122,7 @@ void testQuery() {
 }
 
 void testRedistributeOne(){
-  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity);
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, between_runs);
 
   int buckets[] = {1, 3, 4, 6, 3, 6, 1, 3};
   int remainders[] = {100, 100, 100, 10, 14, 17, 103, 77};
@@ -163,13 +163,89 @@ void testRedistributeOne(){
 
 }
 
+
+void testRedistributeTwo(){
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, between_runs);
+
+  int buckets[] = {1, 3, 4, 6, 3, 6, 1, 3};
+  int remainders[] = {100, 100, 100, 10, 14, 17, 103, 77};
+    for (int i = 0; i < 8; i++) {
+      qf.insertElement(qfv(buckets[i], remainders[i]));
+    }
+  
+
+  
+  // qf.deleteElement(qfv(3,100));
+  // qf.deleteElement(qfv(3,77));
+  // qf.deleteElement(qfv(3,14));
+  // int count = 0;
+  // std::cout << "Before redistribution" << "\n";
+
+  // std::cout << "Cluster start: " << qf.findClusterStart(7) << "\n";
+
+  // for (int i = 1; i < 13; i++) {
+  //   std::cout << "-----------START-----------" << "\n";
+  //   std::cout << "GOT " << qf.table[i].isTombstone << "\n";
+  //   std::cout << "GOT " << qf.table[i].isEndOfCluster << "\n";
+  //   std::cout << "GOT " << qf.table[i].value << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_occupied << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_continuation << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_shifted << "\n";
+  //   std::cout << "-----------FINISH-----------" << "\n";
+  // }
+  qf.redistributeTombstonesBetweenRunsInsert();
+
+  // for (int i = 1; i < 13; i++) {
+  //   std::cout << "-----------START-----------" << "\n";
+  //   std::cout << "GOT " << qf.table[i].isTombstone << "\n";
+  //   std::cout << "GOT " << qf.table[i].isEndOfCluster << "\n";
+  //   std::cout << "GOT " << qf.table[i].value << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_occupied << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_continuation << "\n";
+  //   std::cout << "GOT " << qf.table[i].is_shifted << "\n";
+  //   std::cout << "-----------FINISH-----------" << "\n";
+  // }
+
+  // int occupied_buckets[] = {1, 3, 4, 6};
+  // int curr_exc = 0;
+  // for (int i=0; i < 16; i++) {
+  //   if (curr_exc < 4 && occupied_buckets[curr_exc] == i) {
+  //     std::cout << "EXPECT 1 GOT " << qf.table[i].is_occupied << "\n";
+  //     curr_exc++;
+  //     continue;
+  //   }
+  //     std::cout << "EXPECT 0 GOT " << qf.table[i].is_occupied << "\n";
+  // }
+  // int numToDelete[] = {qfv(1, 100), qfv(1,103), qfv(3,100), qfv(3,14), qfv(3,77)};
+  // qf.deleteElement(qfv(3,100));
+  // qf.deleteElement(qfv(3,14));
+  // int numToDelete = qfv(4,100);
+  // qf.deleteElement(numToDelete);
+  // for (int i=0; i < 5; i++) {
+  //   qf.deleteElement(numToDelete[i]);
+  // }
+
+  // int tombStones[] = {1,2,3,4,5};
+  // for (int i =0; i< 2;i++) {
+  //   std::cout << "EXPECT 1 GOT " << qf.table[tombStones[i]].isTombstone << "\n";
+  //   std::cout << "EXPECT 1 GOT " << qf.table[tombStones[i]].isEndOfCluster << "\n";
+  //   PredSucPair res = qf.decodeValue(qf.table[tombStones[i]].value);
+  //   std::cout << "PREDECESSOR FOR TOMBSTONE AT " << tombStones[i] << " IS " << res.predecessor << "\n";
+  //   std::cout << "SUCCESSOR FOR TOMBSTONE AT " << tombStones[i] << " IS " << res.successor << "\n";
+  // }
+  // for (int i=6; i<16; i++) {
+  //   std::cout << "EXPECT 0 GOT " << qf.table[i+1].isTombstone << "\n";
+  // }
+
+}
+
 void testEncode() {
-    QuotientFilterGraveyard g = QuotientFilterGraveyard(3, &identity);
+    QuotientFilterGraveyard g = QuotientFilterGraveyard(3, &identity, between_runs);
     long long res = g.encodeValue(32, 64);
     PredSucPair res2 = g.decodeValue(res);
     std::cout << "Predecessor: " << res2.predecessor << "Successor: " << res2.successor << "\n";
 }
 
 int main() {
-    testRedistributeOne();
+    testRedistributeTwo();
 }

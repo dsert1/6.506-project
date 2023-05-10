@@ -4,6 +4,34 @@
 #include <stdbool.h>
 #include "../quotient_filter/quotient_filter_element.h"
 
+enum RedistributionPolicy{
+    no_redistribution, between_runs, between_runs_insert, evenly_distribute
+};
+
+enum ReorgCase{
+    all_tombstones = 1,
+    nothing_to_push = 2,
+    no_tombstones = 3,
+    normal_case= 4
+};
+
+struct Pair {
+    int val1;
+    int val2;
+};
+
+struct Opt {
+    int val1;
+    bool val2;
+};
+
+struct Res {
+    int val1;
+    int val2;
+    int val3;
+    ReorgCase val4;
+};
+
 class QuotientFilterGraveyard {
     private:
         int REBUILD_WINDOW_SIZE;
@@ -22,14 +50,14 @@ class QuotientFilterGraveyard {
         void updateAdjacentTombstonesInsert(int newRun);
         int findRunStartForBucket(int target_bucket);
         int findEndOfCluster(int slot);
-        int findEndOfRun(int slot);
+        int findEndOfRun(int startOfRun, int * itemsTouched);
         void shiftElementsUp(int start);
         bool isEmptySlot(int slot, int bucket);
 
         int findClusterStart(int pos);
-        int reorganizeCluster(int nextItem);
-        int reorganizeCluster2(int nextItem, int endOfCluster);
-        int startOfWrite(int start);
+        int reorganizeCluster(int nextItem, int * itemsTouched);
+        int reorganizeCluster2(int nextItem, int * itemsTouched);
+        int startOfWrite(int start, int * elementCount);
         int startOfCopy(int startOfMove);
         int correctStartOfWrite(int startOfMove, int bucketOfToBeCopied);
 
@@ -39,6 +67,12 @@ class QuotientFilterGraveyard {
         void redistributeTombstonesBetweenRunsInsert();
         void redistributeTombstonesBetweenRunsEvenlyDistribute();
         void resetTombstoneSuccessors(int bucket);
+        int shiftClusterElementsDown(Res res, int * itemsTouched);
+        bool insertTombstone(int pos);
+
+        int findStartOfTombstonesInRun(int pos);
+        Res findStartOfWriteAndCopy(int startOfCluster, int * itemsTouched);
+        Opt separateRunsByTombstones(int startOfCluster, int * itemsTouched);
 
         QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy);
         ~QuotientFilterGraveyard();
@@ -47,8 +81,5 @@ class QuotientFilterGraveyard {
         void deleteElement(int value);
         bool query(int value);
         bool mayContain(int value);
-};
-
-enum RedistributionPolicy{
-    no_redistribution, between_runs, between_runs_insert, evenly_distribute
+        int findNextBucket(int currBucket);
 };
