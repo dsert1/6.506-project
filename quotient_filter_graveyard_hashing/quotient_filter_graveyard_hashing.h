@@ -49,6 +49,7 @@ class QuotientFilterGraveyard {
         void shiftTombstoneDown(int start, int predecessor, int successor);
         void updateAdjacentTombstonesInsert(int newRun);
         int findRunStartForBucket(int target_bucket);
+        int findRunStartForBucket(int target_bucket, bool stop_at_tombstones);
         int findEndOfCluster(int slot);
         int findEndOfRun(int startOfRun, int * itemsTouched);
         void shiftElementsUp(int start);

@@ -27,6 +27,9 @@ add_executable(
 add_executable(
   graveyard_filter_tests $<TARGET_OBJECTS:QuotientFilterGraveyard> graveyard_filter_tests.cc
 )
+add_executable(
+  redistribution_tests $<TARGET_OBJECTS:QuotientFilterGraveyard> redistribution_tests.cc
+)
 target_link_libraries(normal_filter_tests
   QuotientFilter
   GTest::gtest_main
@@ -35,7 +38,12 @@ target_link_libraries(graveyard_filter_tests
   QuotientFilterGraveyard
   GTest::gtest_main
 )
+target_link_libraries(redistribution_tests
+  QuotientFilterGraveyard
+  GTest::gtest_main
+)
 
 include(GoogleTest)
 gtest_discover_tests(normal_filter_tests EXTRA_ARGS ${VALIDATE_TABLE})
 gtest_discover_tests(graveyard_filter_tests EXTRA_ARGS ${VALIDATE_TABLE})
+gtest_discover_tests(redistribution_tests EXTRA_ARGS ${VALIDATE_TABLE})
