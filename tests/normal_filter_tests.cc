@@ -173,7 +173,7 @@ TEST_F(GraveyardFilterTest, PerfFivePercent) {
   std::cout << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
 }
 
-// Performance: to insert elements until 95% filled, then perform uniform random lookups and successful lookups
+Performance: to insert elements until 95% filled, then perform uniform random lookups and successful lookups
 TEST_F(GraveyardFilterTest, PerformanceTest) {
   // Calculate the number of elements to insert until the filter is 95% filled
   const int filter_capacity = qf->metadata->max_size;

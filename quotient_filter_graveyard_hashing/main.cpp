@@ -246,6 +246,57 @@ void testEncode() {
     std::cout << "Predecessor: " << res2.predecessor << "Successor: " << res2.successor << "\n";
 }
 
+void test2() {
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, between_runs);
+  int first_bucket = 3;
+  int remainders[] = {103, 194, 128, 349, 301, 392};
+  int b_remainder = 222;
+  int d_remainder = 444;
+
+  int ba = first_bucket;
+  int bb = (first_bucket + 1) % 16;
+  int bc = (first_bucket + 2) % 16;
+  int bd = (first_bucket + 3) % 16;
+  int buckets[] = {ba, ba, ba, bc, bc, bc};
+
+  int b[8];
+  for (int i = 0; i < 8; i ++) {
+    if (i < 6) {
+      qf.insertElement(qfv(buckets[i], remainders[i]));
+    }
+    b[i] = (first_bucket + i) % 16;
+  }
+
+  std::cout << "SIZE: " << qf.size << "\n";
+  qf.insertElement(qfv(bb, b_remainder));
+  std::cout << "FINDING: " << qfv(bb, b_remainder) << ". GOT: " <<  qf.query(qfv(bb, b_remainder)) << "\n";
+  qf.insertElement(qfv(bd, d_remainder));
+  std::cout << "FINDING: " << qfv(bd, d_remainder) << ". GOT: " <<  qf.query(qfv(bd, d_remainder)) << "\n";
+  for (int i = 0; i < 6; i ++) {
+    qf.deleteElement(qfv(buckets[i], remainders[i]));
+  }
+
+  std::cout << "FINDING: " << qfv(bb, b_remainder) << ". GOT: " <<  qf.query(qfv(bb, b_remainder)) << "\n";
+  std::cout << "FINDING: " << qfv(bd, d_remainder) << ". GOT: " <<  qf.query(qfv(bd, d_remainder)) << "\n";
+
+  for (int i=3; i<11; i++) {
+    std::cout<< "PRINTING OUT INFO AT: " << i << "\n";
+    if (qf.table[i].isTombstone) {
+      PredSucPair res = qf.decodeValue(qf.table[i].value);
+      std::cout << "PREDECESSOR: " <<res.predecessor << "\n";
+      std::cout << "SUCCESSOR: " <<res.successor << "\n";
+    } else {
+       std::cout << qf.table[i].value << "\n";
+    }
+    std::cout << "IS OCCUPIED: " <<qf.table[i].is_occupied << "\n";
+    std::cout << "IS SHIFTED: " <<qf.table[i].is_shifted << "\n";
+    std::cout << "IS CONTINUATION: " <<qf.table[i].is_continuation << "\n";
+  }
+}
+
 int main() {
-    testRedistributeTwo();
+    // test2();
+    std::hash<int> intHash;
+    uint64_t hashVal = intHash(40);
+    std::cout << hashVal << "\n";
 }

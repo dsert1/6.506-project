@@ -68,6 +68,7 @@ class QuotientFilterGraveyard {
         void redistributeTombstonesBetweenRunsInsert();
         void redistributeTombstonesBetweenRunsEvenlyDistribute();
         void resetTombstoneSuccessors(int bucket);
+        void redistribute();
         int shiftClusterElementsDown(Res res, int * itemsTouched);
         bool insertTombstone(int pos);
 
@@ -82,5 +83,5 @@ class QuotientFilterGraveyard {
         void deleteElement(int value);
         bool query(int value);
         bool mayContain(int value);
-        int findNextBucket(int currBucket);
+        int findNextBucket(int currBucket, int endIndex=-1);
 };
