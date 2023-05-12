@@ -15,17 +15,24 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+add_subdirectory(../quotient_filter qf_build)
+add_subdirectory(../quotient_filter_graveyard_hashing qfg_build)
+
 add_executable(
   normal_perf
+  $<TARGET_OBJECTS:QuotientFilter>
   normal_perf.cc
   # graveyard_perf
   # graveyard_perf.cc
 )
 target_link_libraries(
   normal_perf
+  QuotientFilter
   # graveyard_perf
   GTest::gtest_main
 )
+
+
 
 include(GoogleTest)
 gtest_discover_tests(normal_perf)
