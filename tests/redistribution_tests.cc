@@ -23,6 +23,18 @@ class RedistributionTestBetweenRuns : public ::testing::Test {
     // void TearDown() override {}
 };
 
+// Fixture class
+class RedistributionTestBetweenRunsInsert : public ::testing::Test {
+  protected:
+    QuotientFilterGraveyard* qf;
+
+    void SetUp() override {
+      qf = new QuotientFilterGraveyard(4, &identity, between_runs_insert);
+    }
+
+    // void TearDown() override {}
+};
+
 // Builds a value to insert into the filter, based on q and r
 // q should be less than 16
 int qfv(int q, int r) {
@@ -234,7 +246,7 @@ TEST_F(RedistributionTestBetweenRuns, RunCleaned) {
   EXPECT_EQ(qf->size, 2);
 }
 
-// Checks that multiple tombstones between runs can be passed to later tombstones
+// Checks that multiple tombstones between runs can be passed to later runs
 TEST_F(RedistributionTestBetweenRuns, PassTombstones) {
   int starting_bucket = 4;
   int remainders[] = {111, 222, 333, 444, 555, 666, 777, 888};
@@ -272,6 +284,250 @@ TEST_F(RedistributionTestBetweenRuns, PassTombstones) {
                        {b[6], false, true, false, false, (uint64_t)remainders[6]},
                        {b[7], false, true, true, false, (uint64_t)remainders[7]}};
   check_slots(qf, 10, slot_tests);
+  EXPECT_EQ(qf->size, 6);
+}
+
+
+
+///////// Between Runs Insert Policy
+
+// Checks that a rebuild leaves a single run with one tombstone
+TEST_F(RedistributionTestBetweenRunsInsert, InsertOnlySingle) {
+  int starting_bucket = 4;
+  int remainders[] = {987, 65, 4, 321, 9, 8, 765, 43};
+  int b[9];
+
+  for (int i = 0; i < 6; i ++) {
+    b[i] = (starting_bucket + i) % 16;
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+  }
+  b[6] = ((starting_bucket + 6) % 16);
+  // Rebuild expected after 6 operations; 1 tombstone inserted
+
+  assert_empty_buckets(qf, 7, b);
+  Mdt slot_tests1[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, false, (uint64_t)remainders[1]},
+                      {b[2], false, true, true, false, (uint64_t)remainders[2]},
+                      {b[3], false, true, true, false, (uint64_t)remainders[3]},
+                      {b[4], false, true, true, false, (uint64_t)remainders[4]},
+                      {b[5], false, true, true, false, (uint64_t)remainders[5]},
+                      {b[6], false, true, true, true, psv(b[0], b[0])}};
+  check_slots(qf, 7, slot_tests1);
+  EXPECT_EQ(qf->size, 6);
+
+  // load factor = 7/16 -> x = 1/(9/16) = 16/9 -> window size = 16/(4 * x) = 16/4 * 9/16 = 9/4 = 2.25
+  // -> rebuild interval 2
+  for (int i = 6; i < 8; i ++) {
+    b[i] = (starting_bucket + 1 + i) % 16;
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+  }
+
+  assert_empty_buckets(qf, 9, b);
+  Mdt slot_tests2[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                      {b[1], false, true, true, false, (uint64_t)remainders[1]},
+                      {b[2], false, true, true, false, (uint64_t)remainders[2]},
+                      {b[3], false, true, true, false, (uint64_t)remainders[3]},
+                      {b[4], false, true, true, false, (uint64_t)remainders[4]},
+                      {b[5], false, true, true, false, (uint64_t)remainders[5]},
+                      {b[6], false, true, true, false, (uint64_t)remainders[6]},
+                      {b[7], false, true, true, false, (uint64_t)remainders[7]},
+                      {b[8], false, true, true, true, psv(b[0], b[0])}};
+  check_slots(qf, 9, slot_tests2);
+  EXPECT_EQ(qf->size, 8);
+}
+
+// Checks that a rebuild leaves separate runs with a tombstone
+TEST_F(RedistributionTestBetweenRunsInsert, InsertOnlySeparate) {
+  int starting_bucket = 2;
+  int remainders[] = {12, 323, 5942, 102, 3, 6};
+  int b[12];
+
+  for (int i = 0; i < 6; i ++) {
+    b[i] = (starting_bucket + i) % 16;
+    qf->insertElement(qfv(b[i], remainders[i]));
+    b[i + 6] = (b[i] + 6) % 16;
+  }
+  // Rebuild expected after 6 operations
+
+  assert_empty_buckets(qf, 12, b);
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                      {b[1], true, true, true, true, psv(b[0], b[1])},
+                      {b[2], true, true, false, false, (uint64_t)remainders[1]},
+                      {b[3], true, true, true, true, psv(b[1], b[2])},
+                      {b[4], true, true, false, false, (uint64_t)remainders[2]},
+                      {b[5], true, true, true, true, psv(b[2], b[3])},
+                      {b[6], false, true, false, false, (uint64_t)remainders[3]},
+                      {b[7], false, true, true, true, psv(b[3], b[4])},
+                      {b[8], false, true, false, false, (uint64_t)remainders[4]},
+                      {b[9], false, true, true, true, psv(b[4], b[5])},
+                      {b[10], false, true, false, false, (uint64_t)remainders[5]},
+                      {b[11], false, true, true, true, psv(b[5], b[5])}};
+  check_slots(qf, 12, slot_tests);
+  EXPECT_EQ(qf->size, 6);
+}
+
+// Checks that a rebuild clears a table containing only tombstones
+TEST_F(RedistributionTestBetweenRunsInsert, TombstonesOnly) {
+  int starting_bucket = 6;
+  int remainders[] = {111, 222, 333};
+
+  for (int i = 0; i < 3; i ++) {
+    qf->insertElement(qfv((starting_bucket + i) % 16, remainders[i]));
+  }
+  for (int i = 0; i < 3; i ++) {
+    qf->deleteElement(qfv((starting_bucket + i) % 16, remainders[i]));
+  }
+  // Rebuild expected after 6 operations
+
+  assert_empty_buckets(qf, 0, NULL);
+  EXPECT_EQ(qf->size, 0);
+}
+
+// Checks that single tombstones between clusters are unaffected
+TEST_F(RedistributionTestBetweenRunsInsert, ClusterGap) {
+  int starting_bucket = 15;
+  int remainders[] = {111, 222, 333, 444, 555};
+  int b[6];
+
+  for (int i = 0; i < 3; i ++) {
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  qf->deleteElement(qfv(starting_bucket, remainders[2]));
+  for (int i = 3; i < 5; i ++) {
+    qf->insertElement(qfv((starting_bucket + 3) % 16, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  b[5] = (starting_bucket + 5) % 16;
+  // Rebuild expected after 6 operations
+
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                       {b[1], false, true, true, false, (uint64_t)remainders[1]},
+                       {b[2], false, true, true, true, psv(b[0], b[3])},
+                       {b[3], true, false, false, false, (uint64_t)remainders[3]},
+                       {b[4], false, true, true, false, (uint64_t)remainders[4]},
+                       {b[5], false, true, true, true, psv(b[3], b[3])}};
+  check_slots(qf, 6, slot_tests);
+  EXPECT_EQ(qf->size, 4);
+}
+
+// Checks that multiple tombstones between clusters are reduced to single tombstones
+TEST_F(RedistributionTestBetweenRunsInsert, ClusterCleaned) {
+  int starting_bucket = 2;
+  int remainders[] = {111, 222, 333, 444};
+  int b[5];
+
+  for (int i = 0; i < 3; i ++) {
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  qf->insertElement(qfv((starting_bucket + 3) % 16, remainders[3]));
+  b[3] = (starting_bucket + 3) % 16;
+  b[4] = (starting_bucket + 4) % 16;
+
+  qf->deleteElement(qfv(starting_bucket, remainders[1]));
+  qf->deleteElement(qfv(starting_bucket, remainders[2]));
+  // Rebuild expected after 6 operations
+
+  int expected_buckets[] = {b[0], b[1], b[3], b[4]};
+  assert_empty_buckets(qf, 4, expected_buckets);
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                       {b[1], false, true, true, true, psv(b[0], b[0])},
+                       {b[3], true, false, false, false, (uint64_t)remainders[3]},
+                       {b[4], false, true, true, true, psv(b[3], b[3])}};
+  check_slots(qf, 4, slot_tests);
+  EXPECT_EQ(qf->size, 2);
+}
+
+// Checks that single tombstones between runs are unaffected
+TEST_F(RedistributionTestBetweenRunsInsert, RunGap) {
+  int starting_bucket = 6;
+  int remainders[] = {111, 222, 333, 444, 555};
+  int b[6];
+
+  for (int i = 0; i < 3; i ++) {
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  for (int i = 3; i < 5; i ++) {
+    qf->insertElement(qfv((starting_bucket + 1) % 16, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  b[5] = (starting_bucket + 5) % 16;
+  qf->deleteElement(qfv(starting_bucket, remainders[2]));
+  // Rebuild expected after 6 operations
+
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, false, (uint64_t)remainders[1]},
+                       {b[2], false, true, true, true, psv(b[0], b[1])},
+                       {b[3], false, true, false, false, (uint64_t)remainders[3]},
+                       {b[4], false, true, true, false, (uint64_t)remainders[4]},
+                       {b[5], false, true, true, true, psv(b[1], b[1])}};
+  check_slots(qf, 6, slot_tests);
+  EXPECT_EQ(qf->size, 4);
+}
+
+// Checks that multiple tombstones between runs are reduced to single tombstones
+TEST_F(RedistributionTestBetweenRunsInsert, RunCleaned) {
+  int starting_bucket = 12;
+  int remainders[] = {111, 222, 333, 444};
+  int b[4];
+
+  for (int i = 0; i < 3; i ++) {
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  b[3] = (starting_bucket + 3) % 16;
+  qf->insertElement(qfv((starting_bucket + 1) % 16, remainders[3]));
+
+  qf->deleteElement(qfv(starting_bucket, remainders[1]));
+  qf->deleteElement(qfv(starting_bucket, remainders[2]));
+  // Rebuild expected after 6 operations
+
+  assert_empty_buckets(qf, 4, b);
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                       {b[1], true, true, true, true, psv(b[0], b[1])},
+                       {b[2], false, true, false, false, (uint64_t)remainders[3]},
+                       {b[3], false, true, true, true, psv(b[1], b[1])}};
+  check_slots(qf, 4, slot_tests);
+  EXPECT_EQ(qf->size, 2);
+}
+
+// Checks that multiple tombstones between runs can be passed to or inserted in later runs
+TEST_F(RedistributionTestBetweenRunsInsert, PassTombstones) {
+  int starting_bucket = 4;
+  int remainders[] = {111, 222, 333, 444, 555, 666, 777};
+  int b[9];
+
+  for (int i = 0; i < 4; i ++) {
+    qf->insertElement(qfv(starting_bucket, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  for (int i = 4; i < 6; i ++) {
+    qf->insertElement(qfv((starting_bucket + 1) % 16, remainders[i]));
+    b[i] = (starting_bucket + i) % 16;
+  }
+  // First rebuild expected after 6 operations; 2 tombstones inserted
+  // load factor = 1/2 -> x = 1/(1/2) = 2 -> window size = 16/(4 * 2) = 2
+  // -> rebuild interval 2
+
+  for (int i = 6; i < 9; i ++) {
+    b[i] = (starting_bucket + i) % 16;
+  }
+  qf->insertElement(qfv((starting_bucket + 2) % 16, remainders[6]));
+  qf->deleteElement(qfv(starting_bucket, remainders[1]));
+
+  assert_empty_buckets(qf, 9, b);
+  Mdt slot_tests[] = {{b[0], true, false, false, false, (uint64_t)remainders[0]},
+                      {b[1], true, true, true, false, (uint64_t)remainders[2]},
+                      {b[2], true, true, true, false, (uint64_t)remainders[3]},
+                      {b[3], false, true, true, true, psv(b[0], b[1])},
+                      {b[4], false, true, false, false, (uint64_t)remainders[4]},
+                      {b[5], false, true, true, false, (uint64_t)remainders[5]},
+                      {b[6], false, true, true, true, psv(b[1], b[2])},
+                      {b[7], false, true, false, false, (uint64_t)remainders[6]},
+                      {b[8], false, true, true, true, psv(b[2], b[2])}};
+  check_slots(qf, 9, slot_tests);
   EXPECT_EQ(qf->size, 6);
 }
 
