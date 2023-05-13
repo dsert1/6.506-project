@@ -1,4 +1,4 @@
-# Install script for directory: /Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild
+# Install script for directory: /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

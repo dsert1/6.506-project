@@ -154,7 +154,7 @@ TEST_F(QuotientFilterTest, Perf95) {
 TEST_F(QuotientFilterTest, PerfMixed) {
 
   // Open output file
-  std::ofstream outfile("perf95_lookup_times.txt");
+  std::ofstream outfile("perfmixed.txt");
 
   // Set the time duration of the test (in seconds)
   const int test_duration = 10;

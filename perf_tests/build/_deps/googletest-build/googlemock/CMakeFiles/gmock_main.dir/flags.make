@@ -4,9 +4,7 @@
 # compile CXX with /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -isystem "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-src/googlemock/include" -isystem "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-src/googlemock" -isystem "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-src/googletest/include" -isystem "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-src/googletest"
+CXX_INCLUDES = -isystem /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-src/googlemock/include -isystem /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-src/googlemock -isystem /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-src/googletest/include -isystem /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-src/googletest
 
-CXX_FLAGSarm64 = -std=c++14 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk -mmacosx-version-min=12.6  -DGTEST_HAS_PTHREAD=1  
-
-CXX_FLAGS = -std=c++14 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.0.sdk -mmacosx-version-min=12.6  -DGTEST_HAS_PTHREAD=1  
+CXX_FLAGS = -std=c++14 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk  -DGTEST_HAS_PTHREAD=1  
 

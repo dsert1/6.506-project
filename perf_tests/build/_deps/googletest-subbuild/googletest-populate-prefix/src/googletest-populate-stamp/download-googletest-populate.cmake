@@ -22,14 +22,14 @@ function(check_file_hash has_hash hash_is_good)
   set("${has_hash}" TRUE PARENT_SCOPE)
 
   message(STATUS "verifying file...
-       file='/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'")
+       file='/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'")
 
-  file("" "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip" actual_value)
+  file("" "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip" actual_value)
 
   if(NOT "${actual_value}" STREQUAL "")
     set("${hash_is_good}" FALSE PARENT_SCOPE)
     message(STATUS " hash of
-    /Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
   does not match expected value
     expected: ''
       actual: '${actual_value}'")
@@ -71,7 +71,7 @@ function(sleep_before_download attempt)
   execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep "${sleep_seconds}")
 endfunction()
 
-if("/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip" STREQUAL "")
+if("/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip" STREQUAL "")
   message(FATAL_ERROR "LOCAL can't be empty")
 endif()
 
@@ -79,32 +79,32 @@ if("https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4b
   message(FATAL_ERROR "REMOTE can't be empty")
 endif()
 
-if(EXISTS "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
+if(EXISTS "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
   check_file_hash(has_hash hash_is_good)
   if(has_hash)
     if(hash_is_good)
       message(STATUS "File already exists and hash match (skip download):
-  file='/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
+  file='/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
   =''"
       )
       return()
     else()
       message(STATUS "File already exists but hash mismatch. Removing...")
-      file(REMOVE "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
+      file(REMOVE "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
     endif()
   else()
     message(STATUS "File already exists but no hash specified (use URL_HASH):
-  file='/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
+  file='/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
 Old file will be removed and new file downloaded from URL."
     )
-    file(REMOVE "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
+    file(REMOVE "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
   endif()
 endif()
 
 set(retry_number 5)
 
 message(STATUS "Downloading...
-   dst='/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
+   dst='/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip'
    timeout='none'
    inactivity timeout='none'"
 )
@@ -126,7 +126,7 @@ foreach(i RANGE ${retry_number})
 
       file(
         DOWNLOAD
-        "${url}" "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip"
+        "${url}" "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip"
         SHOW_PROGRESS
         # no TIMEOUT
         # no INACTIVITY_TIMEOUT
@@ -143,7 +143,7 @@ foreach(i RANGE ${retry_number})
         check_file_hash(has_hash hash_is_good)
         if(has_hash AND NOT hash_is_good)
           message(STATUS "Hash mismatch, removing...")
-          file(REMOVE "/Users/dsert/Documents/Documents - Deniz's Macbook/MIT Semesters/Spring 2023/6.5060 - Algorithm Engineering/6.506-project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
+          file(REMOVE "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/_deps/googletest-subbuild/googletest-populate-prefix/src/03597a01ee50ed33e9dfd640b249b4be3799d395.zip")
         else()
           message(STATUS "Downloading... done")
           return()
