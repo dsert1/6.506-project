@@ -3,7 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/normal_perf.dir/normal_perf.cc.o.d"
   "normal_perf"
   "normal_perf.pdb"
-  "normal_perf[1]_tests.cmake"
 )
 
 # Per-language clean rules from dependency scanning.

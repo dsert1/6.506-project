@@ -1,4 +1,5 @@
 /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles/normal_perf.dir
+/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles/graveyard_perf.dir
 /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles/test.dir
 /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles/edit_cache.dir
 /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles/rebuild_cache.dir

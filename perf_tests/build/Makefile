@@ -185,6 +185,19 @@ normal_perf/fast:
 .PHONY : normal_perf/fast
 
 #=============================================================================
+# Target rules for targets named graveyard_perf
+
+# Build rule for target.
+graveyard_perf: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 graveyard_perf
+.PHONY : graveyard_perf
+
+# fast build rule for target.
+graveyard_perf/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/build
+.PHONY : graveyard_perf/fast
+
+#=============================================================================
 # Target rules for targets named gmock
 
 # Build rule for target.
@@ -262,6 +275,30 @@ QuotientFilterGraveyard/fast:
 	$(MAKE) $(MAKESILENT) -f qfg_build/CMakeFiles/QuotientFilterGraveyard.dir/build.make qfg_build/CMakeFiles/QuotientFilterGraveyard.dir/build
 .PHONY : QuotientFilterGraveyard/fast
 
+graveyard_perf.o: graveyard_perf.cc.o
+.PHONY : graveyard_perf.o
+
+# target to build an object file
+graveyard_perf.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/graveyard_perf.cc.o
+.PHONY : graveyard_perf.cc.o
+
+graveyard_perf.i: graveyard_perf.cc.i
+.PHONY : graveyard_perf.i
+
+# target to preprocess a source file
+graveyard_perf.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/graveyard_perf.cc.i
+.PHONY : graveyard_perf.cc.i
+
+graveyard_perf.s: graveyard_perf.cc.s
+.PHONY : graveyard_perf.s
+
+# target to generate assembly for a file
+graveyard_perf.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/graveyard_perf.cc.s
+.PHONY : graveyard_perf.cc.s
+
 normal_perf.o: normal_perf.cc.o
 .PHONY : normal_perf.o
 
@@ -303,9 +340,13 @@ help:
 	@echo "... QuotientFilterGraveyard"
 	@echo "... gmock"
 	@echo "... gmock_main"
+	@echo "... graveyard_perf"
 	@echo "... gtest"
 	@echo "... gtest_main"
 	@echo "... normal_perf"
+	@echo "... graveyard_perf.o"
+	@echo "... graveyard_perf.i"
+	@echo "... graveyard_perf.s"
 	@echo "... normal_perf.o"
 	@echo "... normal_perf.i"
 	@echo "... normal_perf.s"

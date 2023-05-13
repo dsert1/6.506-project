@@ -4,7 +4,7 @@
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
-include("/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/normal_perf[1]_include.cmake")
+include("/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/graveyard_perf[1]_include.cmake")
 subdirs("_deps/googletest-build")
 subdirs("qf_build")
 subdirs("qfg_build")

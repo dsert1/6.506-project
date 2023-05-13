@@ -2,7 +2,11 @@
 // #include "quotient_filter_element.h"
 // #include <boost/python.hpp>
 #include <iostream>
-
+#include <bitset>
+#include <fstream>
+#include <chrono>
+#include <random>
+#pragma warning( disable: 4838 )
 int identity(int x) {
     return x;
 }
@@ -294,9 +298,67 @@ void test2() {
   }
 }
 
+int generate_random_number(int min, int max) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(min, max);
+  return dis(gen);
+}
+
+void test3(){
+  std::ofstream outfile("perfmixed_graveyard_graveyard.txt");
+
+  // Set the time duration of the test (in seconds)
+  const int test_duration = 10;
+
+  // Initialize variables for tracking the number of operations performed
+  int insert_count = 0;
+  int delete_count = 0;
+  int lookup_count = 0;
+
+  // Measure the time taken for the test
+  auto start_time = std::chrono::steady_clock::now();
+  while (true) {
+      auto current_time = std::chrono::steady_clock::now();
+      auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
+      if (elapsed_time >= test_duration) {
+        break;
+      }
+
+      // Generate a random operation to perform (insert, delete, or lookup)
+      int operation_type = generate_random_number(0, 2);
+        
+      QuotientFilterGraveyard qf = QuotientFilterGraveyard(16, &identity, between_runs);
+      // Perform the selected operation
+      if (operation_type == 0) { // Insert
+        std::cout << "INSERTING\n";
+        int test_bucket = generate_random_number(0, qf.table_size);
+        int test_remainder = generate_random_number(0, qf.table_size);
+        qf.insertElement(qfv(test_bucket, test_remainder));
+        insert_count++;
+      } else if (operation_type == 1) { // Delete
+        std::cout << "DELETING\n";
+        int test_bucket = generate_random_number(0, qf.table_size);
+        int test_remainder = generate_random_number(0, qf.table_size);
+        qf.deleteElement(qfv(test_bucket, test_remainder));
+        delete_count++;
+      } else { // Lookup
+        std::cout << "LOOKUP\n";
+        int test_bucket = generate_random_number(0, qf.table_size);
+        int test_remainder = generate_random_number(0, qf.table_size);
+        qf.query(qfv(test_bucket, test_remainder));
+        lookup_count++;
+      }
+      std::cout << "FINISHED ONE OP\n";
+  }
+
+  // Close the file
+  outfile.close();
+}
+
 int main() {
-    // test2();
-    std::hash<int> intHash;
-    uint64_t hashVal = intHash(40);
-    std::cout << hashVal << "\n";
+    test3();
+    // std::hash<int> intHash;
+    // uint64_t hashVal = intHash(40);
+    // std::cout << hashVal << "\n";
 }

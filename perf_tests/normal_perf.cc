@@ -29,7 +29,7 @@ class QuotientFilterTest : public ::testing::Test {
     QuotientFilter* qf; 
 
     void SetUp() override {
-      qf = new QuotientFilter(4, &identity);
+      qf = new QuotientFilter(28, &identity);
     }
 
     // void TearDown() override {}
@@ -46,22 +46,28 @@ TEST_F(QuotientFilterTest , Perf5) {
   // Open output file
   std::ofstream outfile("perf5_lookup_times.txt");
 
-
-
   // Calculate the number of elements to insert until the filter is 5% filled
   const int filter_capacity = qf->table_size;
   const int fill_limit = filter_capacity * 0.05;
 
-  // Insert elements until the filter is 5% filled
+  int numbersToInsert[fill_limit];
   for (int i = 0; i < fill_limit; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
     int test_remainder = generate_random_number(0, qf->table_size);
-    qf->insertElement(qfv(test_bucket, test_remainder));
+    numbersToInsert[i] = qfv(test_bucket, test_remainder);
   }
+
+  // Insert elements until the filter is 5% filled
+  auto start_inserts = std::chrono::steady_clock::now();
+  for (int i = 0; i < fill_limit; i++) {
+    qf->insertElement(numbersToInsert[i]);
+  }
+  auto end_inserts = std::chrono::steady_clock::now();
+  outfile << "Inserting : " << fill_limit << "numbers took" << uniform_random_lookup_time << " microseconds" << std::endl;
 
   // Measure the time taken for uniform random lookups
   auto start_uniform_random_lookup = std::chrono::steady_clock::now();
-  const int uniform_random_lookup_count = 10000;
+  const int uniform_random_lookup_count = 100000;
   for (int i = 0; i < uniform_random_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
     int test_remainder = generate_random_number(0, qf->table_size);

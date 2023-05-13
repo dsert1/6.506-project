@@ -21,21 +21,28 @@ add_subdirectory(../quotient_filter_graveyard_hashing qfg_build)
 add_executable(
   normal_perf
   $<TARGET_OBJECTS:QuotientFilter>
-  $<TARGET_OBJECTS:QuotientFilterGraveyard>
   normal_perf.cc
+)
+
+add_executable(
   graveyard_perf
+  $<TARGET_OBJECTS:QuotientFilterGraveyard>
   graveyard_perf.cc
 )
+
 target_link_libraries(
   normal_perf
   QuotientFilter
-  QuotientFilterGraveyard
+  GTest::gtest_main
+)
+
+target_link_libraries(
   graveyard_perf
+  QuotientFilterGraveyard
   GTest::gtest_main
 )
 
 
-
 include(GoogleTest)
-gtest_discover_tests(normal_perf)
+# gtest_discover_tests(normal_perf)
 gtest_discover_tests(graveyard_perf)

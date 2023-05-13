@@ -64,6 +64,7 @@ CMAKE_BINARY_DIR = /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build
 
 # The main recursive "all" target.
 all: CMakeFiles/normal_perf.dir/all
+all: CMakeFiles/graveyard_perf.dir/all
 all: _deps/googletest-build/all
 all: qf_build/all
 all: qfg_build/all
@@ -77,6 +78,7 @@ preinstall: qfg_build/preinstall
 
 # The main recursive "clean" target.
 clean: CMakeFiles/normal_perf.dir/clean
+clean: CMakeFiles/graveyard_perf.dir/clean
 clean: _deps/googletest-build/clean
 clean: qf_build/clean
 clean: qfg_build/clean
@@ -172,7 +174,7 @@ CMakeFiles/normal_perf.dir/all: _deps/googletest-build/googletest/CMakeFiles/gte
 CMakeFiles/normal_perf.dir/all: qf_build/CMakeFiles/QuotientFilter.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/normal_perf.dir/build.make CMakeFiles/normal_perf.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/normal_perf.dir/build.make CMakeFiles/normal_perf.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=13,14 "Built target normal_perf"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=15,16 "Built target normal_perf"
 .PHONY : CMakeFiles/normal_perf.dir/all
 
 # Build rule for subdir invocation for target.
@@ -190,6 +192,34 @@ normal_perf: CMakeFiles/normal_perf.dir/rule
 CMakeFiles/normal_perf.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/normal_perf.dir/build.make CMakeFiles/normal_perf.dir/clean
 .PHONY : CMakeFiles/normal_perf.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/graveyard_perf.dir
+
+# All Build rule for target.
+CMakeFiles/graveyard_perf.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all
+CMakeFiles/graveyard_perf.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
+CMakeFiles/graveyard_perf.dir/all: qfg_build/CMakeFiles/QuotientFilterGraveyard.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=9,10 "Built target graveyard_perf"
+.PHONY : CMakeFiles/graveyard_perf.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/graveyard_perf.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles 8
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/graveyard_perf.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles 0
+.PHONY : CMakeFiles/graveyard_perf.dir/rule
+
+# Convenience name for target.
+graveyard_perf: CMakeFiles/graveyard_perf.dir/rule
+.PHONY : graveyard_perf
+
+# clean rule for target.
+CMakeFiles/graveyard_perf.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/graveyard_perf.dir/build.make CMakeFiles/graveyard_perf.dir/clean
+.PHONY : CMakeFiles/graveyard_perf.dir/clean
 
 #=============================================================================
 # Target rules for target _deps/googletest-build/googlemock/CMakeFiles/gmock.dir
@@ -251,7 +281,7 @@ _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/clean:
 _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all:
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=9,10 "Built target gtest"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=11,12 "Built target gtest"
 .PHONY : _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all
 
 # Build rule for subdir invocation for target.
@@ -277,7 +307,7 @@ _deps/googletest-build/googletest/CMakeFiles/gtest.dir/clean:
 _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all: _deps/googletest-build/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/depend
 	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=11,12 "Built target gtest_main"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/CMakeFiles --progress-num=13,14 "Built target gtest_main"
 .PHONY : _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/all
 
 # Build rule for subdir invocation for target.
