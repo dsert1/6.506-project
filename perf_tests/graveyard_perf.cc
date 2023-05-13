@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include "../quotient_filter_graveyard_hashing/quotient_filter_graveyard_hashing.h"
 #include <bitset>
+#include <fstream>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
@@ -48,6 +49,11 @@ int generate_random_number(int min, int max) {
 
 // Testing performance with uniform random lookups on a 5% filled element
 TEST_F(GraveyardFilterTest, Perf5) {
+  // Open output file
+  std::ofstream outfile("perf5_lookup_times_graveyard.txt");
+
+
+
   // Calculate the number of elements to insert until the filter is 5% filled
   const int filter_capacity = qf->metadata->max_size;
   const int fill_limit = filter_capacity * 0.05;
@@ -82,13 +88,26 @@ TEST_F(GraveyardFilterTest, Perf5) {
   auto end_successful_lookup = std::chrono::steady_clock::now();
   auto successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
 
+  // Write the values to the file
+  outfile << "Uniform random lookup time: " << uniform_random_lookup_time << " microseconds" << std::endl;
+  outfile << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
+
+
   // Print the time taken for uniform random lookups and successful lookups
   std::cout << "Uniform random lookup time: " << uniform_random_lookup_time << " microseconds" << std::endl;
   std::cout << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
+
+  // Close the file
+  outfile.close();
 }
 
 // Performance: to insert elements until 95% filled, then perform uniform random lookups and successful lookups
 TEST_F(GraveyardFilterTest, Perf95) {
+
+  // Open output file
+  std::ofstream outfile("perf95_lookup_times_graveyard.txt");
+
+
   // Calculate the number of elements to insert until the filter is 95% filled
   const int filter_capacity = qf->metadata->max_size;
   const int fill_limit = filter_capacity * 0.95;
@@ -123,13 +142,26 @@ TEST_F(GraveyardFilterTest, Perf95) {
   auto end_successful_lookup = std::chrono::steady_clock::now();
   auto successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
 
+  // Write the values to the file
+  outfile << "Uniform random lookup time: " << uniform_random_lookup_time << " microseconds" << std::endl;
+  outfile << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
+
+
   // Print the time taken for uniform random lookups and successful lookups
   std::cout << "Uniform random lookup time: " << uniform_random_lookup_time << " microseconds" << std::endl;
   std::cout << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
+
+  // Close the file
+  outfile.close();
 }
 
 // Performance: to perform a mix of inserts, deletes, and lookups for a fixed amount of time
 TEST_F(GraveyardFilterTest, PerfMixed) {
+  // Open output file
+  std::ofstream outfile("perfmixed_graveyard_graveyard.txt");
+
+
+
   // Set the time duration of the test (in seconds)
   const int test_duration = 10;
 
@@ -179,6 +211,14 @@ TEST_F(GraveyardFilterTest, PerfMixed) {
   std::cout << "Insert time: " << insert_time << " milliseconds" << std::endl;
   std::cout << "Delete time: " << delete_time << " milliseconds" << std::endl;
   std::cout << "Lookup time: " << lookup_time << " milliseconds" << std::endl;
+
+  // Print the time taken for each operation
+  std::cout << "Insert time: " << insert_time << " milliseconds" << std::endl;
+  std::cout << "Delete time: " << delete_time << " milliseconds" << std::endl;
+  std::cout << "Lookup time: " << lookup_time << " milliseconds" << std::endl;
+
+  // Close the file
+  outfile.close();
 }
 
 int main(int argc, char **argv) {
