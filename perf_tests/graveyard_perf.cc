@@ -2,6 +2,9 @@
 #include "../quotient_filter_graveyard_hashing/quotient_filter_graveyard_hashing.h"
 #include <bitset>
 #include <fstream>
+#include <iostream>
+#include <chrono>
+#include <random>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
@@ -55,13 +58,13 @@ TEST_F(GraveyardFilterTest, Perf5) {
 
 
   // Calculate the number of elements to insert until the filter is 5% filled
-  const int filter_capacity = qf->metadata->max_size;
+  const int filter_capacity = qf->table_size;
   const int fill_limit = filter_capacity * 0.05;
 
   // Insert elements until the filter is 5% filled
   for (int i = 0; i < fill_limit; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
   }
 
@@ -70,7 +73,7 @@ TEST_F(GraveyardFilterTest, Perf5) {
   const int uniform_random_lookup_count = 10000;
   for (int i = 0; i < uniform_random_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->query(qfv(test_bucket, test_remainder));
   }
   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
@@ -81,7 +84,7 @@ TEST_F(GraveyardFilterTest, Perf5) {
   const int successful_lookup_count = 10000;
   for (int i = 0; i < successful_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
     qf->query(qfv(test_bucket, test_remainder));
   }
@@ -109,13 +112,13 @@ TEST_F(GraveyardFilterTest, Perf95) {
 
 
   // Calculate the number of elements to insert until the filter is 95% filled
-  const int filter_capacity = qf->metadata->max_size;
+  const int filter_capacity = qf->table_size;
   const int fill_limit = filter_capacity * 0.95;
 
   // Insert elements until the filter is 95% filled
   for (int i = 0; i < fill_limit; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
   }
 
@@ -124,7 +127,7 @@ TEST_F(GraveyardFilterTest, Perf95) {
   const int uniform_random_lookup_count = 10000;
   for (int i = 0; i < uniform_random_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->query(qfv(test_bucket, test_remainder));
   }
   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
@@ -135,7 +138,7 @@ TEST_F(GraveyardFilterTest, Perf95) {
   const int successful_lookup_count = 10000;
   for (int i = 0; i < successful_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
     qf->query(qfv(test_bucket, test_remainder));
   }
@@ -184,18 +187,18 @@ TEST_F(GraveyardFilterTest, PerfMixed) {
 
     // Perform the selected operation
     if (operation_type == 0) { // Insert
-      int test_bucket = generate_random_number(0, qf->metadata->max_size - 1);
-      int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+      int test_bucket = generate_random_number(0, qf->table_size);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->insertElement(qfv(test_bucket, test_remainder));
       insert_count++;
     } else if (operation_type == 1) { // Delete
-      int test_bucket = generate_random_number(0, qf->metadata->max_size - 1);
-      int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+      int test_bucket = generate_random_number(0, qf->table_size);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->deleteElement(qfv(test_bucket, test_remainder));
       delete_count++;
     } else { // Lookup
-      int test_bucket = generate_random_number(0, qf->metadata->max_size - 1);
-      int test_remainder = generate_random_number(0, qf->metadata->range - 1);
+      int test_bucket = generate_random_number(0, qf->table_size);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->query(qfv(test_bucket, test_remainder));
       lookup_count++;
     }
