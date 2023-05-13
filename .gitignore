@@ -36,3 +36,4 @@
 
 # testing
 tests/build
+perf_tests/build
