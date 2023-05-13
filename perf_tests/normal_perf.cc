@@ -55,7 +55,7 @@ TEST_F(QuotientFilterTest , Perf5) {
   // Insert elements until the filter is 5% filled
   for (int i = 0; i < fill_limit; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
   }
 
@@ -64,7 +64,7 @@ TEST_F(QuotientFilterTest , Perf5) {
   const int uniform_random_lookup_count = 10000;
   for (int i = 0; i < uniform_random_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->query(qfv(test_bucket, test_remainder));
   }
   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
@@ -75,7 +75,7 @@ TEST_F(QuotientFilterTest , Perf5) {
   const int successful_lookup_count = 10000;
   for (int i = 0; i < successful_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
     qf->query(qfv(test_bucket, test_remainder));
   }
@@ -109,7 +109,7 @@ TEST_F(QuotientFilterTest, Perf95) {
   // Insert elements until the filter is 95% filled
   for (int i = 0; i < fill_limit; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
   }
 
@@ -118,7 +118,7 @@ TEST_F(QuotientFilterTest, Perf95) {
   const int uniform_random_lookup_count = 10000;
   for (int i = 0; i < uniform_random_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->query(qfv(test_bucket, test_remainder));
   }
   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
@@ -129,7 +129,7 @@ TEST_F(QuotientFilterTest, Perf95) {
   const int successful_lookup_count = 10000;
   for (int i = 0; i < successful_lookup_count; i++) {
     int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size - 1);
+    int test_remainder = generate_random_number(0, qf->table_size);
     qf->insertElement(qfv(test_bucket, test_remainder));
     qf->query(qfv(test_bucket, test_remainder));
   }
@@ -179,17 +179,17 @@ TEST_F(QuotientFilterTest, PerfMixed) {
     // Perform the selected operation
     if (operation_type == 0) { // Insert
       int test_bucket = generate_random_number(0, qf->table_size);
-      int test_remainder = generate_random_number(0, qf->table_size - 1);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->insertElement(qfv(test_bucket, test_remainder));
       insert_count++;
     } else if (operation_type == 1) { // Delete
       int test_bucket = generate_random_number(0, qf->table_size);
-      int test_remainder = generate_random_number(0, qf->table_size - 1);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->deleteElement(qfv(test_bucket, test_remainder));
       delete_count++;
     } else { // Lookup
       int test_bucket = generate_random_number(0, qf->table_size);
-      int test_remainder = generate_random_number(0, qf->table_size - 1);
+      int test_remainder = generate_random_number(0, qf->table_size);
       qf->query(qfv(test_bucket, test_remainder));
       lookup_count++;
     }
