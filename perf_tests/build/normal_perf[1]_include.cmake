@@ -1,5 +1,0 @@
-if(EXISTS "/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/normal_perf[1]_tests.cmake")
-  include("/Users/isabellequaye/Desktop/6.5060_project/perf_tests/build/normal_perf[1]_tests.cmake")
-else()
-  add_test(normal_perf_NOT_BUILT normal_perf_NOT_BUILT)
-endif()
