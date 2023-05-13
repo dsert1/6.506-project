@@ -101,7 +101,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
 
     //Perform redistribution if necessary
     this->opCount +=1;
-    // redistribute();
+    redistribute();
 }
 
 bool QuotientFilterGraveyard::isEmptySlot(int slot, int bucket) {
@@ -170,7 +170,7 @@ void QuotientFilterGraveyard::deleteElement(int value) {
         }
         this->opCount +=1;
         //Perform redistribution if necessary
-        // redistribute();
+        redistribute();
     }
 }
 
