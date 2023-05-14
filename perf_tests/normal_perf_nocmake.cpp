@@ -191,81 +191,81 @@ void perfTestOne(QuotientFilter *qf) {
 // }
 
 // TEST_F(QuotientFilterTest, PerfMixed) {
-  int duration = 60;
-  double max_fullness = 0.95;
-  // Open output file
-  std::ofstream outfile("perf3.txt");
+//   int duration = 60;
+//   double max_fullness = 0.95;
+//   // Open output file
+//   std::ofstream outfile("perf3.txt");
 
-  float currentFullness = 0.05;
-  while (currentFullness <= max_fullness) {
-    // Calculate the number of elements to insert until the filter is 5% filled
-    const int filter_capacity = qf->table_size;
-    const int fill_limit = filter_capacity * 0.1;
-    const int delete_limit = filter_capacity * 0.05;
-    int numbersToInsert[fill_limit];
+//   float currentFullness = 0.05;
+//   while (currentFullness <= max_fullness) {
+//     // Calculate the number of elements to insert until the filter is 5% filled
+//     const int filter_capacity = qf->table_size;
+//     const int fill_limit = filter_capacity * 0.1;
+//     const int delete_limit = filter_capacity * 0.05;
+//     int numbersToInsert[fill_limit];
 
-    // generates numbers to insert into filter
-    for (int i = 0; i < fill_limit; i++) {
-      numbersToInsert[i] = generate_random_number(0, qf->table_size);
-    }
+//     // generates numbers to insert into filter
+//     for (int i = 0; i < fill_limit; i++) {
+//       numbersToInsert[i] = generate_random_number(0, qf->table_size);
+//     }
 
-    // Insert elements until the filter is 5% filled
-    auto start_inserts = std::chrono::steady_clock::now();
-    for (int i = 0; i < fill_limit; i++) {
-      qf->insertElement(numbersToInsert[i]);
-    }
-    auto end_inserts = std::chrono::steady_clock::now();
-    auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+//     // Insert elements until the filter is 5% filled
+//     auto start_inserts = std::chrono::steady_clock::now();
+//     for (int i = 0; i < fill_limit; i++) {
+//       qf->insertElement(numbersToInsert[i]);
+//     }
+//     auto end_inserts = std::chrono::steady_clock::now();
+//     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
+//     outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
 
 
-    // Delete elements until the filter is 5% filled
-    auto start_deletes = std::chrono::steady_clock::now();
-    for (int i = 0; i < delete_limit; i++) {
-      qf->deleteElement(numbersToInsert[fill_limit - i - 1]);
-    }
+//     // Delete elements until the filter is 5% filled
+//     auto start_deletes = std::chrono::steady_clock::now();
+//     for (int i = 0; i < delete_limit; i++) {
+//       qf->deleteElement(numbersToInsert[fill_limit - i - 1]);
+//     }
 
-    auto end_deletes = std::chrono::steady_clock::now();
-    auto delete_time = std::chrono::duration_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
-    outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
+//     auto end_deletes = std::chrono::steady_clock::now();
+//     auto delete_time = std::chrono::duration_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
+//     outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
 
-    // perform queries for 60%
-    auto start = std::chrono::high_resolution_clock::now();
-    auto end = start + std::chrono::seconds(duration);
+//     // perform queries for 60%
+//     auto start = std::chrono::high_resolution_clock::now();
+//     auto end = start + std::chrono::seconds(duration);
     
 
-    int counter = 0;
-    while (std::chrono::high_resolution_clock::now() < end) {
-        qf->query(generate_random_number(0, qf->table_size));
-        counter++;
-    }
+//     int counter = 0;
+//     while (std::chrono::high_resolution_clock::now() < end) {
+//         qf->query(generate_random_number(0, qf->table_size));
+//         counter++;
+//     }
 
-    // Write the random lookup values to file
-    outfile << " " << counter << " random queries in 60 seconds" << std::endl;
+//     // Write the random lookup values to file
+//     outfile << " " << counter << " random queries in 60 seconds" << std::endl;
 
-    // list of random values we insert
+//     // list of random values we insert
 
-    // perform queries for 60%
-    auto start2 = std::chrono::high_resolution_clock::now();
-    auto end2 = start2 + std::chrono::seconds(duration);
+//     // perform queries for 60%
+//     auto start2 = std::chrono::high_resolution_clock::now();
+//     auto end2 = start2 + std::chrono::seconds(duration);
     
 
-    int counter2 = 0;
-    while (std::chrono::high_resolution_clock::now() < end2) {
-        int randomValueToQuery = numbersToInsert[generate_random_number(0, fill_limit / 2)];
-        qf->query(randomValueToQuery);
-        counter2++;
-    }
+//     int counter2 = 0;
+//     while (std::chrono::high_resolution_clock::now() < end2) {
+//         int randomValueToQuery = numbersToInsert[generate_random_number(0, fill_limit / 2)];
+//         qf->query(randomValueToQuery);
+//         counter2++;
+//     }
 
-    // Write the random lookup values to file
-    outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
-    currentFullness += 0.05;
-  }
+//     // Write the random lookup values to file
+//     outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
+//     currentFullness += 0.05;
+//   }
   
 
-  // Close the file
-  outfile.close();
-}
+//   // Close the file
+//   outfile.close();
+// }
 
 int main(int argc, char **argv) {
     QuotientFilter qf = QuotientFilter(5, &identity);
