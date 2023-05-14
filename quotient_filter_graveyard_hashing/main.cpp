@@ -251,39 +251,16 @@ void testEncode() {
 }
 
 void test2() {
-  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, between_runs);
-  int first_bucket = 3;
-  int remainders[] = {103, 194, 128, 349, 301, 392};
-  int b_remainder = 222;
-  int d_remainder = 444;
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, evenly_distribute);
 
-  int ba = first_bucket;
-  int bb = (first_bucket + 1) % 16;
-  int bc = (first_bucket + 2) % 16;
-  int bd = (first_bucket + 3) % 16;
-  int buckets[] = {ba, ba, ba, bc, bc, bc};
+  int starting_bucket = 13;
+  int remainders[] = {12, 323, 5942, 102, 3, 6};
 
-  int b[8];
-  for (int i = 0; i < 8; i ++) {
-    if (i < 6) {
-      qf.insertElement(qfv(buckets[i], remainders[i]));
-    }
-    b[i] = (first_bucket + i) % 16;
-  }
-
-  std::cout << "SIZE: " << qf.size << "\n";
-  qf.insertElement(qfv(bb, b_remainder));
-  std::cout << "FINDING: " << qfv(bb, b_remainder) << ". GOT: " <<  qf.query(qfv(bb, b_remainder)) << "\n";
-  qf.insertElement(qfv(bd, d_remainder));
-  std::cout << "FINDING: " << qfv(bd, d_remainder) << ". GOT: " <<  qf.query(qfv(bd, d_remainder)) << "\n";
   for (int i = 0; i < 6; i ++) {
-    qf.deleteElement(qfv(buckets[i], remainders[i]));
+    qf.insertElement(qfv((starting_bucket + i) % 16, remainders[i]));
   }
 
-  std::cout << "FINDING: " << qfv(bb, b_remainder) << ". GOT: " <<  qf.query(qfv(bb, b_remainder)) << "\n";
-  std::cout << "FINDING: " << qfv(bd, d_remainder) << ". GOT: " <<  qf.query(qfv(bd, d_remainder)) << "\n";
-
-  for (int i=3; i<11; i++) {
+  for (int i=0; i<6; i++) {
     std::cout<< "PRINTING OUT INFO AT: " << i << "\n";
     if (qf.table[i].isTombstone) {
       PredSucPair res = qf.decodeValue(qf.table[i].value);
@@ -305,59 +282,8 @@ int generate_random_number(int min, int max) {
   return dis(gen);
 }
 
-void test3(){
-  std::ofstream outfile("perfmixed_graveyard_graveyard.txt");
-
-  // Set the time duration of the test (in seconds)
-  const int test_duration = 10;
-
-  // Initialize variables for tracking the number of operations performed
-  int insert_count = 0;
-  int delete_count = 0;
-  int lookup_count = 0;
-
-  // Measure the time taken for the test
-  auto start_time = std::chrono::steady_clock::now();
-  while (true) {
-      auto current_time = std::chrono::steady_clock::now();
-      auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
-      if (elapsed_time >= test_duration) {
-        break;
-      }
-
-      // Generate a random operation to perform (insert, delete, or lookup)
-      int operation_type = generate_random_number(0, 2);
-        
-      QuotientFilterGraveyard qf = QuotientFilterGraveyard(16, &identity, between_runs);
-      // Perform the selected operation
-      if (operation_type == 0) { // Insert
-        std::cout << "INSERTING\n";
-        int test_bucket = generate_random_number(0, qf.table_size);
-        int test_remainder = generate_random_number(0, qf.table_size);
-        qf.insertElement(qfv(test_bucket, test_remainder));
-        insert_count++;
-      } else if (operation_type == 1) { // Delete
-        std::cout << "DELETING\n";
-        int test_bucket = generate_random_number(0, qf.table_size);
-        int test_remainder = generate_random_number(0, qf.table_size);
-        qf.deleteElement(qfv(test_bucket, test_remainder));
-        delete_count++;
-      } else { // Lookup
-        std::cout << "LOOKUP\n";
-        int test_bucket = generate_random_number(0, qf.table_size);
-        int test_remainder = generate_random_number(0, qf.table_size);
-        qf.query(qfv(test_bucket, test_remainder));
-        lookup_count++;
-      }
-      std::cout << "FINISHED ONE OP\n";
-  }
-
-  // Close the file
-  outfile.close();
-}
-
 int main() {
-    test3();
+    test2();
     // std::hash<int> intHash;
     // uint64_t hashVal = intHash(40);
     // std::cout << hashVal << "\n";
