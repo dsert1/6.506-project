@@ -5,6 +5,7 @@
 #include <chrono>
 #include <random>
 #include <fstream>
+#include <thread>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
@@ -24,23 +25,12 @@ int generate_random_number(int min, int max) {
 bool validateTable;
 
 // Fixture classes
-class QuotientFilterTestLarge : public ::testing::Test {
+class QuotientFilterTest : public ::testing::Test {
   protected:
     QuotientFilter* qf; 
 
     void SetUp() override {
-      qf = new QuotientFilter(20, &identity);
-    }
-
-    // void TearDown() override {}
-};
-
-class QuotientFilterTestSmall : public ::testing::Test {
-  protected:
-    QuotientFilter* qf; 
-
-    void SetUp() override {
-      qf = new QuotientFilter(10, &identity);
+      qf = new QuotientFilter(5, &identity);
     }
 
     // void TearDown() override {}
@@ -54,70 +44,74 @@ int qfvSmall(int q, int r) {
 
 // Builds a value to insert into the filter, based on q and r
 // q should be less than 16
-int qfvLarge(int q, int r) {
+int qfv(int q, int r) {
   return ((q & 28) << 4) + r;
 }
 
 // Testing performance with uniform random lookups on a 5% filled element
-TEST_F(QuotientFilterTestLarge , Perf5) {
+TEST_F(QuotientFilterTest, Perf5) {
+  int duration = 1;
+  double max_fullness = 0.2;
   // Open output file
   std::ofstream outfile("perf5_lookup_times.txt");
 
-  // Calculate the number of elements to insert until the filter is 5% filled
-  const int filter_capacity = qf->table_size;
-  const int fill_limit = filter_capacity * 0.05;
-  int remainder_max = (1 << qf->r);
-  int numbersToInsert[fill_limit];
+  float currentFullness = 0.05;
+  while (currentFullness < max_fullness) {
+    // Calculate the number of elements to insert until the filter is 5% filled
+    const int filter_capacity = qf->table_size;
+    const int fill_limit = filter_capacity * 0.05;
+    int remainder_max = (1 << qf->r);
+    int numbersToInsert[fill_limit];
 
-  for (int i = 0; i < fill_limit; i++) {
-    int test_bucket = generate_random_number(0, qf->table_size);
-    int test_remainder = generate_random_number(0, remainder_max);
-    numbersToInsert[i] = qfvLarge(test_bucket, test_remainder);
+    // generates numbers to insert into filter
+    for (int i = 0; i < fill_limit; i++) {
+      int test_bucket = generate_random_number(0, qf->table_size);
+      int test_remainder = generate_random_number(0, remainder_max);
+      numbersToInsert[i] = qfv(test_bucket, test_remainder);
+    }
+
+    // Insert elements until the filter is 5% filled
+    int start_inserts = std::chrono::steady_clock::now();
+    for (int i = 0; i < fill_limit; i++) {
+      qf->insertElement(numbersToInsert[i]);
+    }
+    int end_inserts = std::chrono::steady_clock::now();
+    int insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts);
+    outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+
+    // perform queries for 60%
+    int start = std::chrono::high_resolution_clock::now();
+    int end = start + std::chrono::seconds(duration);
+    
+
+    int counter = 0;
+    while (std::chrono::high_resolution_clock::now() < end) {
+        qf->query(generate_random_number(0, qf->table_size));
+        counter++;
+    }
+
+    // Write the random lookup values to file
+    outfile << " " << counter << " random queries in 60 seconds" << std::endl;
+
+    // list of random values we insert
+
+    // perform queries for 60%
+    int start2 = std::chrono::high_resolution_clock::now();
+    int end2 = start2 + std::chrono::seconds(duration);
+    
+
+    int counter2 = 0;
+    while (std::chrono::high_resolution_clock::now() < end2) {
+        int randomValueToQuery = numbersToInsert[generate_random_number(0, fill_limit)];
+        qf->query(randomValueToQuery);
+        counter2++;
+    }
+
+    // Write the random lookup values to file
+    outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
+    currentFullness += 0.05;
   }
-
-  // Insert elements until the filter is 5% filled
-  auto start_inserts = std::chrono::steady_clock::now();
-  for (int i = 0; i < fill_limit; i++) {
-    qf->insertElement(numbersToInsert[i]);
-  }
-  auto end_inserts = std::chrono::steady_clock::now();
-  auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-  outfile << "Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
-
-  std::cout << "Insertion complete\n";
-  //Generate query items
-  const int uniform_random_lookup_count = 100000;
-  int numbersToQuery[uniform_random_lookup_count];
-  for (int i = 0; i < uniform_random_lookup_count; i++) {
-    int test_bucket = generate_random_number(0, qf->table_size);
-    int test_remainder = generate_random_number(0, remainder_max);
-    numbersToQuery[i] = qfvLarge(test_bucket, test_remainder);
-  }
-
-  // Measure the time taken for uniform random lookups
-  auto start_uniform_random_lookup = std::chrono::steady_clock::now();
-  for (int i = 0; i < uniform_random_lookup_count; i++) {
-    qf->query(numbersToQuery[i]);
-  }
-  auto end_uniform_random_lookup = std::chrono::steady_clock::now();
-  auto uniform_random_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_uniform_random_lookup - start_uniform_random_lookup).count();
-
-  std::cout << "Query complete\n";
-  //Measure the time taken for successful lookups
-  auto start_successful_lookup = std::chrono::steady_clock::now();
-  const int successful_lookup_count = 10000;
-  for (int i = 0; i < successful_lookup_count; i++) {
-    int test_bucket = generate_random_number(0, filter_capacity - 1);
-    int test_remainder = generate_random_number(0, qf->table_size);
-    qf->insertElement(qfvLarge(test_bucket, test_remainder));
-    qf->query(qfvLarge(test_bucket, test_remainder));
-  }
-  auto end_successful_lookup = std::chrono::steady_clock::now();
-  auto successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
-
-  // Write the values to the file
-  outfile << "Lookups :" << uniform_random_lookup_count << " " << uniform_random_lookup_time << " microseconds" << std::endl;
-  // outfile << "Successful lookup time: " << successful_lookup_time << " microseconds" << std::endl;
+  
 
   // Close the file
   outfile.close();
@@ -140,26 +134,26 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //   }
 
 //   // Insert elements until the filter is 5% filled
-//   auto start_inserts = std::chrono::steady_clock::now();
+//   int start_inserts = std::chrono::steady_clock::now();
 //   for (int i = 0; i < fill_limit; i++) {
 //     qf->insertElement(numbersToInsert[i]);
 //   }
-//   auto end_inserts = std::chrono::steady_clock::now();
+//   int end_inserts = std::chrono::steady_clock::now();
 //   outfile << "Inserting : " << fill_limit << "numbers took" << uniform_random_lookup_time << " microseconds" << std::endl;
 
 //   // Measure the time taken for uniform random lookups
-//   auto start_uniform_random_lookup = std::chrono::steady_clock::now();
+//   int start_uniform_random_lookup = std::chrono::steady_clock::now();
 //   const int uniform_random_lookup_count = 100000;
 //   for (int i = 0; i < uniform_random_lookup_count; i++) {
 //     int test_bucket = generate_random_number(0, filter_capacity - 1);
 //     int test_remainder = generate_random_number(0, qf->table_size);
 //     qf->query(qfv(test_bucket, test_remainder));
 //   }
-//   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
-//   auto uniform_random_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_uniform_random_lookup - start_uniform_random_lookup).count();
+//   int end_uniform_random_lookup = std::chrono::steady_clock::now();
+//   int uniform_random_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_uniform_random_lookup - start_uniform_random_lookup).count();
 
 //   // Measure the time taken for successful lookups
-//   auto start_successful_lookup = std::chrono::steady_clock::now();
+//   int start_successful_lookup = std::chrono::steady_clock::now();
 //   const int successful_lookup_count = 10000;
 //   for (int i = 0; i < successful_lookup_count; i++) {
 //     int test_bucket = generate_random_number(0, filter_capacity - 1);
@@ -167,8 +161,8 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //     qf->insertElement(qfv(test_bucket, test_remainder));
 //     qf->query(qfv(test_bucket, test_remainder));
 //   }
-//   auto end_successful_lookup = std::chrono::steady_clock::now();
-//   auto successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
+//   int end_successful_lookup = std::chrono::steady_clock::now();
+//   int successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
 
 //   // Write the values to the file
 //   outfile << "Uniform random lookup time: " << uniform_random_lookup_time << " microseconds" << std::endl;
@@ -202,18 +196,18 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //   }
 
 //   // Measure the time taken for uniform random lookups
-//   auto start_uniform_random_lookup = std::chrono::steady_clock::now();
+//   int start_uniform_random_lookup = std::chrono::steady_clock::now();
 //   const int uniform_random_lookup_count = 10000;
 //   for (int i = 0; i < uniform_random_lookup_count; i++) {
 //     int test_bucket = generate_random_number(0, filter_capacity - 1);
 //     int test_remainder = generate_random_number(0, qf->table_size);
 //     qf->query(qfv(test_bucket, test_remainder));
 //   }
-//   auto end_uniform_random_lookup = std::chrono::steady_clock::now();
-//   auto uniform_random_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_uniform_random_lookup - start_uniform_random_lookup).count();
+//   int end_uniform_random_lookup = std::chrono::steady_clock::now();
+//   int uniform_random_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_uniform_random_lookup - start_uniform_random_lookup).count();
 
 //   // Measure the time taken for successful lookups
-//   auto start_successful_lookup = std::chrono::steady_clock::now();
+//   int start_successful_lookup = std::chrono::steady_clock::now();
 //   const int successful_lookup_count = 10000;
 //   for (int i = 0; i < successful_lookup_count; i++) {
 //     int test_bucket = generate_random_number(0, filter_capacity - 1);
@@ -221,8 +215,8 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //     qf->insertElement(qfv(test_bucket, test_remainder));
 //     qf->query(qfv(test_bucket, test_remainder));
 //   }
-//   auto end_successful_lookup = std::chrono::steady_clock::now();
-//   auto successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
+//   int end_successful_lookup = std::chrono::steady_clock::now();
+//   int successful_lookup_time = std::chrono::duration_cast<std::chrono::microseconds>(end_successful_lookup - start_successful_lookup).count();
 
 
 //   // Write the values to the file
@@ -253,10 +247,10 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //   int lookup_count = 0;
 
 //   // Measure the time taken for the test
-//   auto start_time = std::chrono::steady_clock::now();
+//   int start_time = std::chrono::steady_clock::now();
 //   while (true) {
-//     auto current_time = std::chrono::steady_clock::now();
-//     auto elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
+//     int current_time = std::chrono::steady_clock::now();
+//     int elapsed_time = std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count();
 //     if (elapsed_time >= test_duration) {
 //       break;
 //     }
@@ -284,10 +278,10 @@ TEST_F(QuotientFilterTestLarge , Perf5) {
 //   }
 
 //   // Measure the time taken for each operation
-//   auto total_operation_count = insert_count + delete_count + lookup_count;
-//   auto insert_time = (double)insert_count / total_operation_count * test_duration * 1000;
-//   auto delete_time = (double)delete_count / total_operation_count * test_duration * 1000;
-//   auto lookup_time = (double)lookup_count / total_operation_count * test_duration * 1000;
+//   int total_operation_count = insert_count + delete_count + lookup_count;
+//   int insert_time = (double)insert_count / total_operation_count * test_duration * 1000;
+//   int delete_time = (double)delete_count / total_operation_count * test_duration * 1000;
+//   int lookup_time = (double)lookup_count / total_operation_count * test_duration * 1000;
 
 //   // Print the time taken for each operation
 //   std::cout << "Insert time: " << insert_time << " milliseconds" << std::endl;
