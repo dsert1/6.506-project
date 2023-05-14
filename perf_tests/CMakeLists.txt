@@ -44,5 +44,5 @@ target_link_libraries(
 
 
 include(GoogleTest)
-# gtest_discover_tests(normal_perf)
-gtest_discover_tests(graveyard_perf)
+gtest_discover_tests(normal_perf)
+# gtest_discover_tests(graveyard_perf)
