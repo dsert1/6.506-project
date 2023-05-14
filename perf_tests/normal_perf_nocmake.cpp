@@ -1,11 +1,11 @@
 #include "../quotient_filter/quotient_filter.h"
-#include <bitset>
-#include <iostream>
+// #include <bitset>
+// #include <iostream>
 #include <chrono>
 #include <random>
 #include <fstream>
-#include <thread>
-#include <functional>
+// #include <thread>
+// #include <functional>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
@@ -52,8 +52,8 @@ int qfv(int q, int r) {
 
 // Testing performance with uniform random lookups on a 5% filled element
 void perfTestOne(QuotientFilter *qf) {
-  int duration = 60;
-  double max_fullness = 0.95;
+  int duration = 1;
+  double max_fullness = 0.2;
   // Open output file
   std::ofstream outfile("perfInsert_refactored.txt");
 
