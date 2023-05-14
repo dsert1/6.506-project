@@ -24,7 +24,7 @@ void QuotientFilter::insertElement(int value) {
     }
 
     FingerprintPair f = fingerprintQuotient(value);
-    std::cout << "[debug] insert - fq: " << f.fq << " fr: " << f.fr << "\n";
+    // std::cout << "[debug] insert - fq: " << f.fq << " fr: " << f.fr << "\n";
     bool originally_occupied = table[f.fq].is_occupied;
 
     // Set occupied bit to 1
@@ -32,7 +32,7 @@ void QuotientFilter::insertElement(int value) {
 
     // Find the beginning of the run
     int target_slot = findRunStartForBucket(f.fq);
-    std::cout << "run start: " << target_slot << "\n";
+    // std::cout << "run start: " << target_slot << "\n";
 
     // Scan to end of run
     if (originally_occupied) {
@@ -81,7 +81,7 @@ void QuotientFilter::deleteElement(int value) {
 
         int s = findRunStartForBucket(f.fq);
         int startOfRun = s;
-        std::cout << "del run start: " << startOfRun << '\n';
+        // std::cout << "del run start: " << startOfRun << '\n';
         int deletePointIndex;
         int deletePointBucket;
         bool found = false;
@@ -104,8 +104,8 @@ void QuotientFilter::deleteElement(int value) {
             // Checks if the deleted element was at the beginning of a run
             bool setToRunHead = (nextItem == deletePointIndex);
 
-            std::cout << "startIndexOfShifting: " << deletePointIndex << " beforeStart: " << -1%table_size << " startBucketOfShifting: " << f.fq << "\n";
-            std:: cout << "HERE" << "\n";
+            // std::cout << "startIndexOfShifting: " << deletePointIndex << " beforeStart: " << -1%table_size << " startBucketOfShifting: " << f.fq << "\n";
+            // std:: cout << "HERE" << "\n";
             deletePointBucket = f.fq;
             shiftElementsDown(deletePointIndex, deletePointBucket);
             if (setToRunHead) {
@@ -127,7 +127,7 @@ void QuotientFilter::advanceToNextRun(int * s) {
 }
 
 void QuotientFilter::advanceToNextBucket(int * b) {
-    std::cout << "b before " << *b << "\n";
+    // std::cout << "b before " << *b << "\n";
     do {
         *b = (*(b) + 1)%table_size;
     }
@@ -237,13 +237,13 @@ void QuotientFilter::shiftElementsDown(int startIndex, int startBucket) {
     int currBucket = startBucket;
     int prevPointer = (currPointer - 1 + table_size) % table_size;
     while (table[currPointer].is_shifted) {
-        std::cout << "currPointer: " << currPointer << " currBucket: " << currBucket << " prevPointer: " << prevPointer <<"\n";
+        // std::cout << "currPointer: " << currPointer << " currBucket: " << currBucket << " prevPointer: " << prevPointer <<"\n";
         //If within the same run, shift value over only
         table[prevPointer].value = table[currPointer].value;
 
         //If encounter different run, check that we haven't shifted an element to its correct bucket
         if (!table[currPointer].is_continuation) {
-            std::cout << "HERE 2" << "\n";
+            // std::cout << "HERE 2" << "\n";
             do {
                 currBucket = (currBucket + 1) % table_size;
             } while (!table[currBucket].is_occupied);

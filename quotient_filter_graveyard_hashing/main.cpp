@@ -2,7 +2,11 @@
 // #include "quotient_filter_element.h"
 // #include <boost/python.hpp>
 #include <iostream>
-
+#include <bitset>
+#include <fstream>
+#include <chrono>
+#include <random>
+#pragma warning( disable: 4838 )
 int identity(int x) {
     return x;
 }
@@ -246,6 +250,41 @@ void testEncode() {
     std::cout << "Predecessor: " << res2.predecessor << "Successor: " << res2.successor << "\n";
 }
 
+void test2() {
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(4, &identity, evenly_distribute);
+
+  int starting_bucket = 13;
+  int remainders[] = {12, 323, 5942, 102, 3, 6};
+
+  for (int i = 0; i < 6; i ++) {
+    qf.insertElement(qfv((starting_bucket + i) % 16, remainders[i]));
+  }
+
+  for (int i=0; i<6; i++) {
+    std::cout<< "PRINTING OUT INFO AT: " << i << "\n";
+    if (qf.table[i].isTombstone) {
+      PredSucPair res = qf.decodeValue(qf.table[i].value);
+      std::cout << "PREDECESSOR: " <<res.predecessor << "\n";
+      std::cout << "SUCCESSOR: " <<res.successor << "\n";
+    } else {
+       std::cout << qf.table[i].value << "\n";
+    }
+    std::cout << "IS OCCUPIED: " <<qf.table[i].is_occupied << "\n";
+    std::cout << "IS SHIFTED: " <<qf.table[i].is_shifted << "\n";
+    std::cout << "IS CONTINUATION: " <<qf.table[i].is_continuation << "\n";
+  }
+}
+
+int generate_random_number(int min, int max) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(min, max);
+  return dis(gen);
+}
+
 int main() {
-    testRedistributeTwo();
+    test2();
+    // std::hash<int> intHash;
+    // uint64_t hashVal = intHash(40);
+    // std::cout << hashVal << "\n";
 }
