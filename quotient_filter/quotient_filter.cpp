@@ -1,6 +1,6 @@
 #include "quotient_filter.h"
-// #include <cmath>
-// #include <iostream>
+#include <cmath>
+#include <iostream>
 
 QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
