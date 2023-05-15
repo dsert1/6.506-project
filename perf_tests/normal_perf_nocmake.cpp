@@ -9,7 +9,7 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 10;
+const int DURATION = 60;
 const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
@@ -57,10 +57,10 @@ int qfv(int q, int r) {
 void perfTestInsert(QuotientFilter *qf) {
   std::cout << "Reached perfTestInsert" << std::endl;
   // Open output file
-  std::ofstream outfile("perfInsert_refactored1.txt");
+  std::ofstream outfile("normal_perfInsert.txt");
 
   int counter = 0;
-  float currentFullness = 0.5;
+  float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
     if (counter % 1 == 0) {
       std::cout << "TestInsert Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
@@ -82,7 +82,7 @@ void perfTestInsert(QuotientFilter *qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << " Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -96,7 +96,7 @@ void perfTestInsert(QuotientFilter *qf) {
     }
 
     // Write the random lookup values to file
-    outfile << " " << counter << " random queries in 60 seconds" << std::endl;
+    outfile << counter << " random queries in 60 seconds" << std::endl;
 
     // list of random values we insert
 
@@ -113,9 +113,10 @@ void perfTestInsert(QuotientFilter *qf) {
     }
 
     // Write the random lookup values to file
-    outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
+    outfile << counter2 << " successful queries in 60 seconds" << std::endl;
     currentFullness += 0.05;
     counter += 1;
+    outfile << "-------" << std::endl;
   }
   
 
@@ -297,8 +298,8 @@ void perfTestDelete(QuotientFilter *qf) {
 }
 
 int main(int argc, char **argv) {
-    QuotientFilter qf = QuotientFilter(10, &identity);
+    QuotientFilter qf = QuotientFilter(20, &identity);
     perfTestInsert(&qf);
-    perfTestDelete(&qf);
-    perfTestMixed(&qf);
+    // perfTestDelete(&qf);
+    // perfTestMixed(&qf);
 }

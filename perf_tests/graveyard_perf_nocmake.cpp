@@ -9,7 +9,7 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 10;
+const int DURATION = 60;
 const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
@@ -57,9 +57,15 @@ int qfv(int q, int r) {
 // TEST_F(QuotientFilterTest, PerfInsertion) {
 void perfTestInsert(QuotientFilterGraveyard* qf) {
   // Open output file
-  std::ofstream outfile("perfInsert_graveyard_noredis.txt");
 
-  float currentFullness = 0.5;
+  // std::string filename = "perfInsert_graveyard_" + qf->redistributionPolicy + ".txt";
+  // std::string filename = "perfInsert_graveyard_" + qf->redistributionPolicy + ".txt";
+  // std::ofstream outfile("perfInsert_graveyard_" + qf->redistributionPolicy + ".txt");
+  // std::string filename = "perfInsert_graveyard_" + qf->redistributionPolicy + ".txt";
+  // std::ofstream outfile(filename);
+  std::string filename = "graveyard_perfInsert_noredis.txt";
+
+  float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
     std::cout << "Current fullness: " << currentFullness << std::endl;
     // Calculate the number of elements to insert until the filter is 5% filled
@@ -79,7 +85,7 @@ void perfTestInsert(QuotientFilterGraveyard* qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << " Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -93,7 +99,7 @@ void perfTestInsert(QuotientFilterGraveyard* qf) {
     }
 
     // Write the random lookup values to file
-    outfile << " " << counter << " random queries in 60 seconds" << std::endl;
+    outfile << counter << " random queries in 60 seconds" << std::endl;
 
     // list of random values we insert
 
@@ -110,7 +116,8 @@ void perfTestInsert(QuotientFilterGraveyard* qf) {
     }
 
     // Write the random lookup values to file
-    outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
+    outfile << counter2 << " successful queries in 60 seconds" << std::endl;
+    outfile << "-------" << std::endl;
     currentFullness += 0.05;
   }
   
@@ -206,7 +213,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf) {
   // Open output file
   std::ofstream outfile("perfMixed_graveyard_noredis.txt");
 
-  float currentFullness = 0.5;
+  float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
     std::cout << " Current fullness: " << currentFullness << std::endl;
     // Calculate the number of elements to insert until the filter is 5% filled
@@ -227,7 +234,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << " Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
 
     // Delete elements until the filter is 5% filled
@@ -281,11 +288,14 @@ void perfTestMixed(QuotientFilterGraveyard* qf) {
 
 int main(int argc, char **argv) {
     // QuotientFilter qf = QuotientFilter(5, &identity);
-    // QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &hash_fn, no_redistribution);
-    // QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &hash_fn, between_runs);
-    // QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &hash_fn, between_runs_insert);
-    QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &hash_fn, evenly_distribute);
-    perfTestInsert(&qf);
-    perfTestDelete(&qf);
-    perfTestMixed(&qf);
+    QuotientFilterGraveyard qf1 = QuotientFilterGraveyard(20, &hash_fn, no_redistribution);
+    QuotientFilterGraveyard qf2 = QuotientFilterGraveyard(20, &hash_fn, between_runs);
+    QuotientFilterGraveyard qf3 = QuotientFilterGraveyard(20, &hash_fn, between_runs_insert);
+    QuotientFilterGraveyard qf4 = QuotientFilterGraveyard(20, &hash_fn, evenly_distribute);
+    perfTestInsert(&qf1);
+    // perfTestInsert(&qf2);
+    // perfTestInsert(&qf3);
+    // perfTestInsert(&qf4);
+    // perfTestDelete(&qf);
+    // perfTestMixed(&qf);
 }
