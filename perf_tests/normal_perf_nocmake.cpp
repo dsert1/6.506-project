@@ -9,8 +9,8 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 1;
-const double MAX_FULLNESS = 0.1;
+const int DURATION = 10;
+const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
 int identity(int x) {
@@ -59,8 +59,12 @@ void perfTestInsert(QuotientFilter *qf) {
   // Open output file
   std::ofstream outfile("perfInsert_refactored1.txt");
 
-  float currentFullness = 0.05;
+  int counter = 0;
+  float currentFullness = 0.5;
   while (currentFullness <= MAX_FULLNESS) {
+    if (counter % 1 == 0) {
+      std::cout << "TestInsert Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
+    }
     // Calculate the number of elements to insert until the filter is 5% filled
     const int filter_capacity = qf->table_size;
     const int fill_limit = filter_capacity * 0.05;
@@ -78,7 +82,7 @@ void perfTestInsert(QuotientFilter *qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << ". Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -111,6 +115,7 @@ void perfTestInsert(QuotientFilter *qf) {
     // Write the random lookup values to file
     outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
     currentFullness += 0.05;
+    counter += 1;
   }
   
 
@@ -139,8 +144,14 @@ void perfTestDelete(QuotientFilter *qf) {
   // Open output file
   std::ofstream outfile("perfDelete_refactored1.txt");
 
+  int counter = 0;
   float currentFullness = MAX_FULLNESS;
-  while (currentFullness >= 0.05) {
+  while (currentFullness >= 0.5) {
+    if (counter % 1 == 0) {
+      std::cout << "TestDelete Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
+    }
+
+
     // Calculate the number of elements to insert until the filter is 5% filled
     const int filter_capacity = qf->table_size;
     int remainder_max = (1 << qf->r);
@@ -154,7 +165,8 @@ void perfTestDelete(QuotientFilter *qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Deletion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << ". Number deleted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
+    // outfile << "Current Fullness: " << currentFullness << ". Number deleted: " << delete_limit << " Time taken: " << delete_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -187,6 +199,7 @@ void perfTestDelete(QuotientFilter *qf) {
     // Write the random lookup values to file
     outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
     currentFullness -= 0.05;
+    counter += 1;
   }
   
 
@@ -202,8 +215,13 @@ void perfTestDelete(QuotientFilter *qf) {
   std::ofstream outfile("perfMixed_refactored.txt");
   outfile << "Reached perfTestMixed" << std::endl;
 
-  float currentFullness = 0.05;
+  int counter = 0;
+  float currentFullness = 0.5;
   while (currentFullness <= MAX_FULLNESS) {
+    if (counter % 1 == 0) {
+      std::cout << "Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
+    }
+
     // Calculate the number of elements to insert until the filter is 5% filled
     const int filter_capacity = qf->table_size;
     const int fill_limit = filter_capacity * 0.1;
@@ -222,7 +240,7 @@ void perfTestDelete(QuotientFilter *qf) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+    outfile << "testMixed Current Fullness: " << currentFullness << ". Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
 
     // Delete elements until the filter is 5% filled
@@ -233,7 +251,9 @@ void perfTestDelete(QuotientFilter *qf) {
 
     auto end_deletes = std::chrono::steady_clock::now();
     auto delete_time = std::chrono::duration_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
-    outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
+    // outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << ". Number deleted: " << delete_limit << " Time taken: " << delete_time << " microseconds" << std::endl;
+
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -266,6 +286,7 @@ void perfTestDelete(QuotientFilter *qf) {
     // Write the random lookup values to file
     outfile << " " << counter2 << " successful queries in 60 seconds" << std::endl;
     currentFullness += 0.05;
+    counter += 1;
   }
   
 
@@ -276,7 +297,7 @@ void perfTestDelete(QuotientFilter *qf) {
 }
 
 int main(int argc, char **argv) {
-    QuotientFilter qf = QuotientFilter(5, &identity);
+    QuotientFilter qf = QuotientFilter(10, &identity);
     perfTestInsert(&qf);
     perfTestDelete(&qf);
     perfTestMixed(&qf);

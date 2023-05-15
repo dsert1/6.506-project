@@ -372,7 +372,7 @@ bool QuotientFilterGraveyard::query(int value) {
             return true;
         } else {
             int s = findRunStartForBucket(f.fq);
-            std:: cout << "s: " << s << "\n";
+            // std:: cout << "s: " << s << "\n";
             //Once you locate the run containing item, look through to find it
             do {
                 if (table[s].value == f.fr) {

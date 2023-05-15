@@ -59,7 +59,7 @@ void QuotientFilter::deleteElement(int value) {
     // std::cout << "fq: " << f.fq << " fr: " << f.fr  << "\n";
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
-        std:: cout << "fq: " << f.fq << " fr: " << f.fr << "\n";
+        // std:: cout << "fq: " << f.fq << " fr: " << f.fr << "\n";
 
         // // Try to find the beginning of the cluster by walking backward
         // int startOfCluster = f.fq;
@@ -138,7 +138,7 @@ void QuotientFilter::advanceToNextBucket(int * b) {
 bool QuotientFilter::query(int value) {
     // get value fingerprint
     FingerprintPair f = fingerprintQuotient(value);
-    std:: cout << "query fq: " << f.fq << " fr: " << f.fr << "\n";
+    // std:: cout << "query fq: " << f.fq << " fr: " << f.fr << "\n";
     // check if the item is in the table
     if (table[f.fq].is_occupied) {
         //If item in bucket already, return true
