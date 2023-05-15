@@ -9,8 +9,8 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 1;
-const double MAX_FULLNESS = 0.2;
+const int DURATION = 20;
+const double MAX_FULLNESS = 0.4;
 
 // To be used as the hash function for testing
 int hash_fn(int x) {
@@ -77,7 +77,7 @@ void perfTestInsert(QuotientFilterGraveyard* qf) {
       qf->insertElement(numbersToInsert[i]);
     }
     auto end_inserts = std::chrono::steady_clock::now();
-    auto insert_time = std::chrono::DURATION_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
+    auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
     outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
@@ -150,7 +150,7 @@ void perfTestDelete(QuotientFilterGraveyard* qf) {
       qf->deleteElement(numbersToInsert[i]);
     }
     auto end_inserts = std::chrono::steady_clock::now();
-    auto insert_time = std::chrono::DURATION_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
+    auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
     outfile << "Current Fullness: " << currentFullness << ". Deletion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
@@ -215,7 +215,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf) {
       qf->insertElement(numbersToInsert[i]);
     }
     auto end_inserts = std::chrono::steady_clock::now();
-    auto insert_time = std::chrono::DURATION_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
+    auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
     outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
 
 
@@ -226,7 +226,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf) {
     }
 
     auto end_deletes = std::chrono::steady_clock::now();
-    auto delete_time = std::chrono::DURATION_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
+    auto delete_time = std::chrono::duration_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
     outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
 
     // perform queries for 60%

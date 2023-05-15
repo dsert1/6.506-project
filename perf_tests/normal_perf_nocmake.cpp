@@ -10,8 +10,7 @@
 #pragma warning( disable: 4838 )
 
 const int DURATION = 1;
-const double MAX_FULLNESS = 0.2;
-
+const double MAX_FULLNESS = 0.1;
 
 // To be used as the hash function for testing
 int identity(int x) {
@@ -56,6 +55,7 @@ int qfv(int q, int r) {
 
 // Testing performance with uniform random lookups on a 5% filled element
 void perfTestInsert(QuotientFilter *qf) {
+  std::cout << "Reached perfTestInsert" << std::endl;
   // Open output file
   std::ofstream outfile("perfInsert_refactored1.txt");
 
@@ -116,10 +116,13 @@ void perfTestInsert(QuotientFilter *qf) {
 
   // Close the file
   outfile.close();
+
+  std::cout << "Finished perfTestInsert" << std::endl;
 }
 
 // TEST_F(QuotientFilterTest, PerfDelete) {
 void perfTestDelete(QuotientFilter *qf) {
+  std::cout << "Reached perfTestDelete" << std::endl;
   const int filter_capacity = qf->table_size;
   const int fill_limit = filter_capacity * MAX_FULLNESS;
   std::vector<int> numbersToInsert(fill_limit);
@@ -189,12 +192,15 @@ void perfTestDelete(QuotientFilter *qf) {
 
   // Close the file
   outfile.close();
+  std::cout << "Finished perfTestDelete" << std::endl;
 }
 
 // TEST_F(QuotientFilterTest, PerfMixed) {
   void perfTestMixed(QuotientFilter *qf) {
+  std::cout << "Reached perfTestMixed" << std::endl;
   // Open output file
   std::ofstream outfile("perfMixed_refactored.txt");
+  outfile << "Reached perfTestMixed" << std::endl;
 
   float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
@@ -265,6 +271,8 @@ void perfTestDelete(QuotientFilter *qf) {
 
   // Close the file
   outfile.close();
+
+  std::cout << "Finished perfTestMixed" << std::endl;
 }
 
 int main(int argc, char **argv) {
