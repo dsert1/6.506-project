@@ -1,0 +1,3 @@
+Current Fullness: 0.05. Insertion 1 0 microseconds
+ 19284 random queries in 60 seconds
+ 20029 successful queries in 60 seconds

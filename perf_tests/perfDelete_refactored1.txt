@@ -1,0 +1,3 @@
+Current Fullness: 0.1. Deletion 3 102 microseconds
+ 61065 random queries in 60 seconds
+ 21398 successful queries in 60 seconds
