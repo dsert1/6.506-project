@@ -9,7 +9,7 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 1;
+const int DURATION = 60;
 const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
@@ -60,7 +60,7 @@ void perfTestInsert(QuotientFilter *qf) {
   std::ofstream outfile("normal_perfInsert.txt");
 
   int counter = 0;
-  float currentFullness = 0.6;
+  float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
     if (counter % 1 == 0) {
       std::cout << "TestInsert Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
@@ -298,7 +298,7 @@ void perfTestDelete(QuotientFilter *qf) {
 }
 
 int main(int argc, char **argv) {
-    QuotientFilter qf = QuotientFilter(5, &identity);
+    QuotientFilter qf = QuotientFilter(20, &identity);
     perfTestInsert(&qf);
     // perfTestDelete(&qf);
     // perfTestMixed(&qf);
