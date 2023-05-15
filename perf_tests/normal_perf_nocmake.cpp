@@ -60,7 +60,7 @@ void perfTestInsert(QuotientFilter *qf) {
   std::ofstream outfile("normal_perfInsert.txt");
 
   int counter = 0;
-  float currentFullness = 0.05;
+  float currentFullness = 0.5;
   while (currentFullness <= MAX_FULLNESS) {
     if (counter % 1 == 0) {
       std::cout << "TestInsert Current iteration: " << counter << " Current fullness: " << currentFullness << std::endl;
@@ -298,7 +298,7 @@ void perfTestDelete(QuotientFilter *qf) {
 }
 
 int main(int argc, char **argv) {
-    QuotientFilter qf = QuotientFilter(20, &identity);
+    QuotientFilter qf = QuotientFilter(10, &identity);
     perfTestInsert(&qf);
     // perfTestDelete(&qf);
     // perfTestMixed(&qf);
