@@ -1,24 +1,5 @@
-Current Fullness: 0.05 Number inserted: 52428 Time taken: 20723922 microseconds
-113544 random queries in 30 seconds
-119981 successful queries in 30 seconds
+Current Fullness: 0.2 Number inserted: 1638 Time taken: 11710 microseconds
+336370 random queries in 30 seconds
+470422 successful queries in 30 seconds
 -------
-Current Fullness: 0.1 Number inserted: 52428 Time taken: 59163442 microseconds
-61899 random queries in 30 seconds
-61640 successful queries in 30 seconds
--------
-Current Fullness: 0.15 Number inserted: 52428 Time taken: 97785526 microseconds
-41920 random queries in 30 seconds
-42011 successful queries in 30 seconds
--------
-Current Fullness: 0.2 Number inserted: 52428 Time taken: 143038122 microseconds
-31582 random queries in 30 seconds
-31762 successful queries in 30 seconds
--------
-Current Fullness: 0.25 Number inserted: 52428 Time taken: 176808494 microseconds
-23802 random queries in 30 seconds
-25302 successful queries in 30 seconds
--------
-Current Fullness: 0.3 Number inserted: 52428 Time taken: 218017554 microseconds
-21029 random queries in 30 seconds
-21116 successful queries in 30 seconds
--------
+Current Fullness: 0.25 Number inserted: 1638 Time taken: 34649 microseconds

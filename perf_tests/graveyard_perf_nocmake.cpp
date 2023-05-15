@@ -62,7 +62,7 @@ void perfTestInsert(QuotientFilterGraveyard* qf) {
   // std::string filename = "perfInsert_graveyard_" + qf->redistributionPolicy + ".txt";
   // std::ofstream outfile("perfInsert_graveyard_" + qf->redistributionPolicy + ".txt");
   // std::string filename = "perfInsert_graveyard_" + qf->redistributionPolicy + ".txt";
-  std::ofstream outfile("graveyard_perfInsert_evenlydistribute");
+  std::ofstream outfile("graveyard_perfInsert_betweenrunsinsert");
 
   float currentFullness = 0.2;
   while (currentFullness <= MAX_FULLNESS) {
@@ -289,9 +289,9 @@ int main(int argc, char **argv) {
     // QuotientFilter qf = QuotientFilter(5, &identity);
     // QuotientFilterGraveyard qf1 = QuotientFilterGraveyard(20, &hash_fn, no_redistribution);
     // QuotientFilterGraveyard qf2 = QuotientFilterGraveyard(20, &hash_fn, between_runs);
-    // QuotientFilterGraveyard qf3 = QuotientFilterGraveyard(20, &hash_fn, between_runs_insert);
-    QuotientFilterGraveyard qf4 = QuotientFilterGraveyard(15, &hash_fn, evenly_distribute);
-    perfTestInsert(&qf4);
+    QuotientFilterGraveyard qf3 = QuotientFilterGraveyard(15, &hash_fn, between_runs_insert);
+    //QuotientFilterGraveyard qf4 = QuotientFilterGraveyard(15, &hash_fn, evenly_distribute);
+    perfTestInsert(&qf3);
     // perfTestInsert(&qf2);
     // perfTestInsert(&qf3);
     // perfTestInsert(&qf4);

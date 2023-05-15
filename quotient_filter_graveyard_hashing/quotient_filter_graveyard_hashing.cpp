@@ -17,7 +17,7 @@ QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
     this->redistributionPolicy = policy;
     this->opCount=0;
-    this->REBUILD_WINDOW_SIZE = 0.4*this->table_size; //figure out good numerical value for this based on quotient filter paper
+    this->REBUILD_WINDOW_SIZE = 0.20*this->table_size; //figure out good numerical value for this based on quotient filter paper
 }
 
 QuotientFilterGraveyard::~QuotientFilterGraveyard() {
@@ -855,6 +855,9 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsEvenlyDistribute(
                 break;
             }
         }
+        //Update the opcount and rebuild windows appropriately
+        this->opCount = 0;
+        this->REBUILD_WINDOW_SIZE = table_size/(4*x);
     }
 
     // for (int i=0; i<8; i++) {
