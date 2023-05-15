@@ -28,6 +28,7 @@
 
 # Executables
 *.exe
+!builds/*.exe
 *.out
 *.app
 
