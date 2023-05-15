@@ -9,7 +9,7 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 60;
+const int DURATION = 5;
 const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
