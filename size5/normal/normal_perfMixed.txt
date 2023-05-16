@@ -1,0 +1,57 @@
+Reached perfTestMixed
+testMixed Current Fullness: 0.2. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.2. Number deleted: 1 Time taken: 1 microseconds
+ 1204094 random queries in 60 seconds
+ 1221346 successful queries in 60 seconds
+testMixed Current Fullness: 0.25. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.25. Number deleted: 1 Time taken: 1 microseconds
+ 1217210 random queries in 60 seconds
+ 1172145 successful queries in 60 seconds
+testMixed Current Fullness: 0.3. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.3. Number deleted: 1 Time taken: 2 microseconds
+ 1169726 random queries in 60 seconds
+ 1141249 successful queries in 60 seconds
+testMixed Current Fullness: 0.35. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.35. Number deleted: 1 Time taken: 1 microseconds
+ 1184720 random queries in 60 seconds
+ 1206323 successful queries in 60 seconds
+testMixed Current Fullness: 0.4. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.4. Number deleted: 1 Time taken: 0 microseconds
+ 1211521 random queries in 60 seconds
+ 1193465 successful queries in 60 seconds
+testMixed Current Fullness: 0.45. Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.45. Number deleted: 1 Time taken: 1 microseconds
+ 1195654 random queries in 60 seconds
+ 1220196 successful queries in 60 seconds
+testMixed Current Fullness: 0.5. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.5. Number deleted: 1 Time taken: 0 microseconds
+ 1211191 random queries in 60 seconds
+ 1214691 successful queries in 60 seconds
+testMixed Current Fullness: 0.55. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.55. Number deleted: 1 Time taken: 1 microseconds
+ 1214355 random queries in 60 seconds
+ 1217539 successful queries in 60 seconds
+testMixed Current Fullness: 0.6. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.6. Number deleted: 1 Time taken: 0 microseconds
+ 1211289 random queries in 60 seconds
+ 1225066 successful queries in 60 seconds
+testMixed Current Fullness: 0.65. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.65. Number deleted: 1 Time taken: 1 microseconds
+ 1215542 random queries in 60 seconds
+ 1194660 successful queries in 60 seconds
+testMixed Current Fullness: 0.7. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.7. Number deleted: 1 Time taken: 0 microseconds
+ 1158416 random queries in 60 seconds
+ 1190674 successful queries in 60 seconds
+testMixed Current Fullness: 0.75. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.75. Number deleted: 1 Time taken: 1 microseconds
+ 1172398 random queries in 60 seconds
+ 1165638 successful queries in 60 seconds
+testMixed Current Fullness: 0.8. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.8. Number deleted: 1 Time taken: 0 microseconds
+ 1170630 random queries in 60 seconds
+ 1206283 successful queries in 60 seconds
+testMixed Current Fullness: 0.85. Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.85. Number deleted: 1 Time taken: 1 microseconds
+ 1159421 random queries in 60 seconds
+ 1196424 successful queries in 60 seconds
