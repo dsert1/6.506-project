@@ -44,7 +44,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
         PredSucPair ps = decodeValue(table[target_slot].value);
         int pred = ps.predecessor;
         int succ = ps.successor;
-        printf("insertion tombstone test: pred %d, bucket %d, succ %d\n", pred, f.fq, succ);
+        // printf("insertion tombstone test: pred %d, bucket %d, succ %d\n", pred, f.fq, succ);
 
         bool valid_for_insertion;
         if (succ > pred) {
@@ -584,7 +584,7 @@ int QuotientFilterGraveyard::shiftClusterElementsDown(Res res, int * itemsTouche
 
 int QuotientFilterGraveyard::findEndOfRun(int startOfRun, int * itemsTouched) { //Function assumes we have no tombstones in the run
     Pair res;
-    std::cout << "Finding end of run starting at: " << startOfRun << "\n";
+    // std::cout << "Finding end of run starting at: " << startOfRun << "\n";
     do {
         startOfRun = (startOfRun + 1) % table_size;
         if (!table[startOfRun].isTombstone) {
@@ -598,7 +598,7 @@ Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * 
     Opt opt;
     std::deque<QuotientFilterElement> backedUpElements;
     std::stack<int> lastDisplaced;
-    std::cout << "IN HERE\n";
+    // std::cout << "IN HERE\n";
     //Find end of run and push onto queue
     int nextSlot = findEndOfRun(startOfCluster, itemsTouched); //Really the next thing after the run ends
     backedUpElements.push_back(table[nextSlot]);
@@ -614,13 +614,13 @@ Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * 
         table[nextSlot].isEndOfCluster = false; //we are merging clusters!
         table[nextSlot].is_continuation = true;
         table[nextSlot].is_shifted = true;
-        std::cout << "NEW RUN\n";
+        // std::cout << "NEW RUN\n";
         //Shift items from the queue into the nextSlot until you hit the end of a run
         do {
             //pop element to place down
             QuotientFilterElement currElement = backedUpElements.front();
-            std::cout << "NEXT SLOT" << nextSlot << "\n";
-            std::cout << "CURR ELEMENT" << currElement.value << "\n";
+            // std::cout << "NEXT SLOT" << nextSlot << "\n";
+            // std::cout << "CURR ELEMENT" << currElement.value << "\n";
             backedUpElements.pop_front();
 
             //Element may be empty slot

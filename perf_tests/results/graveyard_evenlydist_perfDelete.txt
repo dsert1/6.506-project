@@ -1,0 +1,48 @@
+Current Fullness: 0.65 Number deleted: 21299 Time taken: 188449 microseconds
+ 143031 random queries in 10 seconds
+ 98454 successful queries in 10 seconds
+-------
+Current Fullness: 0.6 Number deleted: 21299 Time taken: 162685 microseconds
+ 144309 random queries in 10 seconds
+ 98719 successful queries in 10 seconds
+-------
+Current Fullness: 0.55 Number deleted: 21299 Time taken: 168890 microseconds
+ 143240 random queries in 10 seconds
+ 99473 successful queries in 10 seconds
+-------
+Current Fullness: 0.5 Number deleted: 21299 Time taken: 1970479 microseconds
+ 144060 random queries in 10 seconds
+ 99088 successful queries in 10 seconds
+-------
+Current Fullness: 0.45 Number deleted: 21299 Time taken: 155713 microseconds
+ 143549 random queries in 10 seconds
+ 98919 successful queries in 10 seconds
+-------
+Current Fullness: 0.4 Number deleted: 21299 Time taken: 164517 microseconds
+ 142096 random queries in 10 seconds
+ 98676 successful queries in 10 seconds
+-------
+Current Fullness: 0.35 Number deleted: 21299 Time taken: 1185776 microseconds
+ 143087 random queries in 10 seconds
+ 99697 successful queries in 10 seconds
+-------
+Current Fullness: 0.3 Number deleted: 21299 Time taken: 163895 microseconds
+ 143164 random queries in 10 seconds
+ 99026 successful queries in 10 seconds
+-------
+Current Fullness: 0.25 Number deleted: 21299 Time taken: 170414 microseconds
+ 142861 random queries in 10 seconds
+ 100228 successful queries in 10 seconds
+-------
+Current Fullness: 0.2 Number deleted: 21299 Time taken: 153258 microseconds
+ 144283 random queries in 10 seconds
+ 100265 successful queries in 10 seconds
+-------
+Current Fullness: 0.15 Number deleted: 21299 Time taken: 1069328 microseconds
+ 143047 random queries in 10 seconds
+ 98137 successful queries in 10 seconds
+-------
+Current Fullness: 0.0999999 Number deleted: 21299 Time taken: 154046 microseconds
+ 142322 random queries in 10 seconds
+ 83048 successful queries in 10 seconds
+-------
