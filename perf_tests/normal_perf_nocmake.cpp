@@ -278,6 +278,6 @@ void perfTestDelete(QuotientFilter *qf) {
 int main(int argc, char **argv) {
     QuotientFilter qf = QuotientFilter(5, &identity);
     perfTestInsert(&qf);
-    perfTestDelete(&qf);
-    perfTestMixed(&qf);
+    // perfTestDelete(&qf);
+    // perfTestMixed(&qf);
 }

@@ -1,6 +1,8 @@
 #include "quotient_filter.h"
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <chrono>
 
 QuotientFilter::QuotientFilter(int q, int (*hashFunction)(int)) { //Initialize a table of size 2^(q)
     this->size = 0;
@@ -56,28 +58,9 @@ void QuotientFilter::insertElement(int value) {
 void QuotientFilter::deleteElement(int value) {
     // Step 1: Figure out value finger print
     FingerprintPair f = fingerprintQuotient(value);
-    // std::cout << "fq: " << f.fq << " fr: " << f.fr  << "\n";
+    // std::ofstream outfile("element_shifting_time.txt", std::ios::app);
     //Step 2: If that location's finger print is occupied, check to see if you can find fr
     if (table[f.fq].is_occupied) {
-        std:: cout << "fq: " << f.fq << " fr: " << f.fr << "\n";
-
-        // // Try to find the beginning of the cluster by walking backward
-        // int startOfCluster = f.fq;
-        // while (table[startOfCluster].is_shifted) {
-        //     startOfCluster = ((startOfCluster-1)%table_size + table_size)%table_size;
-        // }
-
-        // //Using bits in the Quotient filter element, try to narrow down a range to look for fr
-        // int s = startOfCluster;
-        // int b = startOfCluster;
-        // while (b != f.fq && b<table_size){
-        //     advanceToNextRun(&s);
-        //     advanceToNextBucket(&b);
-        // }
-
-        // std::cout << "startOfRun: " << s << " bucket: " << b  << "\n";
-        // //Now we look for fr in that run and delete if found. We shift all elements in the run down
-        // int startOfRun = s;
 
         int s = findRunStartForBucket(f.fq);
         int startOfRun = s;
@@ -104,17 +87,18 @@ void QuotientFilter::deleteElement(int value) {
             // Checks if the deleted element was at the beginning of a run
             bool setToRunHead = (nextItem == deletePointIndex);
 
-            // std::cout << "startIndexOfShifting: " << deletePointIndex << " beforeStart: " << -1%table_size << " startBucketOfShifting: " << f.fq << "\n";
-            // std:: cout << "HERE" << "\n";
             deletePointBucket = f.fq;
+            // auto start_shifting = std::chrono::steady_clock::now();
             shiftElementsDown(deletePointIndex, deletePointBucket);
+            // auto end_shifting = std::chrono::steady_clock::now();
+            // auto shifting_time = std::chrono::duration_cast<std::chrono::microseconds>(end_shifting-start_shifting).count();
+            // outfile <<  shifting_time << std::endl;
+
             if (setToRunHead) {
                 table[s].is_continuation = false;
             }
             this->size--;
         }
-
-        // std::cout  << "DONE"<<"\n";
 
     }
 }
@@ -138,7 +122,8 @@ void QuotientFilter::advanceToNextBucket(int * b) {
 bool QuotientFilter::query(int value) {
     // get value fingerprint
     FingerprintPair f = fingerprintQuotient(value);
-    std:: cout << "query fq: " << f.fq << " fr: " << f.fr << "\n";
+
+    // std:: cout << "query fq: " << f.fq << " fr: " << f.fr << "\n";
     // check if the item is in the table
     if (table[f.fq].is_occupied) {
         //If item in bucket already, return true

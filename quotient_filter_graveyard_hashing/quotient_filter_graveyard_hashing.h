@@ -35,6 +35,7 @@ struct Res {
 class QuotientFilterGraveyard {
     private:
         int REBUILD_WINDOW_SIZE;
+        int CLEANUP_WINDOW_SIZE;
     public:
         QuotientFilterElement* table;
         int size;
@@ -44,6 +45,8 @@ class QuotientFilterGraveyard {
         int (*hashFunction)(int);
         RedistributionPolicy redistributionPolicy;
         int opCount;
+        int delCount;
+
          
         FingerprintPair fingerprintQuotient(int value);
         void shiftTombstoneDown(int start, int predecessor, int successor);
@@ -64,12 +67,14 @@ class QuotientFilterGraveyard {
 
         long long int encodeValue(int predecessor, int successor);
         PredSucPair decodeValue(long long int value);
+        void cleanUpTombstones();
+        int cleanUpHelper(int start);
         void redistributeTombstonesBetweenRuns();
         void redistributeTombstonesBetweenRunsInsert();
         void redistributeTombstonesBetweenRunsEvenlyDistribute();
         void resetTombstoneSuccessors(int bucket);
         void redistribute();
-        int shiftClusterElementsDown(Res res, int * itemsTouched);
+        int shiftClusterElementsDown(Res res, int * itemsTouched, bool noleave_tombstones);
         bool insertTombstone(int pos);
 
         int findStartOfTombstonesInRun(int pos);
