@@ -1,0 +1,57 @@
+Current Fullness: 0.05. Insertion 3276 48498 microseconds
+Current Fullness: 0.05. Deletion 1638 39907 microseconds
+600000 successful lookups in 8748622
+Current Fullness: 0.1. Insertion 3276 91904 microseconds
+Current Fullness: 0.1. Deletion 1638 59644 microseconds
+600000 successful lookups in 15570067
+Current Fullness: 0.15. Insertion 3276 139462 microseconds
+Current Fullness: 0.15. Deletion 1638 83995 microseconds
+600000 successful lookups in 13518463
+Current Fullness: 0.2. Insertion 3276 186276 microseconds
+Current Fullness: 0.2. Deletion 1638 107048 microseconds
+600000 successful lookups in 11697925
+Current Fullness: 0.25. Insertion 3276 232863 microseconds
+Current Fullness: 0.25. Deletion 1638 131180 microseconds
+600000 successful lookups in 10130690
+Current Fullness: 0.3. Insertion 3276 277853 microseconds
+Current Fullness: 0.3. Deletion 1638 154012 microseconds
+600000 successful lookups in 8798674
+Current Fullness: 0.35. Insertion 3276 324610 microseconds
+Current Fullness: 0.35. Deletion 1638 179505 microseconds
+600000 successful lookups in 7689448
+Current Fullness: 0.4. Insertion 3276 372979 microseconds
+Current Fullness: 0.4. Deletion 1638 203103 microseconds
+600000 successful lookups in 6660146
+Current Fullness: 0.45. Insertion 3276 416807 microseconds
+Current Fullness: 0.45. Deletion 1638 227841 microseconds
+600000 successful lookups in 5659344
+Current Fullness: 0.5. Insertion 3276 464280 microseconds
+Current Fullness: 0.5. Deletion 1638 250925 microseconds
+600000 successful lookups in 5005429
+Current Fullness: 0.55. Insertion 3276 507021 microseconds
+Current Fullness: 0.55. Deletion 1638 275400 microseconds
+600000 successful lookups in 4292261
+Current Fullness: 0.6. Insertion 3276 553887 microseconds
+Current Fullness: 0.6. Deletion 1638 299018 microseconds
+600000 successful lookups in 3718418
+Current Fullness: 0.65. Insertion 3276 629195 microseconds
+Current Fullness: 0.65. Deletion 1638 333044 microseconds
+600000 successful lookups in 3155346
+Current Fullness: 0.7. Insertion 3276 649556 microseconds
+Current Fullness: 0.7. Deletion 1638 345790 microseconds
+600000 successful lookups in 2766089
+Current Fullness: 0.75. Insertion 3276 686111 microseconds
+Current Fullness: 0.75. Deletion 1638 366689 microseconds
+600000 successful lookups in 2329439
+Current Fullness: 0.8. Insertion 3276 733386 microseconds
+Current Fullness: 0.8. Deletion 1638 394199 microseconds
+600000 successful lookups in 131505866
+Current Fullness: 0.85. Insertion 3276 802467 microseconds
+Current Fullness: 0.85. Deletion 1638 411923 microseconds
+600000 successful lookups in 133625028
+Current Fullness: 0.9. Insertion 3276 870745 microseconds
+Current Fullness: 0.9. Deletion 1638 467703 microseconds
+600000 successful lookups in 125169165
+Current Fullness: 0.95. Insertion 3276 931298 microseconds
+Current Fullness: 0.95. Deletion 1638 497494 microseconds
+600000 successful lookups in 117494998

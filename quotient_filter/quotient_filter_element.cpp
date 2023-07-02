@@ -6,5 +6,4 @@ QuotientFilterElement::QuotientFilterElement(unsigned long long int value, bool 
     this->is_continuation = is_continuation;
     this->is_shifted = is_shifted;
     this->isTombstone = false;
-    this->isEndOfCluster = is_end_of_cluster;
 }
