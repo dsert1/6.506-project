@@ -1,0 +1,57 @@
+Current Fullness: 1. Deleted 51.2 in 6629 microseconds
+600000 successful lookups in 5242089
+600000 random lookups in 2739374
+Current Fullness: 0.95. Deleted 51.2 in 3670 microseconds
+600000 successful lookups in 4654922
+600000 random lookups in 2628640
+Current Fullness: 0.9. Deleted 51.2 in 3474 microseconds
+600000 successful lookups in 4379914
+600000 random lookups in 2667948
+Current Fullness: 0.85. Deleted 51.2 in 4050 microseconds
+600000 successful lookups in 4122872
+600000 random lookups in 2532428
+Current Fullness: 0.8. Deleted 51.2 in 3236 microseconds
+600000 successful lookups in 3868245
+600000 random lookups in 2582122
+Current Fullness: 0.75. Deleted 51.2 in 3513 microseconds
+600000 successful lookups in 3641123
+600000 random lookups in 2399508
+Current Fullness: 0.7. Deleted 51.2 in 3817 microseconds
+600000 successful lookups in 3377055
+600000 random lookups in 2589332
+Current Fullness: 0.65. Deleted 51.2 in 2793 microseconds
+600000 successful lookups in 3168736
+600000 random lookups in 2227743
+Current Fullness: 0.6. Deleted 51.2 in 2894 microseconds
+600000 successful lookups in 3021105
+600000 random lookups in 2132857
+Current Fullness: 0.55. Deleted 51.2 in 2363 microseconds
+600000 successful lookups in 2857311
+600000 random lookups in 2166451
+Current Fullness: 0.5. Deleted 51.2 in 2879 microseconds
+600000 successful lookups in 2471340
+600000 random lookups in 1868464
+Current Fullness: 0.45. Deleted 51.2 in 3090 microseconds
+600000 successful lookups in 2103217
+600000 random lookups in 1696905
+Current Fullness: 0.4. Deleted 51.2 in 2707 microseconds
+600000 successful lookups in 1828127
+600000 random lookups in 1534634
+Current Fullness: 0.35. Deleted 51.2 in 2440 microseconds
+600000 successful lookups in 1570803
+600000 random lookups in 1368976
+Current Fullness: 0.3. Deleted 51.2 in 2531 microseconds
+600000 successful lookups in 1330155
+600000 random lookups in 1175846
+Current Fullness: 0.25. Deleted 51.2 in 2682 microseconds
+600000 successful lookups in 1065790
+600000 random lookups in 961904
+Current Fullness: 0.2. Deleted 51.2 in 2354 microseconds
+600000 successful lookups in 803836
+600000 random lookups in 748115
+Current Fullness: 0.15. Deleted 51.2 in 2595 microseconds
+600000 successful lookups in 546537
+600000 random lookups in 519009
+Current Fullness: 0.0999998. Deleted 51.2 in 2722 microseconds
+600000 successful lookups in 308298
+600000 random lookups in 288513

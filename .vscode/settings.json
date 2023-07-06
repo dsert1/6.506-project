@@ -114,6 +114,9 @@
         "valarray": "cpp",
         "*.ipp": "cpp",
         "__memory": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "__undef_macros": "cpp",
+        "functional": "cpp",
+        "memory_resource": "cpp"
     }
 }

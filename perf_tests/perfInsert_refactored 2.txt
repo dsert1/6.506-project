@@ -1,5 +1,0 @@
-Current Fullness: 0.05. Insertion 1 0 microseconds
- 1123341 random queries in 60 seconds
- 1004736 successful queries in 60 seconds
-Current Fullness: 0.1. Insertion 1 0 microseconds
- 1255293 random queries in 60 seconds

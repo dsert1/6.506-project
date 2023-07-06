@@ -12,7 +12,7 @@ def construct_graph(fullness, num_insertions, time_taken, y_label, title, dvzp=0
 
     plt.plot(fullness[0], throughput[0], color=NORMAL_COLOR, label = "Normal QF")
     plt.plot(fullness[1], throughput[1], color=GRAVEYARD_COLOR, label="GF (No Redistribution)")
-    plt.plot(fullness[2], throughput[2], color=GRAVEYARD_COLOR1, label="GF (Graveyard Hashing Policy)")
+    # plt.plot(fullness[2], throughput[2], color=GRAVEYARD_COLOR1, label="GF (Graveyard Hashing Policy)")
     plt.plot(fullness[3], throughput[3], color=GRAVEYARD_COLOR2, label="GF (Between-Runs Policy)")
     plt.plot(fullness[4], throughput[4], color=GRAVEYARD_COLOR3, label="GF (Clean-Up Policy)")
     plt.xlabel("Percent Full")
@@ -34,11 +34,8 @@ def parse_insertions(filename):
         all_lines = f.readlines()
         for line in all_lines:
             clean_line = line.strip()
-            # print(clean_line)
-            # print("line end")
-            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*) Number inserted: (\d+) Time taken: (\d+) microseconds",string=clean_line)
-            matchObj2 = re.match(pattern="\s*(\d+) random queries in (\d+) seconds", string=clean_line)
-            matchObj3 = re.match(pattern="\s*(\d+) successful queries in (\d+) seconds", string=clean_line)
+            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*), Number Inserted: (\d+), Time Taken: (\d+) micros",string=clean_line)
+            matchObj2 = re.match(pattern="\s*Query duration: (\d+) sec, Random Queries: (\d+), Successful Queries: (\d+)", string=clean_line)
             if matchObj:
                 nums = matchObj.groups()
                 results["fullness"].append(float(nums[0]))
@@ -46,12 +43,10 @@ def parse_insertions(filename):
                 results["insert_time"].append(float(nums[2])/1000000)
             if matchObj2:
                 nums = matchObj2.groups()
-                results["rquery_count"].append(float(nums[0]))
-                results["rquery_time"].append(float(nums[1]))
-            if matchObj3:
-                nums = matchObj3.groups()
-                results["squery_count"].append(float(nums[0]))
-                results["squery_time"].append(float(nums[1]))
+                results["rquery_time"].append(float(nums[0]))
+                results["squery_time"].append(float(nums[0]))
+                results["rquery_count"].append(float(nums[1]))
+                results["squery_count"].append(float(nums[2]))
     return results
 
 def parse_deletions(filename):
@@ -68,9 +63,8 @@ def parse_deletions(filename):
         all_lines = f.readlines()
         for line in all_lines:
             clean_line = line.strip()
-            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*) Number deleted: (\d+) Time taken: (\d+) microseconds",string=clean_line)
-            matchObj2 = re.match(pattern="\s*(\d+) random queries in (\d+) seconds", string=clean_line)
-            matchObj3 = re.match(pattern="\s*(\d+) successful queries in (\d+) seconds", string=clean_line)
+            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*), Number Deleted: (\d+), Time Taken: (\d+) micros",string=clean_line)
+            matchObj2 = re.match(pattern="\s*Query duration: (\d+) sec, Random Queries: (\d+), Successful Queries: (\d+)", string=clean_line)
             if matchObj:
                 nums = matchObj.groups()
                 results["fullness"].append(float(nums[0]))
@@ -78,12 +72,10 @@ def parse_deletions(filename):
                 results["delete_time"].append(float(nums[2])/1000000)
             if matchObj2:
                 nums = matchObj2.groups()
-                results["rquery_count"].append(float(nums[0]))
-                results["rquery_time"].append(float(nums[1]))
-            if matchObj3:
-                nums = matchObj3.groups()
-                results["squery_count"].append(float(nums[0]))
-                results["squery_time"].append(float(nums[1]))
+                results["rquery_time"].append(float(nums[0]))
+                results["squery_time"].append(float(nums[0]))
+                results["rquery_count"].append(float(nums[1]))
+                results["squery_count"].append(float(nums[2]))
     return results
 
 def parse_mixed(filename):
@@ -102,27 +94,21 @@ def parse_mixed(filename):
         all_lines = f.readlines()
         for line in all_lines:
             clean_line = line.strip()
-            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*) Number deleted: (\d+) Time taken: (\d+) microseconds",string=clean_line)
-            matchObj2 = re.match(pattern="\s*Current Fullness: ([\d\.]*) Number inserted: (\d+) Time taken: (\d+) microseconds",string=clean_line)
-            matchObj3 = re.match(pattern="\s*(\d+) random queries in (\d+) seconds", string=clean_line)
-            matchObj4 = re.match(pattern="\s*(\d+) successful queries in (\d+) seconds", string=clean_line)
+            matchObj = re.match(pattern="\s*Current Fullness: ([\d\.]*), Number Inserted: (\d+), Time Taken: (\d+) micros; Number Deleted: (\d+), Time Taken: (\d+) micros",string=clean_line)
+            matchObj2 = re.match(pattern="\s*Query duration: (\d+) sec, Random Queries: (\d+), Successful Queries: (\d+)", string=clean_line)
             if matchObj:
                 nums = matchObj.groups()
                 results["fullness"].append(float(nums[0]))
-                results["delete_count"].append(float(nums[1]))
-                results["delete_time"].append(float(nums[2])/1000000)
-            if matchObj2:
-                nums = matchObj2.groups()
                 results["insert_count"].append(float(nums[1]))
                 results["insert_time"].append(float(nums[2])/1000000)
-            if matchObj3:
-                nums = matchObj3.groups()
-                results["rquery_count"].append(float(nums[0]))
-                results["rquery_time"].append(float(nums[1]))
-            if matchObj4:
-                nums = matchObj4.groups()
-                results["squery_count"].append(float(nums[0]))
-                results["squery_time"].append(float(nums[1]))
+                results["delete_count"].append(float(nums[3]))
+                results["delete_time"].append(float(nums[4])/1000000)
+            if matchObj2:
+                nums = matchObj2.groups()
+                results["rquery_time"].append(float(nums[0]))
+                results["squery_time"].append(float(nums[0]))
+                results["rquery_count"].append(float(nums[1]))
+                results["squery_count"].append(float(nums[2]))
     return results
 
 
@@ -133,12 +119,18 @@ testData = [
 ]
 
 for (current_test, parse_function, test_subtitle, graph_inserts, graph_deletes) in testData:
+    # perfResults = [
+    #     parse_function(f"perf_tests/results_old/normal_{current_test}.txt"),
+    #     parse_function(f"perf_tests/results_old/graveyard_noredis_{current_test}.txt"),
+    #     parse_function(f"perf_tests/results_old/graveyard_evenlydist_{current_test}.txt"),
+    #     parse_function(f"perf_tests/results_old/graveyard_betweenruns_{current_test}.txt"),
+    #     parse_function(f"perf_tests/results_old/graveyard_betweenrunsinsert_{current_test}.txt")]
     perfResults = [
-        parse_function(f"perf_tests/results/normal_{current_test}.txt"),
-        parse_function(f"perf_tests/results/graveyard_noredis_{current_test}.txt"),
-        parse_function(f"perf_tests/results/graveyard_evenlydist_{current_test}.txt"),
-        parse_function(f"perf_tests/results/graveyard_betweenruns_{current_test}.txt"),
-        parse_function(f"perf_tests/results/graveyard_betweenrunsinsert_{current_test}.txt")]
+        parse_function(f"perf_tests/results_v2/normal_{current_test}.txt"),
+        parse_function(f"perf_tests/results_v2/no_redist_{current_test}.txt"),
+        parse_function(f"perf_tests/results_v2/evenly_dist_{current_test}.txt"),
+        parse_function(f"perf_tests/results_v2/between_runs_{current_test}.txt"),
+        parse_function(f"perf_tests/results_v2/between_runs_insert_{current_test}.txt")]
 
     if (graph_inserts):
         construct_graph(
