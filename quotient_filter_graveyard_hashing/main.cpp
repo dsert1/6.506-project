@@ -259,7 +259,7 @@ int generate_random_number(int min, int max) {
 }
 
 void test2() {
-  QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &identity, between_runs_insert);
+  QuotientFilterGraveyard qf = QuotientFilterGraveyard(10, &identity, amortized_clean);
   int elementsInserted[qf.table_size];
   for (int i = 0; i < qf.table_size; i++) {
     elementsInserted[i] = generate_random_number(0,10000);

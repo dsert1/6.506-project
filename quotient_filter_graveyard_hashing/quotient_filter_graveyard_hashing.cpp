@@ -13,7 +13,7 @@ QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
     this->redistributionPolicy = policy;
     this->opCount=0;
-    this->delCount = 0;
+    // this->delCount = 0;
     this->REBUILD_WINDOW_SIZE = 0.3*this->table_size; //figure out good numerical value for this based on quotient filter paper
 }
 
@@ -118,8 +118,10 @@ void QuotientFilterGraveyard::deleteElement(int value) {
     //Step 2: If that location's fingerprint is occupied, insert tombstone and keep moving
     if (table[f.fq].is_occupied) {
         //Find predecessor value and position of element
-        int s = findRunStartForBucket(f.fq);
-        int startOfRun = s;
+        PairVal res;
+        findRunStartForBucket(f.fq, &res);
+        // int s = res.runStart;
+        int startOfRun = res.runStart;
         int deletePointIndex;
         int successorBucket = findNextBucket(f.fq, startOfRun);
         bool found = false;
@@ -136,24 +138,23 @@ void QuotientFilterGraveyard::deleteElement(int value) {
         while (table[startOfRun].is_continuation && !found);
         //Check if the element is found before inserting tombstone at the end of run
         if (found) {
-            int nextItem = (s + 1)%table_size;
+            int nextItem = (res.runStart + 1)%table_size;
             if (!table[nextItem].is_continuation|| table[nextItem].isTombstone) { //Set is_occupied accurately
                 table[f.fq].is_occupied = false;
                 //If run was shifted, it may affect the tombstones in the run where its actual bucket is located
-                if (table[s].is_shifted) {
+                if (table[res.runStart].is_shifted) {
                     resetTombstoneSuccessors(f.fq);
                 }
             }
-
-            shiftTombstoneDown(deletePointIndex, f.fq, successorBucket);
+            shiftTombstoneDown(deletePointIndex, f.fq, successorBucket, res);
             this->size--;
-            this->delCount++;
+            // this->delCount++;
         }
         //Cleanup tombstones if tombstones take over 30% of the table
-        float tombStoneRatio = this->delCount/(float)this->table_size;
-        if (tombStoneRatio > 0.3) {
-            cleanUpTombstones();
-        }
+        // float tombStoneRatio = this->delCount/(float)this->table_size;
+        // if (tombStoneRatio > 0.3) {
+        //     cleanUpTombstones();
+        // }
     }
 }
 
@@ -198,10 +199,24 @@ void QuotientFilterGraveyard::resetTombstoneSuccessors(int bucket) {
 
 }
 
-void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int tombstonePrededcessorBucket, int tombstoneSuccessorBucket) {
+void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int tombstonePrededcessorBucket, int tombstoneSuccessorBucket, PairVal cleanUpInfo) {
     int currPointer =  afterTombstoneLocation;
     int prevPointer = (currPointer - 1 + table_size)%table_size;
     int successorBucket = tombstoneSuccessorBucket;
+    //If cleanup, just move the elements up and leave the tombstones
+    if (cleanUpInfo.cleanUpNeeded && redistributionPolicy == amortized_clean) { 
+        int startOfReading = cleanUpInfo.runStart;
+        int startOfWriting = cleanUpInfo.tombstoneStart;
+        while (startOfReading != prevPointer && !table[startOfReading].isTombstone) {
+            std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
+            bool is_occupiedBitBefore = table[startOfWriting].is_occupied;
+            table[startOfWriting] = table[startOfReading];
+            table[startOfWriting].is_occupied = is_occupiedBitBefore;
+            table[startOfWriting].is_shifted = !(tombstonePrededcessorBucket == startOfWriting);
+            startOfReading = (startOfReading + 1)%table_size;
+            startOfWriting = (startOfWriting + 1)%table_size;
+        }
+    }
     //Push tombstone to the end of the run  or to the start of  a stretch of tombstonese
     while (table[currPointer].is_continuation && !table[currPointer].isTombstone) {
 
@@ -256,6 +271,10 @@ void QuotientFilterGraveyard::updateAdjacentTombstonesInsert(int newRun) {
 
 /* Helper function; assumes that the target bucket is occupied
 */
+void QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, PairVal* res) {
+    this->findRunStartForBucket(target_bucket, false, res);
+}
+
 int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket) {
     return this->findRunStartForBucket(target_bucket, false);
 }
@@ -301,6 +320,62 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_
     return run_start;
 }
 
+int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_at_tombstones, PairVal* res){
+    // Check for item in table
+    if (!table[target_bucket].is_occupied) {
+        return -1;
+    }
+    // Backtrack to beginning of cluster
+    int bucket = target_bucket;
+    int numTombstones = 0;
+    while (table[bucket].is_shifted) {
+        if (table[bucket].isTombstone) {
+            numTombstones++;
+        }
+        if (numTombstones == 2) {
+            res->tombstoneStart = bucket;
+        }
+        bucket = (bucket - 1 + table_size) % table_size;
+    }
+
+    //Check if any cleanup needs to happen
+    if (numTombstones > 1) {
+        res->cleanUpNeeded = true;
+    } else{
+        res->cleanUpNeeded = false;
+    }
+
+    // Find the run for fq
+    int run_start = bucket;
+    int next_bucket = bucket;
+    while (bucket != target_bucket) {
+        // Find the next bucket
+        do {
+            next_bucket = (next_bucket + 1) % table_size;
+        }
+        while (!table[next_bucket].is_occupied);
+
+        // Skip to the next run
+        if (!(stop_at_tombstones && next_bucket == target_bucket)) {
+            do {
+                run_start = (run_start + 1) % table_size;
+            }
+            while (table[run_start].is_continuation || table[run_start].isTombstone);
+        }
+        // If permitted, can stop at a tombstone of the predecessor run
+        else if (!table[run_start].isTombstone) {
+            do {
+                run_start = (run_start + 1) % table_size;
+            }
+            while (table[run_start].is_continuation && !table[run_start].isTombstone);
+        }
+
+        bucket = next_bucket;
+    }
+    res->runStart =  run_start;
+    return run_start;
+}
+
 /* Returns the first slot after the cluster containing the given slot
  * (i.e. guaranteed to return a different slot, assuming the table isn't full)
 */
@@ -338,22 +413,47 @@ bool QuotientFilterGraveyard::query(int value) {
     FingerprintPair f = fingerprintQuotient(value);
     // std:: cout << "fq: " << f.fq << "\n";
     if (table[f.fq].is_occupied) {
-
         if (table[f.fq].value == f.fr) {
             return true;
         } else {
-            int s = findRunStartForBucket(f.fq);
+            PairVal res;
+            findRunStartForBucket(f.fq, &res);
+            int s = res.runStart;
             //Once you locate the run containing item, look through to find it
-            do {
-                if (table[s].value == f.fr) {
-                    return true;
+            if (res.cleanUpNeeded && redistributionPolicy == amortized_clean) {
+                return cleanAndSearch(res, f.fq, f.fr);
+            } else {
+                do {
+                    if (table[s].value == f.fr) {
+                        return true;
+                    }
+                    s = (s+1)%table_size;
                 }
-                s = (s+1)%table_size;
+                while (table[s].is_continuation && !table[s].isTombstone); //Stop when you see a tombstone
             }
-            while (table[s].is_continuation && !table[s].isTombstone); //Stop when you see a tombstone
+
         }
     }
     return false;
+}
+
+bool QuotientFilterGraveyard::cleanAndSearch(PairVal cleanUpInfo, int bucketNumber, int remainderToFind) {
+        int startOfReading = cleanUpInfo.runStart;
+        int startOfWriting = cleanUpInfo.tombstoneStart;
+        bool found = false;
+        while (table[startOfReading].is_continuation && !table[startOfReading].isTombstone) {
+            std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
+            bool is_occupiedBitBefore = table[startOfWriting].is_occupied;
+            table[startOfWriting] = table[startOfReading];
+            table[startOfWriting].is_occupied = is_occupiedBitBefore;
+            table[startOfWriting].is_shifted = !(bucketNumber == startOfWriting);
+            startOfReading = (startOfReading + 1)%table_size;
+            startOfWriting = (startOfWriting + 1)%table_size;
+            if (table[startOfReading].value == remainderToFind) {
+                found = true;
+            }
+        }
+        return found;
 }
 
 FingerprintPair QuotientFilterGraveyard::fingerprintQuotient(int value) {

@@ -5,7 +5,7 @@
 #include "../quotient_filter/quotient_filter_element.h"
 
 enum RedistributionPolicy{
-    no_redistribution, between_runs, between_runs_insert, evenly_distribute
+    no_redistribution, amortized_clean, between_runs, between_runs_insert, evenly_distribute
 };
 
 enum ReorgCase{
@@ -47,12 +47,13 @@ class QuotientFilterGraveyard {
         int opCount;
         int delCount;
 
-         
         FingerprintPair fingerprintQuotient(int value);
-        void shiftTombstoneDown(int start, int predecessor, int successor);
+        void shiftTombstoneDown(int start, int predecessor, int successor, PairVal cleanUpInfo);
         void updateAdjacentTombstonesInsert(int newRun);
         int findRunStartForBucket(int target_bucket);
+        void findRunStartForBucket(int target_bucket, PairVal* res);
         int findRunStartForBucket(int target_bucket, bool stop_at_tombstones);
+        int findRunStartForBucket(int target_bucket, bool stop_at_tombstones, PairVal* res);
         int findEndOfCluster(int slot);
         int findEndOfRun(int startOfRun, int * itemsTouched);
         void shiftElementsUp(int start);
@@ -76,6 +77,7 @@ class QuotientFilterGraveyard {
         void redistribute();
         int shiftClusterElementsDown(Res res, int * itemsTouched, bool noleave_tombstones);
         bool insertTombstone(int pos);
+        bool cleanAndSearch(PairVal cleanUpInfo, int bucketNumber, int remainderToFind);
 
         int findStartOfTombstonesInRun(int pos);
         Res findStartOfWriteAndCopy(int startOfCluster, int * itemsTouched);
