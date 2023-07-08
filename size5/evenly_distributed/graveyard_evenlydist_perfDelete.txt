@@ -1,0 +1,42 @@
+Current Fullness: 0.9. Number deleted: 28 Time taken: 2 microseconds
+ 1196450 random queries in 60 seconds
+ 1214948 successful queries in 60 seconds
+Current Fullness: 0.85. Number deleted: 28 Time taken: 5 microseconds
+ 1211665 random queries in 60 seconds
+ 1215705 successful queries in 60 seconds
+Current Fullness: 0.8. Number deleted: 28 Time taken: 4 microseconds
+ 1210545 random queries in 60 seconds
+ 1212318 successful queries in 60 seconds
+Current Fullness: 0.75. Number deleted: 28 Time taken: 4 microseconds
+ 1213726 random queries in 60 seconds
+ 1212103 successful queries in 60 seconds
+Current Fullness: 0.7. Number deleted: 28 Time taken: 5 microseconds
+ 1213563 random queries in 60 seconds
+ 1215762 successful queries in 60 seconds
+Current Fullness: 0.65. Number deleted: 28 Time taken: 3 microseconds
+ 1211136 random queries in 60 seconds
+ 1210645 successful queries in 60 seconds
+Current Fullness: 0.6. Number deleted: 28 Time taken: 8 microseconds
+ 1212261 random queries in 60 seconds
+ 1212069 successful queries in 60 seconds
+Current Fullness: 0.55. Number deleted: 28 Time taken: 5 microseconds
+ 1214588 random queries in 60 seconds
+ 1220338 successful queries in 60 seconds
+Current Fullness: 0.5. Number deleted: 28 Time taken: 2 microseconds
+ 1213865 random queries in 60 seconds
+ 1220465 successful queries in 60 seconds
+Current Fullness: 0.45. Number deleted: 28 Time taken: 5 microseconds
+ 1219666 random queries in 60 seconds
+ 1218926 successful queries in 60 seconds
+Current Fullness: 0.4. Number deleted: 28 Time taken: 5 microseconds
+ 1217864 random queries in 60 seconds
+ 1217727 successful queries in 60 seconds
+Current Fullness: 0.35. Number deleted: 28 Time taken: 3 microseconds
+ 1213934 random queries in 60 seconds
+ 1220513 successful queries in 60 seconds
+Current Fullness: 0.3. Number deleted: 28 Time taken: 5 microseconds
+ 1220069 random queries in 60 seconds
+ 1221449 successful queries in 60 seconds
+Current Fullness: 0.25. Number deleted: 28 Time taken: 3 microseconds
+ 1219557 random queries in 60 seconds
+ 1220498 successful queries in 60 seconds

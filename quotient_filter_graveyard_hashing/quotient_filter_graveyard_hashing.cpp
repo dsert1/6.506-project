@@ -13,7 +13,7 @@ QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)
     this->table = (QuotientFilterElement*)calloc(sizeof(QuotientFilterElement), this->table_size);
     this->redistributionPolicy = policy;
     this->opCount=0;
-    // this->delCount = 0;
+    this->delCount = 0;
     this->REBUILD_WINDOW_SIZE = 0.3*this->table_size; //figure out good numerical value for this based on quotient filter paper
 }
 
@@ -148,16 +148,17 @@ void QuotientFilterGraveyard::deleteElement(int value) {
             }
             shiftTombstoneDown(deletePointIndex, f.fq, successorBucket, res);
             this->size--;
-            // this->delCount++;
+            this->delCount++;
         }
         //Cleanup tombstones if tombstones take over 30% of the table
-        // float tombStoneRatio = this->delCount/(float)this->table_size;
-        // if (tombStoneRatio > 0.3) {
-        //     cleanUpTombstones();
-        // }
+        if (redistributionPolicy == between_runs || redistributionPolicy == between_runs_insert) {
+            float tombStoneRatio = this->delCount/(float)this->table_size;
+            if (tombStoneRatio > 0.3) {
+                cleanUpTombstones();
+            }
+        }
     }
 }
-
 
 void QuotientFilterGraveyard::resetTombstoneSuccessors(int bucket) {
 
@@ -339,7 +340,7 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_
     }
 
     //Check if any cleanup needs to happen
-    if (numTombstones > 1) {
+    if (numTombstones > 0) {
         res->cleanUpNeeded = true;
     } else{
         res->cleanUpNeeded = false;

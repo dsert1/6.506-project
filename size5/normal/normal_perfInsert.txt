@@ -1,0 +1,56 @@
+Current Fullness: 0.2 Number inserted: 1 Time taken: 0 microseconds
+1205068 random queries in 60 seconds
+1233550 successful queries in 60 seconds
+-------
+Current Fullness: 0.25 Number inserted: 1 Time taken: 0 microseconds
+1229062 random queries in 60 seconds
+1230940 successful queries in 60 seconds
+-------
+Current Fullness: 0.3 Number inserted: 1 Time taken: 0 microseconds
+1231914 random queries in 60 seconds
+1230826 successful queries in 60 seconds
+-------
+Current Fullness: 0.35 Number inserted: 1 Time taken: 0 microseconds
+1225660 random queries in 60 seconds
+1232304 successful queries in 60 seconds
+-------
+Current Fullness: 0.4 Number inserted: 1 Time taken: 0 microseconds
+1227677 random queries in 60 seconds
+1230592 successful queries in 60 seconds
+-------
+Current Fullness: 0.45 Number inserted: 1 Time taken: 0 microseconds
+1224814 random queries in 60 seconds
+1230106 successful queries in 60 seconds
+-------
+Current Fullness: 0.5 Number inserted: 1 Time taken: 0 microseconds
+1226277 random queries in 60 seconds
+1230399 successful queries in 60 seconds
+-------
+Current Fullness: 0.55 Number inserted: 1 Time taken: 0 microseconds
+1225549 random queries in 60 seconds
+1227322 successful queries in 60 seconds
+-------
+Current Fullness: 0.6 Number inserted: 1 Time taken: 0 microseconds
+1227710 random queries in 60 seconds
+1232876 successful queries in 60 seconds
+-------
+Current Fullness: 0.65 Number inserted: 1 Time taken: 0 microseconds
+1224795 random queries in 60 seconds
+1232410 successful queries in 60 seconds
+-------
+Current Fullness: 0.7 Number inserted: 1 Time taken: 0 microseconds
+1225553 random queries in 60 seconds
+1226231 successful queries in 60 seconds
+-------
+Current Fullness: 0.75 Number inserted: 1 Time taken: 0 microseconds
+1203122 random queries in 60 seconds
+1214999 successful queries in 60 seconds
+-------
+Current Fullness: 0.8 Number inserted: 1 Time taken: 0 microseconds
+1207657 random queries in 60 seconds
+1218360 successful queries in 60 seconds
+-------
+Current Fullness: 0.85 Number inserted: 1 Time taken: 2 microseconds
+1223504 random queries in 60 seconds
+1225396 successful queries in 60 seconds
+-------

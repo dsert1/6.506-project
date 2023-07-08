@@ -1,2 +1,2 @@
 default: 
-	clang++ graveyard_perf_nocmake.cpp ../quotient_filter/quotient_filter.cpp  ../quotient_filter_graveyard_hashing/quotient_filter_graveyard_hashing.cpp ../quotient_filter/quotient_filter_element.cpp
+	clang++ revised_perf_tests.cpp ../quotient_filter/quotient_filter.cpp  ../quotient_filter_graveyard_hashing/quotient_filter_graveyard_hashing.cpp ../quotient_filter/quotient_filter_element.cpp

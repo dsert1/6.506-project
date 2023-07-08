@@ -1,0 +1,68 @@
+Current Fullness: 0.05 Number inserted: 1638 Time taken: 176 microseconds
+2616325 random queries in 10 seconds
+2626965 successful queries in 10 seconds
+-------
+Current Fullness: 0.1 Number inserted: 1638 Time taken: 147 microseconds
+2418104 random queries in 10 seconds
+2440127 successful queries in 10 seconds
+-------
+Current Fullness: 0.15 Number inserted: 1638 Time taken: 146 microseconds
+2596832 random queries in 10 seconds
+2443261 successful queries in 10 seconds
+-------
+Current Fullness: 0.2 Number inserted: 1638 Time taken: 166 microseconds
+2447054 random queries in 10 seconds
+2451721 successful queries in 10 seconds
+-------
+Current Fullness: 0.25 Number inserted: 1638 Time taken: 403 microseconds
+2433614 random queries in 10 seconds
+2451791 successful queries in 10 seconds
+-------
+Current Fullness: 0.3 Number inserted: 1638 Time taken: 202 microseconds
+2448046 random queries in 10 seconds
+2443841 successful queries in 10 seconds
+-------
+Current Fullness: 0.35 Number inserted: 1638 Time taken: 225 microseconds
+2440301 random queries in 10 seconds
+2432046 successful queries in 10 seconds
+-------
+Current Fullness: 0.4 Number inserted: 1638 Time taken: 247 microseconds
+2431735 random queries in 10 seconds
+2433636 successful queries in 10 seconds
+-------
+Current Fullness: 0.45 Number inserted: 1638 Time taken: 466 microseconds
+2434180 random queries in 10 seconds
+2428841 successful queries in 10 seconds
+-------
+Current Fullness: 0.5 Number inserted: 1638 Time taken: 312 microseconds
+2427401 random queries in 10 seconds
+2417708 successful queries in 10 seconds
+-------
+Current Fullness: 0.55 Number inserted: 1638 Time taken: 349 microseconds
+2415327 random queries in 10 seconds
+2415081 successful queries in 10 seconds
+-------
+Current Fullness: 0.6 Number inserted: 1638 Time taken: 674 microseconds
+2416003 random queries in 10 seconds
+2398824 successful queries in 10 seconds
+-------
+Current Fullness: 0.65 Number inserted: 1638 Time taken: 547 microseconds
+1913687 random queries in 10 seconds
+1916026 successful queries in 10 seconds
+-------
+Current Fullness: 0.7 Number inserted: 1638 Time taken: 1046 microseconds
+2032005 random queries in 10 seconds
+2055412 successful queries in 10 seconds
+-------
+Current Fullness: 0.75 Number inserted: 1638 Time taken: 1247 microseconds
+2037337 random queries in 10 seconds
+1997200 successful queries in 10 seconds
+-------
+Current Fullness: 0.8 Number inserted: 1638 Time taken: 1108 microseconds
+1990700 random queries in 10 seconds
+1961038 successful queries in 10 seconds
+-------
+Current Fullness: 0.85 Number inserted: 1638 Time taken: 2022 microseconds
+1892686 random queries in 10 seconds
+1878594 successful queries in 10 seconds
+-------

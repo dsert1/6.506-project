@@ -1,0 +1,60 @@
+Current Fullness: 0. Insertion 51 16 microseconds
+600000 successful lookups in 305012
+600000 random lookups in 663214
+Current Fullness: 0.05. Insertion 51 38 microseconds
+600000 successful lookups in 594540
+600000 random lookups in 623113
+Current Fullness: 0.1. Insertion 51 64 microseconds
+600000 successful lookups in 848317
+600000 random lookups in 801526
+Current Fullness: 0.15. Insertion 51 117 microseconds
+600000 successful lookups in 1093570
+600000 random lookups in 1001743
+Current Fullness: 0.2. Insertion 51 207 microseconds
+600000 successful lookups in 1401499
+600000 random lookups in 1214893
+Current Fullness: 0.25. Insertion 51 173 microseconds
+600000 successful lookups in 1601620
+600000 random lookups in 1371071
+Current Fullness: 0.3. Insertion 51 182 microseconds
+600000 successful lookups in 1909389
+600000 random lookups in 1563671
+Current Fullness: 0.35. Insertion 51 315 microseconds
+600000 successful lookups in 2124752
+600000 random lookups in 1789703
+Current Fullness: 0.4. Insertion 51 297 microseconds
+600000 successful lookups in 2530281
+600000 random lookups in 1971970
+Current Fullness: 0.45. Insertion 51 250 microseconds
+600000 successful lookups in 2810144
+600000 random lookups in 2127075
+Current Fullness: 0.5. Insertion 51 246 microseconds
+600000 successful lookups in 2973337
+600000 random lookups in 2242876
+Current Fullness: 0.55. Insertion 51 268 microseconds
+600000 successful lookups in 3268180
+600000 random lookups in 2366741
+Current Fullness: 0.6. Insertion 51 366 microseconds
+600000 successful lookups in 3463991
+600000 random lookups in 2387787
+Current Fullness: 0.65. Insertion 51 314 microseconds
+600000 successful lookups in 3747745
+600000 random lookups in 2392466
+Current Fullness: 0.7. Insertion 51 464 microseconds
+600000 successful lookups in 4016914
+600000 random lookups in 2599465
+Current Fullness: 0.75. Insertion 51 357 microseconds
+600000 successful lookups in 4371910
+600000 random lookups in 2629606
+Current Fullness: 0.8. Insertion 51 502 microseconds
+600000 successful lookups in 4596047
+600000 random lookups in 2751729
+Current Fullness: 0.85. Insertion 51 406 microseconds
+600000 successful lookups in 4704390
+600000 random lookups in 2797550
+Current Fullness: 0.9. Insertion 51 662 microseconds
+600000 successful lookups in 5171663
+600000 random lookups in 2790339
+Current Fullness: 0.95. Insertion 51 485 microseconds
+600000 successful lookups in 5692877
+600000 random lookups in 2763407

@@ -1,0 +1,68 @@
+Current Fullness: 0.05 Number inserted: 3 Time taken: 21 microseconds
+Current Fullness: 0.05. Number deleted: 1 Time taken: 0 microseconds
+ 1189834 random queries in 60 seconds
+ 1203576 successful queries in 60 seconds
+Current Fullness: 0.1 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.1. Number deleted: 1 Time taken: 0 microseconds
+ 1185595 random queries in 60 seconds
+ 1172611 successful queries in 60 seconds
+Current Fullness: 0.15 Number inserted: 3 Time taken: 3 microseconds
+Current Fullness: 0.15. Number deleted: 1 Time taken: 0 microseconds
+ 1192302 random queries in 60 seconds
+ 1210240 successful queries in 60 seconds
+Current Fullness: 0.2 Number inserted: 3 Time taken: 0 microseconds
+Current Fullness: 0.2. Number deleted: 1 Time taken: 0 microseconds
+ 1195924 random queries in 60 seconds
+ 1166900 successful queries in 60 seconds
+Current Fullness: 0.25 Number inserted: 3 Time taken: 15 microseconds
+Current Fullness: 0.25. Number deleted: 1 Time taken: 0 microseconds
+ 1178743 random queries in 60 seconds
+ 1217936 successful queries in 60 seconds
+Current Fullness: 0.3 Number inserted: 3 Time taken: 4 microseconds
+Current Fullness: 0.3. Number deleted: 1 Time taken: 0 microseconds
+ 1215644 random queries in 60 seconds
+ 1223816 successful queries in 60 seconds
+Current Fullness: 0.35 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.35. Number deleted: 1 Time taken: 0 microseconds
+ 1217217 random queries in 60 seconds
+ 1228134 successful queries in 60 seconds
+Current Fullness: 0.4 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.4. Number deleted: 1 Time taken: 0 microseconds
+ 1210967 random queries in 60 seconds
+ 1228809 successful queries in 60 seconds
+Current Fullness: 0.45 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.45. Number deleted: 1 Time taken: 0 microseconds
+ 1218757 random queries in 60 seconds
+ 1225568 successful queries in 60 seconds
+Current Fullness: 0.5 Number inserted: 3 Time taken: 3 microseconds
+Current Fullness: 0.5. Number deleted: 1 Time taken: 1 microseconds
+ 1154455 random queries in 60 seconds
+ 1215530 successful queries in 60 seconds
+Current Fullness: 0.55 Number inserted: 3 Time taken: 3 microseconds
+Current Fullness: 0.55. Number deleted: 1 Time taken: 0 microseconds
+ 1215938 random queries in 60 seconds
+ 1215871 successful queries in 60 seconds
+Current Fullness: 0.6 Number inserted: 3 Time taken: 2 microseconds
+Current Fullness: 0.6. Number deleted: 1 Time taken: 0 microseconds
+ 1156613 random queries in 60 seconds
+ 1201443 successful queries in 60 seconds
+Current Fullness: 0.65 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.65. Number deleted: 1 Time taken: 0 microseconds
+ 1185128 random queries in 60 seconds
+ 1185668 successful queries in 60 seconds
+Current Fullness: 0.7 Number inserted: 3 Time taken: 2 microseconds
+Current Fullness: 0.7. Number deleted: 1 Time taken: 0 microseconds
+ 1178518 random queries in 60 seconds
+ 1192514 successful queries in 60 seconds
+Current Fullness: 0.75 Number inserted: 3 Time taken: 2 microseconds
+Current Fullness: 0.75. Number deleted: 1 Time taken: 0 microseconds
+ 1175286 random queries in 60 seconds
+ 1170927 successful queries in 60 seconds
+Current Fullness: 0.8 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.8. Number deleted: 1 Time taken: 0 microseconds
+ 1177550 random queries in 60 seconds
+ 1205913 successful queries in 60 seconds
+Current Fullness: 0.85 Number inserted: 3 Time taken: 1 microseconds
+Current Fullness: 0.85. Number deleted: 1 Time taken: 0 microseconds
+ 1178388 random queries in 60 seconds
+ 1200155 successful queries in 60 seconds

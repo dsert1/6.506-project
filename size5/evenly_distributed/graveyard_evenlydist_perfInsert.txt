@@ -1,0 +1,56 @@
+Current Fullness: 0.2 Number inserted: 1 Time taken: 20 microseconds
+1197177 random queries in 30 seconds
+1215115 successful queries in 30 seconds
+-------
+Current Fullness: 0.25 Number inserted: 1 Time taken: 1 microseconds
+1207424 random queries in 30 seconds
+1217298 successful queries in 30 seconds
+-------
+Current Fullness: 0.3 Number inserted: 1 Time taken: 2 microseconds
+1210446 random queries in 30 seconds
+1213975 successful queries in 30 seconds
+-------
+Current Fullness: 0.35 Number inserted: 1 Time taken: 1 microseconds
+1212621 random queries in 30 seconds
+1223834 successful queries in 30 seconds
+-------
+Current Fullness: 0.4 Number inserted: 1 Time taken: 1 microseconds
+1215995 random queries in 30 seconds
+1218799 successful queries in 30 seconds
+-------
+Current Fullness: 0.45 Number inserted: 1 Time taken: 2 microseconds
+1210574 random queries in 30 seconds
+1212957 successful queries in 30 seconds
+-------
+Current Fullness: 0.5 Number inserted: 1 Time taken: 2 microseconds
+1203777 random queries in 30 seconds
+1190964 successful queries in 30 seconds
+-------
+Current Fullness: 0.55 Number inserted: 1 Time taken: 0 microseconds
+1196352 random queries in 30 seconds
+1201233 successful queries in 30 seconds
+-------
+Current Fullness: 0.6 Number inserted: 1 Time taken: 0 microseconds
+1196162 random queries in 30 seconds
+1198966 successful queries in 30 seconds
+-------
+Current Fullness: 0.65 Number inserted: 1 Time taken: 0 microseconds
+1206561 random queries in 30 seconds
+1215404 successful queries in 30 seconds
+-------
+Current Fullness: 0.7 Number inserted: 1 Time taken: 0 microseconds
+1214971 random queries in 30 seconds
+1223681 successful queries in 30 seconds
+-------
+Current Fullness: 0.75 Number inserted: 1 Time taken: 3 microseconds
+1219103 random queries in 30 seconds
+1221910 successful queries in 30 seconds
+-------
+Current Fullness: 0.8 Number inserted: 1 Time taken: 0 microseconds
+1218553 random queries in 30 seconds
+1225338 successful queries in 30 seconds
+-------
+Current Fullness: 0.85 Number inserted: 1 Time taken: 1 microseconds
+1218088 random queries in 30 seconds
+1226392 successful queries in 30 seconds
+-------

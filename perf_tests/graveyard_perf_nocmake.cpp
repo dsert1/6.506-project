@@ -10,8 +10,8 @@
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 20;
-const double MAX_FULLNESS = 1;
+const int DURATION = 10;
+const double MAX_FULLNESS = 0.9;
 
 // To be used as the hash function for testing
 int hash_fn(int x) {
@@ -65,6 +65,7 @@ void perfTestInsert(QuotientFilter* vqf, QuotientFilterGraveyard* qf, QuotientFi
   float currentFullness = 0.00;
   int start;
   while (currentFullness <= MAX_FULLNESS) {
+    std::cout << "Current fullness: " << currentFullness << std::endl;
     // Calculate the number of elements to insert until the filter is 5% filled
     start = currentFullness*filter_capacity;
     std::cout << "Inserting at " << currentFullness << " fullness\n";
@@ -450,7 +451,12 @@ void perfTestDelete(QuotientFilterGraveyard* qf, std::string filename) {
   std::ofstream outfile("perfDelete_"+filename+ ".txt");
 
   float currentFullness = MAX_FULLNESS;
+<<<<<<< HEAD
   while (currentFullness >= 0.05) {
+=======
+  while (currentFullness >= 0.5) {
+    std::cout << " Current fullness: " << currentFullness << std::endl;
+>>>>>>> origin/temi-perf-tests
     // Calculate the number of elements to insert until the filter is 5% filled
     std::cout << "Deleting starting at " << currentFullness << " fullness\n";
     const int filter_capacity = qf->table_size;
@@ -459,15 +465,28 @@ void perfTestDelete(QuotientFilterGraveyard* qf, std::string filename) {
     // Insert elements until the filter is 5% filled
     int deletePosition = currentFullness * filter_capacity - 1; // how far into the array we're at
     int deleteMinPosition = deletePosition - 0.05 * filter_capacity;
+<<<<<<< HEAD
+=======
+
+    if (deleteMinPosition < 0) {
+      break;
+    }
+
+    std::cout << "Starting deletes... starting queries\n";
+>>>>>>> origin/temi-perf-tests
     auto start_inserts = std::chrono::steady_clock::now();
     for (int i = deletePosition; i > deleteMinPosition; i--) {
       std::cout << "Deleting number at position " << i << "\n";
       qf->deleteElement(numbersToInsert[i]);
       std::cout << "Deleted number at position " << i << "\n";
     }
+<<<<<<< HEAD
+=======
+    std::cout << "Ending deletes... starting queries\n";
+>>>>>>> origin/temi-perf-tests
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Deletion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << ". Number deleted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();
@@ -514,6 +533,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf, std::string filename) {
 
   float currentFullness = 0.05;
   while (currentFullness <= MAX_FULLNESS) {
+    std::cout << " Current fullness: " << currentFullness << std::endl;
     // Calculate the number of elements to insert until the filter is 5% filled
     const int filter_capacity = qf->table_size;
     const int fill_limit = filter_capacity * 0.1;
@@ -532,7 +552,7 @@ void perfTestMixed(QuotientFilterGraveyard* qf, std::string filename) {
     }
     auto end_inserts = std::chrono::steady_clock::now();
     auto insert_time = std::chrono::duration_cast<std::chrono::microseconds>(end_inserts - start_inserts).count();
-    outfile << "Current Fullness: " << currentFullness << ". Insertion " << fill_limit << " " << insert_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << " Number inserted: " << fill_limit << " Time taken: " << insert_time << " microseconds" << std::endl;
 
 
     // Delete elements until the filter is 5% filled
@@ -543,7 +563,8 @@ void perfTestMixed(QuotientFilterGraveyard* qf, std::string filename) {
 
     auto end_deletes = std::chrono::steady_clock::now();
     auto delete_time = std::chrono::duration_cast<std::chrono::microseconds>(end_deletes - start_deletes).count();
-    outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
+    // outfile << "Current Fullness: " << currentFullness << ". Deletion " << delete_limit << " " << delete_time << " microseconds" << std::endl;
+    outfile << "Current Fullness: " << currentFullness << ". Number deleted: " << delete_limit << " Time taken: " << delete_time << " microseconds" << std::endl;
 
     // perform queries for 60%
     auto start = std::chrono::high_resolution_clock::now();

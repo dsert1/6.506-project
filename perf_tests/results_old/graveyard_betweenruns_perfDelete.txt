@@ -1,0 +1,68 @@
+Current Fullness: 0.9 Number deleted: 29491 Time taken: 8312 microseconds
+ 1601470 random queries in 10 seconds
+ 1497928 successful queries in 10 seconds
+-------
+Current Fullness: 0.85 Number deleted: 29491 Time taken: 5971 microseconds
+ 1612117 random queries in 10 seconds
+ 1494255 successful queries in 10 seconds
+-------
+Current Fullness: 0.8 Number deleted: 29491 Time taken: 5444 microseconds
+ 1600906 random queries in 10 seconds
+ 1478525 successful queries in 10 seconds
+-------
+Current Fullness: 0.75 Number deleted: 29491 Time taken: 5357 microseconds
+ 1581467 random queries in 10 seconds
+ 1478123 successful queries in 10 seconds
+-------
+Current Fullness: 0.7 Number deleted: 29491 Time taken: 3670 microseconds
+ 1641863 random queries in 10 seconds
+ 1486514 successful queries in 10 seconds
+-------
+Current Fullness: 0.65 Number deleted: 29491 Time taken: 5298 microseconds
+ 1645309 random queries in 10 seconds
+ 1496257 successful queries in 10 seconds
+-------
+Current Fullness: 0.6 Number deleted: 29491 Time taken: 3588 microseconds
+ 1671722 random queries in 10 seconds
+ 1498874 successful queries in 10 seconds
+-------
+Current Fullness: 0.55 Number deleted: 29491 Time taken: 4917 microseconds
+ 1691034 random queries in 10 seconds
+ 1480249 successful queries in 10 seconds
+-------
+Current Fullness: 0.5 Number deleted: 29491 Time taken: 3556 microseconds
+ 1697062 random queries in 10 seconds
+ 1429051 successful queries in 10 seconds
+-------
+Current Fullness: 0.45 Number deleted: 29491 Time taken: 5008 microseconds
+ 1726901 random queries in 10 seconds
+ 1475316 successful queries in 10 seconds
+-------
+Current Fullness: 0.4 Number deleted: 29491 Time taken: 3725 microseconds
+ 1755351 random queries in 10 seconds
+ 1489582 successful queries in 10 seconds
+-------
+Current Fullness: 0.35 Number deleted: 29491 Time taken: 3675 microseconds
+ 1773324 random queries in 10 seconds
+ 1478378 successful queries in 10 seconds
+-------
+Current Fullness: 0.3 Number deleted: 29491 Time taken: 4089 microseconds
+ 1823709 random queries in 10 seconds
+ 1475754 successful queries in 10 seconds
+-------
+Current Fullness: 0.25 Number deleted: 29491 Time taken: 3566 microseconds
+ 1874384 random queries in 10 seconds
+ 1476219 successful queries in 10 seconds
+-------
+Current Fullness: 0.2 Number deleted: 29491 Time taken: 3605 microseconds
+ 1889527 random queries in 10 seconds
+ 1478520 successful queries in 10 seconds
+-------
+Current Fullness: 0.15 Number deleted: 29491 Time taken: 4087 microseconds
+ 1969030 random queries in 10 seconds
+ 1490620 successful queries in 10 seconds
+-------
+Current Fullness: 0.0999998 Number deleted: 29491 Time taken: 3365 microseconds
+ 2063698 random queries in 10 seconds
+ 1486676 successful queries in 10 seconds
+-------

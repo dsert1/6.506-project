@@ -1,0 +1,9 @@
+Current Fullness: 0.05 Number inserted: 3276 Time taken: 361 microseconds
+Current Fullness: 0.05 Number deleted: 1638 Time taken: 161 microseconds
+ 2616274 random queries in 10 seconds
+ 2454435 successful queries in 10 seconds
+-------
+Current Fullness: 0.1 Number inserted: 3276 Time taken: 3239 microseconds
+Current Fullness: 0.1 Number deleted: 1638 Time taken: 147 microseconds
+ 2458257 random queries in 10 seconds
+ 2450420 successful queries in 10 seconds

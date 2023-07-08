@@ -1,0 +1,57 @@
+Current Fullness: 0.05. Insertion 102 51 microseconds
+Current Fullness: 0.05. Deletion 51 38 microseconds
+600000 successful lookups in 314600
+Current Fullness: 0.1. Insertion 102 97 microseconds
+Current Fullness: 0.1. Deletion 51 62 microseconds
+600000 successful lookups in 597425
+Current Fullness: 0.15. Insertion 102 168 microseconds
+Current Fullness: 0.15. Deletion 51 100 microseconds
+600000 successful lookups in 893161
+Current Fullness: 0.2. Insertion 102 212 microseconds
+Current Fullness: 0.2. Deletion 51 110 microseconds
+600000 successful lookups in 1169625
+Current Fullness: 0.25. Insertion 102 222 microseconds
+Current Fullness: 0.25. Deletion 51 127 microseconds
+600000 successful lookups in 1405348
+Current Fullness: 0.3. Insertion 102 303 microseconds
+Current Fullness: 0.3. Deletion 51 157 microseconds
+600000 successful lookups in 1711890
+Current Fullness: 0.35. Insertion 102 425 microseconds
+Current Fullness: 0.35. Deletion 51 203 microseconds
+600000 successful lookups in 2079851
+Current Fullness: 0.4. Insertion 102 372 microseconds
+Current Fullness: 0.4. Deletion 51 204 microseconds
+600000 successful lookups in 2145939
+Current Fullness: 0.45. Insertion 102 456 microseconds
+Current Fullness: 0.45. Deletion 51 216 microseconds
+600000 successful lookups in 2417654
+Current Fullness: 0.5. Insertion 102 478 microseconds
+Current Fullness: 0.5. Deletion 51 238 microseconds
+600000 successful lookups in 2683278
+Current Fullness: 0.55. Insertion 102 495 microseconds
+Current Fullness: 0.55. Deletion 51 268 microseconds
+600000 successful lookups in 3143159
+Current Fullness: 0.6. Insertion 102 563 microseconds
+Current Fullness: 0.6. Deletion 51 283 microseconds
+600000 successful lookups in 3302758
+Current Fullness: 0.65. Insertion 102 584 microseconds
+Current Fullness: 0.65. Deletion 51 320 microseconds
+600000 successful lookups in 3714586
+Current Fullness: 0.7. Insertion 102 911 microseconds
+Current Fullness: 0.7. Deletion 51 397 microseconds
+600000 successful lookups in 3933006
+Current Fullness: 0.75. Insertion 102 804 microseconds
+Current Fullness: 0.75. Deletion 51 352 microseconds
+600000 successful lookups in 4452145
+Current Fullness: 0.8. Insertion 102 954 microseconds
+Current Fullness: 0.8. Deletion 51 373 microseconds
+600000 successful lookups in 4315991
+Current Fullness: 0.85. Insertion 102 1075 microseconds
+Current Fullness: 0.85. Deletion 51 395 microseconds
+600000 successful lookups in 4754823
+Current Fullness: 0.9. Insertion 102 914 microseconds
+Current Fullness: 0.9. Deletion 51 418 microseconds
+600000 successful lookups in 4945513
+Current Fullness: 0.95. Insertion 102 1203 microseconds
+Current Fullness: 0.95. Deletion 51 613 microseconds
+600000 successful lookups in 5223073
