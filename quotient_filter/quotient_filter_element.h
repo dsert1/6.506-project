@@ -19,6 +19,12 @@ struct RunInfo {
     int endOfRunOrStartOfTombstones;
 };
 
+struct PairVal {
+    int runStart;
+    bool cleanUpNeeded;
+    int tombstoneStart;
+};
+
 #pragma once
 class QuotientFilterElement {
     public:
