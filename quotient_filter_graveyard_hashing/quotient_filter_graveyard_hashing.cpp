@@ -340,7 +340,7 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_
     }
 
     //Check if any cleanup needs to happen
-    if (numTombstones > 0) {
+    if (numTombstones > 2) {
         res->cleanUpNeeded = true;
     } else{
         res->cleanUpNeeded = false;
@@ -890,6 +890,9 @@ void QuotientFilterGraveyard::cleanUpTombstones(){
         do {
             int endOfCluster = cleanUpHelper(currCluster);
             // std::cout <<  "Curr cluster: " << currCluster << " End of cluster: " << endOfCluster << "\n";
+            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+                break;
+            }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
@@ -900,7 +903,7 @@ void QuotientFilterGraveyard::cleanUpTombstones(){
             } else {
                 break;
             }
-        }while (true);
+        } while (true);
         this->delCount = 0;
 }
 
@@ -913,6 +916,9 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRuns() {
         int itemsTouched = 1;  //count one for the start!
         do {
             int endOfCluster = reorganizeCluster(currCluster, &itemsTouched);
+            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+                break;
+            }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
@@ -944,6 +950,9 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsInsert() {
         do {
             int endOfCluster = reorganizeCluster2(currCluster, &itemsTouched);
             // std::cout << "start: " << currCluster << "end: " << endOfCluster << "\n";
+            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+                break;
+            }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
