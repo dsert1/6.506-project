@@ -1,0 +1,27 @@
+Current Fullness: 0.9, Number Deleted: 102, Time Taken: 50 micros
+Query duration: 1 sec, Random Queries: 376889, Successful Queries: 361901
+-------
+Current Fullness: 0.8, Number Deleted: 102, Time Taken: 60 micros
+Query duration: 1 sec, Random Queries: 378365, Successful Queries: 359931
+-------
+Current Fullness: 0.7, Number Deleted: 102, Time Taken: 100 micros
+Query duration: 1 sec, Random Queries: 379217, Successful Queries: 358441
+-------
+Current Fullness: 0.6, Number Deleted: 102, Time Taken: 50 micros
+Query duration: 1 sec, Random Queries: 384103, Successful Queries: 363575
+-------
+Current Fullness: 0.5, Number Deleted: 102, Time Taken: 62 micros
+Query duration: 1 sec, Random Queries: 384259, Successful Queries: 362346
+-------
+Current Fullness: 0.4, Number Deleted: 102, Time Taken: 60 micros
+Query duration: 1 sec, Random Queries: 385257, Successful Queries: 367995
+-------
+Current Fullness: 0.3, Number Deleted: 102, Time Taken: 58 micros
+Query duration: 1 sec, Random Queries: 389785, Successful Queries: 377669
+-------
+Current Fullness: 0.2, Number Deleted: 102, Time Taken: 46 micros
+Query duration: 1 sec, Random Queries: 402755, Successful Queries: 384271
+-------
+Current Fullness: 0.1, Number Deleted: 102, Time Taken: 45 micros
+Query duration: 1 sec, Random Queries: 404895, Successful Queries: 404459
+-------

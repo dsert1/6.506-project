@@ -1,0 +1,24 @@
+Current Fullness: 0.1, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 491115, Successful Queries: 491809
+-------
+Current Fullness: 0.2, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 494079, Successful Queries: 493264
+-------
+Current Fullness: 0.3, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 492675, Successful Queries: 491884
+-------
+Current Fullness: 0.4, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 495678, Successful Queries: 494919
+-------
+Current Fullness: 0.5, Number Inserted: 6, Time Taken: 2 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 495886, Successful Queries: 490541
+-------
+Current Fullness: 0.6, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 495001, Successful Queries: 494399
+-------
+Current Fullness: 0.7, Number Inserted: 6, Time Taken: 0 micros; Number Deleted: 3, Time Taken: 0 micros
+Query duration: 1 sec, Random Queries: 494277, Successful Queries: 493981
+-------
+Current Fullness: 0.8, Number Inserted: 6, Time Taken: 1 micros; Number Deleted: 3, Time Taken: 1 micros
+Query duration: 1 sec, Random Queries: 491148, Successful Queries: 487832
+-------

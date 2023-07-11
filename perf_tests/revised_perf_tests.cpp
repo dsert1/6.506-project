@@ -7,13 +7,19 @@
 #include <fstream>
 #include <thread>
 #include <functional>
+#include <limits>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 5;
-const double MAX_FULLNESS = 0.9;
-const double FILL_STEP = 0.1;
-const int FILTER_Q = 10;
+const int DURATION = 60;
+const double MAX_FULLNESS = 0.95;
+const double FILL_STEP = 0.05;
+const int FILTER_Q = 20;
+
+const int MIN_VALUE = INT_MIN;
+const int MAX_VALUE = INT_MAX;
+
+const std::string RESULT_FOLDER = "results_revised/";
 
 // allows both quotient filters to be used interchangeablly
 class AbstractQuotientFilter
@@ -101,23 +107,23 @@ std::chrono::microseconds deletionSubTest(AbstractQuotientFilter* qf, int number
 }
 
 // Performs successful and random queries, returning how many were completed
-queryResults querySubTest(AbstractQuotientFilter* qf, int numbers_to_insert[],
-        int value_range, int stop_idx) {
+queryResults querySubTest(AbstractQuotientFilter* qf, int numbers_to_insert[], int stop_idx) {
 
     auto query_duration = std::chrono::seconds(DURATION);
 
     // Perform random lookups
-    printf("random lookups for %d seconds\n", DURATION);
+    printf("random lookups for %d seconds...", DURATION);
     int random_lookup_count = 0;
     auto r_lookup_end_time = std::chrono::high_resolution_clock::now() + query_duration;
     while (std::chrono::high_resolution_clock::now() < r_lookup_end_time) {
-        int query_value = generate_random_number(0, value_range);
+        int query_value = generate_random_number(MIN_VALUE, MAX_VALUE);
         qf->query(query_value);
         random_lookup_count++;
     }
+    printf(" done\n");
 
     // Perform successful lookups
-    printf("successful lookups for %d seconds\n", DURATION);
+    printf("successful lookups for %d seconds...", DURATION);
     int successful_lookup_count = 0;
     auto s_lookup_end_time = std::chrono::high_resolution_clock::now() + query_duration;
     while (std::chrono::high_resolution_clock::now() < s_lookup_end_time) {
@@ -125,6 +131,7 @@ queryResults querySubTest(AbstractQuotientFilter* qf, int numbers_to_insert[],
         qf->query(query_value);
         successful_lookup_count++;
     }
+    printf(" done\n");
 
     queryResults results = {random_lookup_count, successful_lookup_count};
     return results;
@@ -136,24 +143,23 @@ void perfTestInsert(AbstractQuotientFilter* qf, std::string filename) {
 
     // Generate numbers to insert 
     const int table_size = qf->table_size;
-    const int value_range = table_size * 2;
     int numbers_to_insert[table_size];
     for (int i = 0; i < table_size; i ++) {
-        numbers_to_insert[i] = generate_random_number(0, value_range);
+        numbers_to_insert[i] = generate_random_number(MIN_VALUE, MAX_VALUE);
     }
 
     // Tracks the set of values to be inserted next
-    const int fill_increment = table_size * FILL_STEP;
-    int start_idx = 0;
-    int stop_idx = fill_increment;
-
     double current_fullness = FILL_STEP;
+    int start_idx = 0;
+    int stop_idx = table_size * current_fullness;
+
     while (current_fullness <= MAX_FULLNESS) {
         // Insert elements
-        printf("perfInsert: insert to %.2f fullness\n", current_fullness);
+        printf("perfInsert: insert to %.2f fullness...", current_fullness);
         auto insert_time = insertionSubTest(qf, numbers_to_insert, start_idx, stop_idx).count();
+        printf(" done\n");
 
-        queryResults query_results = querySubTest(qf, numbers_to_insert, value_range, stop_idx);
+        queryResults query_results = querySubTest(qf, numbers_to_insert, stop_idx);
         int random_lookup_count = query_results.random_lookup_count;
         int successful_lookup_count = query_results.successful_lookup_count;
 
@@ -169,7 +175,7 @@ void perfTestInsert(AbstractQuotientFilter* qf, std::string filename) {
         // Increment for next loop
         current_fullness += FILL_STEP;
         start_idx = stop_idx;
-        stop_idx += fill_increment;
+        stop_idx = table_size * current_fullness;
     }
 
     outfile.close();
@@ -182,29 +188,30 @@ void perfTestDelete(AbstractQuotientFilter* qf, std::string filename) {
 
     // Generate numbers to insert 
     const int table_size = qf->table_size;
-    const int value_range = table_size * 2;
     int numbers_to_insert[table_size];
     for (int i = 0; i < table_size; i ++) {
-        numbers_to_insert[i] = generate_random_number(0, value_range);
+        numbers_to_insert[i] = generate_random_number(MIN_VALUE, MAX_VALUE);
     }
 
     // Tracks the set of values to be deleted next
-    const int fill_increment = table_size * FILL_STEP;
-    int stop_idx = table_size * MAX_FULLNESS;
-    int start_idx = stop_idx - fill_increment;
+    double current_fullness = MAX_FULLNESS;
+    int stop_idx = table_size * current_fullness;
+    int start_idx = table_size * (current_fullness - FILL_STEP);
 
     // Initially fills table to limit
+    printf("perfDelete: initial insertions to %.2f fullness...", MAX_FULLNESS);
     for (int i = 0; i < stop_idx; i++) {
         qf->insertElement(numbers_to_insert[i]);
     }
+    printf(" done\n");
 
-    double current_fullness = MAX_FULLNESS;
     while (current_fullness >= FILL_STEP) {
         // Delete elements
-        printf("perfDelete: delete from %.2f fullness\n", current_fullness);
+        printf("perfDelete: delete from %.2f fullness...", current_fullness);
         auto delete_time = deletionSubTest(qf, numbers_to_insert, start_idx, stop_idx).count();
+        printf(" done\n");
 
-        queryResults query_results = querySubTest(qf, numbers_to_insert, value_range, stop_idx);
+        queryResults query_results = querySubTest(qf, numbers_to_insert, stop_idx);
         int random_lookup_count = query_results.random_lookup_count;
         int successful_lookup_count = query_results.successful_lookup_count;
 
@@ -220,7 +227,7 @@ void perfTestDelete(AbstractQuotientFilter* qf, std::string filename) {
         // Increment for next loop
         current_fullness -= FILL_STEP;
         stop_idx = start_idx;
-        start_idx -= fill_increment;
+        start_idx = table_size * (current_fullness - FILL_STEP);
         if (start_idx < 0) {start_idx = 0;}
     }
 
@@ -234,29 +241,29 @@ void perfTestMixed(AbstractQuotientFilter* qf, std::string filename) {
 
     // Generate numbers to insert 
     const int table_size = qf->table_size;
-    const int value_range = table_size * 2;
     int numbers_to_insert[table_size];
     for (int i = 0; i < table_size; i ++) {
-        numbers_to_insert[i] = generate_random_number(0, value_range);
+        numbers_to_insert[i] = generate_random_number(MIN_VALUE, MAX_VALUE);
     }
 
     // Tracks the set of values to be inserted and deleted next
-    const int fill_increment = table_size * FILL_STEP;
-    int start_idx = 0;
-    int mid_idx = fill_increment;
-    int stop_idx = mid_idx + fill_increment;
-
     double current_fullness = FILL_STEP;
+    int start_idx = 0;
+    int mid_idx = table_size * current_fullness;
+    int stop_idx = table_size * (current_fullness + FILL_STEP);
+
     while (current_fullness <= MAX_FULLNESS - FILL_STEP) {
         // Insert elements
-        printf("perfMixed: insert to %.2f fullness\n", current_fullness + FILL_STEP);
+        printf("perfMixed: insert to %.2f fullness...", current_fullness + FILL_STEP);
         auto insert_time = insertionSubTest(qf, numbers_to_insert, start_idx, stop_idx).count();
+        printf(" done\n");
 
         // Mixed elements
-        printf("perfMixed: delete to %.2f fullness\n", current_fullness);
+        printf("perfMixed: delete to %.2f fullness...", current_fullness);
         auto delete_time = deletionSubTest(qf, numbers_to_insert, mid_idx, stop_idx).count();
+        printf(" done\n");
 
-        queryResults query_results = querySubTest(qf, numbers_to_insert, value_range, mid_idx);
+        queryResults query_results = querySubTest(qf, numbers_to_insert, mid_idx);
         int random_lookup_count = query_results.random_lookup_count;
         int successful_lookup_count = query_results.successful_lookup_count;
 
@@ -275,7 +282,7 @@ void perfTestMixed(AbstractQuotientFilter* qf, std::string filename) {
         current_fullness += FILL_STEP;
         start_idx = mid_idx;
         mid_idx = stop_idx;
-        stop_idx += fill_increment;
+        stop_idx = table_size * (current_fullness + FILL_STEP);
     }
 
     outfile.close();
@@ -285,10 +292,8 @@ void perfTestMixed(AbstractQuotientFilter* qf, std::string filename) {
 
 
 int main(int argc, char **argv) {
-    std::string result_folder = "results_v2/";
-
     // normal filter
-    std::string normal_filter_name = result_folder + "normal";
+    std::string normal_filter_name = RESULT_FOLDER + "normal";
     perfTestInsert(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
         normal_filter_name);
     perfTestDelete(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
@@ -298,11 +303,12 @@ int main(int argc, char **argv) {
 
     // graveyard filters
     RedistributionPolicy policies[] = {no_redistribution, amortized_clean, between_runs, between_runs_insert, evenly_distribute};
-    std::string filter_names[] = {"no_redist_new", "amortized_clean_new", "between_runs_new", "between_runs_insert_new", "evenly_dist_new"};
+    std::string filter_names[] = {"no_redist", "amortized_clean", "between_runs", "between_runs_insert", "evenly_dist"};
 
-    for (int i = 1; i < 5; i ++) {
+    for (int i = 0; i < 5; i ++) {
         RedistributionPolicy current_policy = policies[i];
-        std::string current_filter_name = result_folder + filter_names[i];
+        printf("\npolicy: %d\n", current_policy);
+        std::string current_filter_name = RESULT_FOLDER + filter_names[i];
         perfTestInsert(new AbstractQuotientFilter(
             new QuotientFilterGraveyard(FILTER_Q, &hash_fn, current_policy)),
             current_filter_name);
