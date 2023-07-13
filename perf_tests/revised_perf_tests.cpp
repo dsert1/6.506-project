@@ -8,13 +8,14 @@
 #include <thread>
 #include <functional>
 #include <limits>
+#include <assert.h>
 // disables a warning for converting ints to uint64_t
 #pragma warning( disable: 4838 )
 
-const int DURATION = 60;
+const int DURATION = 10; //60
 const double MAX_FULLNESS = 0.95;
 const double FILL_STEP = 0.05;
-const int FILTER_Q = 20;
+const int FILTER_Q = 20; //20
 
 const int MIN_VALUE = INT_MIN;
 const int MAX_VALUE = INT_MAX;
@@ -88,6 +89,7 @@ std::chrono::microseconds insertionSubTest(AbstractQuotientFilter* qf, int numbe
 
     auto insert_start_time = std::chrono::steady_clock::now();
     for (int i = start_idx; i < stop_idx; i++) {
+        // std::cout << "Inserting " << numbers_to_insert[i] << "\n";
         qf->insertElement(numbers_to_insert[i]);
     }
     auto insert_end_time = std::chrono::steady_clock::now();
@@ -126,12 +128,14 @@ queryResults querySubTest(AbstractQuotientFilter* qf, int numbers_to_insert[], i
     printf("successful lookups for %d seconds...", DURATION);
     int successful_lookup_count = 0;
     auto s_lookup_end_time = std::chrono::high_resolution_clock::now() + query_duration;
+    int count = 0;
     while (std::chrono::high_resolution_clock::now() < s_lookup_end_time) {
-        int query_value = numbers_to_insert[generate_random_number(0, stop_idx)];
+        count++;
+        int query_value = numbers_to_insert[generate_random_number(0, stop_idx-1)];
         qf->query(query_value);
         successful_lookup_count++;
     }
-    printf(" done\n");
+    printf("done\n");
 
     queryResults results = {random_lookup_count, successful_lookup_count};
     return results;
@@ -159,17 +163,17 @@ void perfTestInsert(AbstractQuotientFilter* qf, std::string filename) {
         auto insert_time = insertionSubTest(qf, numbers_to_insert, start_idx, stop_idx).count();
         printf(" done\n");
 
-        queryResults query_results = querySubTest(qf, numbers_to_insert, stop_idx);
-        int random_lookup_count = query_results.random_lookup_count;
-        int successful_lookup_count = query_results.successful_lookup_count;
+        // queryResults query_results = querySubTest(qf, numbers_to_insert, stop_idx);
+        // int random_lookup_count = query_results.random_lookup_count;
+        // int successful_lookup_count = query_results.successful_lookup_count;
 
         // Write Results
         outfile << "Current Fullness: " << current_fullness << ", ";
         outfile << "Number Inserted: " << (stop_idx - start_idx) << ", ";
         outfile << "Time Taken: " << insert_time << " micros\n";
         outfile << "Query duration: " << DURATION << " sec, ";
-        outfile << "Random Queries: " << random_lookup_count << ", ";
-        outfile << "Successful Queries: " << successful_lookup_count << "\n";
+        // outfile << "Random Queries: " << random_lookup_count << ", ";
+        // outfile << "Successful Queries: " << successful_lookup_count << "\n";
         outfile << "-------\n";
 
         // Increment for next loop
@@ -294,12 +298,12 @@ void perfTestMixed(AbstractQuotientFilter* qf, std::string filename) {
 int main(int argc, char **argv) {
     // normal filter
     std::string normal_filter_name = RESULT_FOLDER + "normal";
-    perfTestInsert(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
-        normal_filter_name);
-    perfTestDelete(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
-        normal_filter_name);
-    perfTestMixed(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
-        normal_filter_name);
+    // perfTestInsert(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
+    //     normal_filter_name);
+    // perfTestDelete(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
+    //     normal_filter_name);
+    // perfTestMixed(new AbstractQuotientFilter(new QuotientFilter(FILTER_Q, &hash_fn)),
+    //     normal_filter_name);
 
     // graveyard filters
     RedistributionPolicy policies[] = {no_redistribution, amortized_clean, between_runs, between_runs_insert, evenly_distribute};

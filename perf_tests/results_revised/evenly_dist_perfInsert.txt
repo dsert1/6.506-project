@@ -1,0 +1,54 @@
+Current Fullness: 0.05, Number Inserted: 52428, Time Taken: 13391 micros
+Query duration: 10 sec, Random Queries: 3060006, Successful Queries: 3076471
+-------
+Current Fullness: 0.1, Number Inserted: 52429, Time Taken: 6612 micros
+Query duration: 10 sec, Random Queries: 3054994, Successful Queries: 3045561
+-------
+Current Fullness: 0.15, Number Inserted: 52429, Time Taken: 6019 micros
+Query duration: 10 sec, Random Queries: 3056592, Successful Queries: 3004605
+-------
+Current Fullness: 0.2, Number Inserted: 52429, Time Taken: 47294 micros
+Query duration: 10 sec, Random Queries: 3050650, Successful Queries: 2995961
+-------
+Current Fullness: 0.25, Number Inserted: 52429, Time Taken: 7693 micros
+Query duration: 10 sec, Random Queries: 3047164, Successful Queries: 2986399
+-------
+Current Fullness: 0.3, Number Inserted: 52428, Time Taken: 8503 micros
+Query duration: 10 sec, Random Queries: 3041377, Successful Queries: 2961993
+-------
+Current Fullness: 0.35, Number Inserted: 52429, Time Taken: 8237 micros
+Query duration: 10 sec, Random Queries: 3037957, Successful Queries: 2964628
+-------
+Current Fullness: 0.4, Number Inserted: 52429, Time Taken: 9114 micros
+Query duration: 10 sec, Random Queries: 3032387, Successful Queries: 2971631
+-------
+Current Fullness: 0.45, Number Inserted: 52429, Time Taken: 9394 micros
+Query duration: 10 sec, Random Queries: 3024262, Successful Queries: 2963041
+-------
+Current Fullness: 0.5, Number Inserted: 52428, Time Taken: 141911 micros
+Query duration: 10 sec, Random Queries: 3018069, Successful Queries: 2925757
+-------
+Current Fullness: 0.55, Number Inserted: 52429, Time Taken: 12490 micros
+Query duration: 10 sec, Random Queries: 2999335, Successful Queries: 2881989
+-------
+Current Fullness: 0.6, Number Inserted: 52429, Time Taken: 14608 micros
+Query duration: 10 sec, Random Queries: 2995038, Successful Queries: 2880266
+-------
+Current Fullness: 0.65, Number Inserted: 52429, Time Taken: 155881 micros
+Query duration: 10 sec, Random Queries: 2971439, Successful Queries: 2820732
+-------
+Current Fullness: 0.7, Number Inserted: 52429, Time Taken: 19937 micros
+Query duration: 10 sec, Random Queries: 2941511, Successful Queries: 2800131
+-------
+Current Fullness: 0.75, Number Inserted: 52429, Time Taken: 23024 micros
+Query duration: 10 sec, Random Queries: 2915443, Successful Queries: 2763896
+-------
+Current Fullness: 0.8, Number Inserted: 52428, Time Taken: 145675 micros
+Query duration: 10 sec, Random Queries: 2838932, Successful Queries: 2658406
+-------
+Current Fullness: 0.85, Number Inserted: 52429, Time Taken: 132947 micros
+Query duration: 10 sec, Random Queries: 2723156, Successful Queries: 2496543
+-------
+Current Fullness: 0.9, Number Inserted: 52429, Time Taken: 131171 micros
+Query duration: 10 sec, Random Queries: 2497446, Successful Queries: 2208970
+-------

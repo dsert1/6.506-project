@@ -1,0 +1,36 @@
+Current Fullness: 0.05, Number Inserted: 52428, Time Taken: 13667 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.1, Number Inserted: 52429, Time Taken: 5388 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.15, Number Inserted: 52429, Time Taken: 5551 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.2, Number Inserted: 52429, Time Taken: 5625 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.25, Number Inserted: 52429, Time Taken: 5721 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.3, Number Inserted: 52428, Time Taken: 6114 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.35, Number Inserted: 52429, Time Taken: 6441 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.4, Number Inserted: 52429, Time Taken: 6939 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.45, Number Inserted: 52429, Time Taken: 7587 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.5, Number Inserted: 52428, Time Taken: 8616 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.55, Number Inserted: 52429, Time Taken: 9773 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.6, Number Inserted: 52429, Time Taken: 11905 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.65, Number Inserted: 52429, Time Taken: 13968 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.7, Number Inserted: 52429, Time Taken: 17793 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.75, Number Inserted: 52429, Time Taken: 22544 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.8, Number Inserted: 52428, Time Taken: 32364 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.85, Number Inserted: 52429, Time Taken: 48323 micros
+Query duration: 10 sec, -------
+Current Fullness: 0.9, Number Inserted: 52429, Time Taken: 93075 micros
+Query duration: 10 sec, -------

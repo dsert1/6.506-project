@@ -1,0 +1,54 @@
+Current Fullness: 0.95, Number Deleted: 52429, Time Taken: 317577 micros
+Query duration: 10 sec, Random Queries: 1454379, Successful Queries: 1097258
+-------
+Current Fullness: 0.9, Number Deleted: 52429, Time Taken: 314369 micros
+Query duration: 10 sec, Random Queries: 1432195, Successful Queries: 1094004
+-------
+Current Fullness: 0.85, Number Deleted: 52429, Time Taken: 309425 micros
+Query duration: 10 sec, Random Queries: 1459834, Successful Queries: 1093263
+-------
+Current Fullness: 0.8, Number Deleted: 52429, Time Taken: 311320 micros
+Query duration: 10 sec, Random Queries: 1460977, Successful Queries: 1093295
+-------
+Current Fullness: 0.75, Number Deleted: 52428, Time Taken: 309312 micros
+Query duration: 10 sec, Random Queries: 1462604, Successful Queries: 1091244
+-------
+Current Fullness: 0.7, Number Deleted: 52429, Time Taken: 315638 micros
+Query duration: 10 sec, Random Queries: 1465061, Successful Queries: 1092391
+-------
+Current Fullness: 0.65, Number Deleted: 52429, Time Taken: 309748 micros
+Query duration: 10 sec, Random Queries: 1464429, Successful Queries: 1092674
+-------
+Current Fullness: 0.6, Number Deleted: 52429, Time Taken: 309439 micros
+Query duration: 10 sec, Random Queries: 1467144, Successful Queries: 1093088
+-------
+Current Fullness: 0.55, Number Deleted: 52429, Time Taken: 314018 micros
+Query duration: 10 sec, Random Queries: 1466377, Successful Queries: 1094268
+-------
+Current Fullness: 0.5, Number Deleted: 52428, Time Taken: 309841 micros
+Query duration: 10 sec, Random Queries: 1470163, Successful Queries: 1101638
+-------
+Current Fullness: 0.45, Number Deleted: 52429, Time Taken: 341787 micros
+Query duration: 10 sec, Random Queries: 1469639, Successful Queries: 1093718
+-------
+Current Fullness: 0.4, Number Deleted: 52429, Time Taken: 310490 micros
+Query duration: 10 sec, Random Queries: 1471947, Successful Queries: 1098921
+-------
+Current Fullness: 0.35, Number Deleted: 52429, Time Taken: 308279 micros
+Query duration: 10 sec, Random Queries: 1473929, Successful Queries: 1099549
+-------
+Current Fullness: 0.3, Number Deleted: 52429, Time Taken: 310753 micros
+Query duration: 10 sec, Random Queries: 1476197, Successful Queries: 1100962
+-------
+Current Fullness: 0.25, Number Deleted: 52428, Time Taken: 309133 micros
+Query duration: 10 sec, Random Queries: 1472844, Successful Queries: 1106126
+-------
+Current Fullness: 0.2, Number Deleted: 52429, Time Taken: 306483 micros
+Query duration: 10 sec, Random Queries: 1472551, Successful Queries: 1106172
+-------
+Current Fullness: 0.15, Number Deleted: 52429, Time Taken: 309153 micros
+Query duration: 10 sec, Random Queries: 1481503, Successful Queries: 1101448
+-------
+Current Fullness: 0.1, Number Deleted: 52429, Time Taken: 303939 micros
+Query duration: 10 sec, Random Queries: 1478084, Successful Queries: 1112445
+-------
