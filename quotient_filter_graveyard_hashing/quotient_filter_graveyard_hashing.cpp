@@ -4,6 +4,9 @@
 #include <deque>
 #include<stack>
 
+//TODO: CORRECT CLEAN UP CONDITION
+//TODO: INCORPORATE CLEAN UP CONDITION FOR EVENLY DISTRIBUTE
+//TODO: Try a variant where we walk down to get predecessor and just store predecessor
 QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy=no_redistribution) { //Initialize a table of size 2^(q)
     this->size = 0;
     this->q = q;
@@ -14,7 +17,7 @@ QuotientFilterGraveyard::QuotientFilterGraveyard(int q, int (*hashFunction)(int)
     this->redistributionPolicy = policy;
     this->opCount=0;
     this->delCount = 0;
-    this->REBUILD_WINDOW_SIZE = 0.3*this->table_size; //figure out good numerical value for this based on quotient filter paper
+    this->REBUILD_WINDOW_SIZE = 0.2*this->table_size; //figure out good numerical value for this based on quotient filter paper
 }
 
 QuotientFilterGraveyard::~QuotientFilterGraveyard() {
@@ -35,17 +38,15 @@ void QuotientFilterGraveyard::insertElement(int value) {
 
     // if there's a valid tombstone for a new run:
     int target_slot = f.fq;
-    // std::cout << "Inserting initially: " << target_slot << "\n";
     if (table[target_slot].isTombstone) {
 
         PredSucPair ps = decodeValue(table[target_slot].value);
         int pred = ps.predecessor;
         int succ = ps.successor;
-        // printf("insertion tombstone test: pred %d, bucket %d, succ %d\n", pred, f.fq, succ);
 
         bool valid_for_insertion;
         if (succ > pred) {
-            valid_for_insertion = pred < f.fq && f.fq < succ;
+            valid_for_insertion = pred <= f.fq && f.fq < succ;
         }
         else if (succ == pred) {
             // case of no successor
@@ -53,7 +54,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
         }
         else {
             // accounting for the case of wrapping around the end of the array
-            valid_for_insertion = (pred < f.fq && f.fq < this->table_size) ||
+            valid_for_insertion = (pred <= f.fq && f.fq < this->table_size) ||
                                   (0 < f.fq && f.fq < succ);
         }
         // valid_for_insertion |= table[target_slot].isEndOfCluster;
@@ -71,6 +72,7 @@ void QuotientFilterGraveyard::insertElement(int value) {
 
     // otherwise:
     // Find the beginning of the run
+    // std::cout << "Here 0\n";
     target_slot = findRunStartForBucket(f.fq, true);
 
     // Scan to end of run
@@ -80,15 +82,16 @@ void QuotientFilterGraveyard::insertElement(int value) {
         } while (table[target_slot].is_continuation && !table[target_slot].isTombstone);
     }
 
-
+    // std::cout << "Here\n";
     // shift following runs (Edit: only do this if element was not put in an empty slot)
     if (!isEmptySlot(target_slot, f.fq)) {
-        shiftElementsUp(target_slot);
+        shiftElementsUp(target_slot, f.fq);
     }
+    // std::cout << "Here 2\n";
     if (!originally_occupied) {
         updateAdjacentTombstonesInsert(target_slot);
     }
-
+    // std::cout << "Here 3\n";
     // insert element
     table[target_slot].isTombstone = false;
     table[target_slot].value = f.fr;
@@ -98,7 +101,10 @@ void QuotientFilterGraveyard::insertElement(int value) {
 
     //Perform redistribution if necessary
     this->opCount +=1;
+    // std::cout << "OVER HERE\n";
     redistribute();
+    // std::cout << "REDISTRIBUTE DONE HERE\n";
+
 }
 
 bool QuotientFilterGraveyard::isEmptySlot(int slot, int bucket) {
@@ -151,7 +157,7 @@ void QuotientFilterGraveyard::deleteElement(int value) {
             this->delCount++;
         }
         //Cleanup tombstones if tombstones take over 30% of the table
-        if (redistributionPolicy == between_runs || redistributionPolicy == between_runs_insert) {
+        if (redistributionPolicy == between_runs || redistributionPolicy == between_runs_insert || redistributionPolicy == evenly_distribute) {
             float tombStoneRatio = this->delCount/(float)this->table_size;
             if (tombStoneRatio > 0.3) {
                 cleanUpTombstones();
@@ -209,7 +215,7 @@ void QuotientFilterGraveyard::shiftTombstoneDown(int afterTombstoneLocation, int
         int startOfReading = cleanUpInfo.runStart;
         int startOfWriting = cleanUpInfo.tombstoneStart;
         while (startOfReading != prevPointer && !table[startOfReading].isTombstone) {
-            std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
+            // std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
             bool is_occupiedBitBefore = table[startOfWriting].is_occupied;
             table[startOfWriting] = table[startOfReading];
             table[startOfWriting].is_occupied = is_occupiedBitBefore;
@@ -333,14 +339,14 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_
         if (table[bucket].isTombstone) {
             numTombstones++;
         }
-        if (numTombstones == 2) {
+        if (numTombstones == 1) {
             res->tombstoneStart = bucket;
         }
         bucket = (bucket - 1 + table_size) % table_size;
     }
 
     //Check if any cleanup needs to happen
-    if (numTombstones > 2) {
+    if (numTombstones > 0) {
         res->cleanUpNeeded = true;
     } else{
         res->cleanUpNeeded = false;
@@ -383,22 +389,34 @@ int QuotientFilterGraveyard::findRunStartForBucket(int target_bucket, bool stop_
 int QuotientFilterGraveyard::findEndOfCluster(int slot) {
     int current_slot = slot;
     do {
+        // std::cout << "Current Slot" << current_slot << "\n";
         current_slot = (current_slot + 1) % table_size;
     }
-    while (table[current_slot].is_shifted);
+    while (table[current_slot].is_shifted && !table[current_slot].isTombstone);
 
     return current_slot;
 }
 
-void QuotientFilterGraveyard::shiftElementsUp(int start) {
+void QuotientFilterGraveyard::shiftElementsUp(int start, int bucketNumber) {
     int end = findEndOfCluster(start);
     // Make sure the end of one cluster isn't the start of another
-    while (table[end].is_occupied && !table[end].isTombstone) {
+    // int count = 0;
+
+    while (!isEmptySlot(end,bucketNumber)) {
+        // count++;
+        // if (count < 10) {
+        //     std::cout << "End: " << end << "\n";
+        //     std::cout << "ISTOMBSTONE: " << table[end].isTombstone << "\n";
+        //     std::cout << "ISOCCUPIED: " << table[end].is_occupied << "\n";
+        //     std::cout << "ISSHIFTED: " << table[end].is_shifted << "\n";
+        //     std::cout << "ISCONTINUATION: " << table[end].is_shifted << "\n";
+        // }
         end = findEndOfCluster(end);
     }
 
     // end should now point to an open position
     while (end != start) { //Corner case: End is an empty slot next to start.
+        // std::cout << "HERE\n";
         int target = (end - 1 + table_size) % table_size;
         table[end].isTombstone = table[target].isTombstone;
         table[end].value = table[target].value;
@@ -412,7 +430,6 @@ void QuotientFilterGraveyard::shiftElementsUp(int start) {
 
 bool QuotientFilterGraveyard::query(int value) {
     FingerprintPair f = fingerprintQuotient(value);
-    // std:: cout << "fq: " << f.fq << "\n";
     if (table[f.fq].is_occupied) {
         if (table[f.fq].value == f.fr) {
             return true;
@@ -443,7 +460,7 @@ bool QuotientFilterGraveyard::cleanAndSearch(PairVal cleanUpInfo, int bucketNumb
         int startOfWriting = cleanUpInfo.tombstoneStart;
         bool found = false;
         while (table[startOfReading].is_continuation && !table[startOfReading].isTombstone) {
-            std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
+            // std::cout << "Start of Reading: " << startOfReading << " Start of Writing: " << startOfWriting << "\n";
             bool is_occupiedBitBefore = table[startOfWriting].is_occupied;
             table[startOfWriting] = table[startOfReading];
             table[startOfWriting].is_occupied = is_occupiedBitBefore;
@@ -466,21 +483,15 @@ FingerprintPair QuotientFilterGraveyard::fingerprintQuotient(int value) {
 }
 
 int QuotientFilterGraveyard::startOfCopy(int start){
-    // std::cout << "start: " << start << "\n";
     while (table[start].isTombstone && table[start].is_shifted) {
         start = (start + 1)%table_size;
     }
-    // std::cout << "start: " << start << "\n";
     return start;
 }
 
-int QuotientFilterGraveyard::startOfWrite(int start, int * itemsTouched) {
+int QuotientFilterGraveyard::startOfWrite(int start) {
     while (!table[start].isTombstone && table[start].is_shifted) {
         start = (start + 1)%table_size;
-        *(itemsTouched) = *(itemsTouched) + 1;//increment it each time you see an element
-    }
-    if (!table[start].isTombstone) { //You  have touched the element!
-        *(itemsTouched) = *(itemsTouched) + 1;//increment it each time you see an element
     }
     if (table[start].isTombstone && table[start].is_shifted) { //If we ended because we found a tombstone, leave one and start writing after it
         start = (start + 1)%table_size;
@@ -494,7 +505,6 @@ int QuotientFilterGraveyard::startOfWrite(int start, int * itemsTouched) {
 int QuotientFilterGraveyard::findClusterStart(int pos) {
     int start = pos;
     do {
-        // std::cout << "Finding cluster with  start: " << start << "\n";
         //walk backwards to start of cluster if one exists
         while(table[start].is_shifted) {
             start = (start - 1 + table_size)%table_size;
@@ -504,32 +514,34 @@ int QuotientFilterGraveyard::findClusterStart(int pos) {
         if (table[start].isTombstone || table[start].is_occupied){
             return start;
         } else {
-            start = (start + 1) % table_size; //otherwise, search for the cluster elsewhere;
+            start = (start - 1 + table_size) % table_size; //otherwise, search for the cluster elsewhere;
         }
     } while(start != pos);
     return start;
 }
 
-int QuotientFilterGraveyard::correctStartOfWrite(int start, int toBeCopiedBucket) {
-    while (start < toBeCopiedBucket && table[start].is_shifted) { //make sure you are still in the cluster!
-        start = (start + 1)%table_size;
+//The goal is to advance the position to write to be the same as the bucket to be copied
+int QuotientFilterGraveyard::correctStartOfWrite(int startOfWriting, int toBeCopiedBucket) {
+    int initialStartOfWriting = startOfWriting;
+    while (startOfWriting != toBeCopiedBucket && table[startOfWriting].is_shifted && table[startOfWriting].isTombstone) { //make sure you are still in the cluster!
+        startOfWriting = (startOfWriting + 1)%table_size;
     }
-    return start;
+    if (table[startOfWriting].isTombstone) {
+        return startOfWriting;
+    } else {
+        return initialStartOfWriting;
+    }
 }
 
-Res QuotientFilterGraveyard::findStartOfWriteAndCopy(int startOfCluster, int * itemsTouched) {
+Res QuotientFilterGraveyard::findStartOfWriteAndCopy(int startOfCluster) {
     int startOfCopying = startOfCluster;
     int startOfWriting = startOfCluster;
     Res res;
     res.val4 = normal_case;
     int currBucket;
     // std::cout << "startOfWriting: " << startOfWriting << " startOfCopying: " << startOfCopying << "\n";
-    if (table[startOfWriting].isTombstone || !table[startOfWriting].is_continuation && !table[startOfWriting].is_shifted && !table[startOfWriting].is_occupied) { //If starts with tombstone or empty spot
-        // std::cout << "start of copying: " << startOfCopying << "\n";
+    if (table[startOfWriting].isTombstone || (!table[startOfWriting].is_continuation && !table[startOfWriting].is_shifted && !table[startOfWriting].is_occupied)) { //If starts with tombstone or empty spot
         startOfCopying = startOfCopy((startOfCopying + 1)%table_size);
-        // std::cout << "writing starting from tombstone/empty slot\n";
-        // std::cout << "start of copying: " << startOfCopying << "\n";
-        // std::cout << "startOfWriting: " << startOfWriting << " startOfCopying: " << startOfCopying << "\n";
         if (table[startOfCopying].is_shifted) { 
             PredSucPair predsuc  = decodeValue(table[startOfWriting].value);
             currBucket = predsuc.successor;
@@ -538,12 +550,8 @@ Res QuotientFilterGraveyard::findStartOfWriteAndCopy(int startOfCluster, int * i
             res.val4 = all_tombstones;
         }
     } else {
-        // std::cout << "writing starting from non tombstone\n";
-        startOfWriting = startOfWrite((startOfWriting+1)%table_size, itemsTouched);
-        // std::cout << "start of writing: " << startOfWriting << "\n";
-        // std::cout << "startOfWriting: " << startOfWriting << " startOfCopying: " << startOfCopying << "\n";
+        startOfWriting = startOfWrite((startOfWriting+1)%table_size);
         if (table[startOfWriting].is_shifted) {
-            // std::cout << "start of writing is shifted\n";
             startOfCopying = startOfCopy(startOfWriting);
             if (!table[startOfCopying].is_shifted) { //If we don't have anything to move up in the cluster
                 int start = (startOfWriting + 1) % table_size;
@@ -561,10 +569,11 @@ Res QuotientFilterGraveyard::findStartOfWriteAndCopy(int startOfCluster, int * i
                 currBucket = predsuc.successor;
                 startOfWriting = correctStartOfWrite(startOfWriting, currBucket);
             }
-        } else{ //If there are no tombstones in the cluster, no rearrangement to be done
+        } else{ 
             res.val4 = no_tombstones;
         }
-    }
+    }   
+    
     res.val1 = startOfCopying;
     res.val2 = startOfWriting;
     res.val3 = currBucket;
@@ -574,31 +583,28 @@ Res QuotientFilterGraveyard::findStartOfWriteAndCopy(int startOfCluster, int * i
 /**
  * Reorganizes the a cluster by moving down elements in runs down if there are available tombstones
  * */
-int QuotientFilterGraveyard::reorganizeCluster(int startOfCluster, int * itemsTouched){
+int QuotientFilterGraveyard::reorganizeCluster(int startOfCluster){
     // std::cout << "Reorganizing cluster starting at " << startOfCluster << "\n";
-    Res res = findStartOfWriteAndCopy(startOfCluster, itemsTouched);
+    Res res = findStartOfWriteAndCopy(startOfCluster);
     switch(res.val4) {
         case all_tombstones:
-            // std::cout << "ALL TOMBSTONES when reorganizing "<< startOfCluster <<"\n";
+            return res.val1; //If all tombstones, then where we start copying from is the end
         case no_tombstones:
-            // std::cout << "ALL TOMBSTONES when reorganizing "<< startOfCluster <<"\n";
         case nothing_to_push:
-            // std::cout << "NOTHING TO DO when reorganizing "<< startOfCluster <<"\n";
-            return res.val1;
+            return res.val2;
         default:
-            return shiftClusterElementsDown(res, itemsTouched, false);
+            return shiftClusterElementsDown(res, false);
     }
 }
 
-int QuotientFilterGraveyard::shiftClusterElementsDown(Res res, int * itemsTouched, bool noleave_tombstone=false) {
+int QuotientFilterGraveyard::shiftClusterElementsDown(Res res, bool noleave_tombstone=false) {
     int startOfCopying = res.val1;
     int startOfWriting = res.val2;
     int currBucket = res.val3;
     if (startOfCopying != startOfWriting) {
         int startBucket = currBucket;
-        do { //Copy all runs, separated by a tombstone if noleave is false
+        do { //Copy all runs, separated by a tombstone where possible if noleave is false
             //Set start bucket appropriately
-        // std::cout << "Outerloop : "<< "startOfWriting: " <<  startOfWriting << " startOfCopying: " << startOfCopying <<"\n";
             int startOfWritingInitial = startOfWriting;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
             do {
                 //Copy over element, maintaining is_occupied bit
@@ -609,36 +615,38 @@ int QuotientFilterGraveyard::shiftClusterElementsDown(Res res, int * itemsTouche
                 table[startOfWriting].isTombstone = false;
                 //Zero out copied element
                 table[startOfCopying].isTombstone = true;
-                *(itemsTouched) = *(itemsTouched) + 1;
+
                 //Advance pointers and get bucket of next run if not already got
                 startOfWriting = (startOfWriting + 1) % table_size;
                 startOfCopying = (startOfCopying + 1) % table_size;
                 if (table[startOfWriting].is_occupied && currBucket == startBucket){
                     currBucket = startOfWriting;
                 }
-                // std::cout<< "Innerloop : "<< "startOfWriting: " <<  startOfWriting << " startOfCopying: " << startOfCopying <<"\n"; 
             }
-            while(!table[startOfCopying].isTombstone && table[startOfCopying].is_continuation && startOfCopying!=startOfWritingInitial);  //Copy a single run
+            while(!table[startOfCopying].isTombstone && table[startOfCopying].is_continuation && startOfCopying!=startOfWritingInitial);  //Make sure we don't place more tombstones than we have room for
 
+            //Check to see if we still have room to write
+            if (startOfCopying == startOfWriting){
+                break;
+            }
             //Add a tombstone after the run to break up cluster.
             if (!noleave_tombstone) {
                 table[startOfWriting].isTombstone = true;
                 startOfWriting = (startOfWriting + 1) % table_size;
             }
-            //Check to see if we still have room to write
-            if (startOfCopying == startOfWriting){
-                break;
-            }
-            //get bucket of next run if not already got
-            if (table[startOfWriting].is_occupied && currBucket == startBucket){
-                // std::cout << "HERE AT index: " << startOfWriting << "\n";
-                currBucket = startOfWriting;
-            }
-            // Check to see if you need to advance startOfCopying and by extension advance startOfWriting accordingly
+
+            //Case 1: You hit a tombstone while copying
             if (table[startOfCopying].isTombstone) {
                 PredSucPair predsuc  = decodeValue(table[startOfCopying].value);
-                startOfWriting = correctStartOfWrite(startOfWriting, currBucket);
+                startOfWriting = correctStartOfWrite(startOfWriting, predsuc.successor);
                 startOfCopying = startOfCopy(startOfCopying);
+                currBucket = predsuc.successor;
+            }
+            //Case 2: You hit a new run while copying
+            if (!table[startOfCopying].is_continuation) {
+                if (table[startOfWriting].is_occupied && currBucket==startBucket) {
+                    currBucket = startOfWriting;
+                }
             }
             startBucket = currBucket;
             // std::cout << "startOfWriting:" <<  startOfWriting << "startOfCopying: " << startOfCopying <<"\n"; 
@@ -659,51 +667,57 @@ int QuotientFilterGraveyard::shiftClusterElementsDown(Res res, int * itemsTouche
     return startOfCopying;
 }
 
-int QuotientFilterGraveyard::findEndOfRun(int startOfRun, int * itemsTouched) { //Function assumes we have no tombstones in the run
+int QuotientFilterGraveyard::findEndOfRun(int startOfRun, int * predecessor, int * successor) { //Function assumes we have no tombstones in the run
     Pair res;
-    // std::cout << "Finding end of run starting at: " << startOfRun << "\n";
+    bool found = false;
+    int endOfRun = startOfRun;
     do {
-        startOfRun = (startOfRun + 1) % table_size;
-        if (!table[startOfRun].isTombstone) {
-            *(itemsTouched) = *(itemsTouched)+1;
+        endOfRun = (endOfRun + 1) % table_size;
+        if (table[endOfRun].is_occupied && !found) {
+            *successor = endOfRun;
+            found = true;
         }
-    } while (table[startOfRun].is_continuation && table[startOfRun].is_shifted);
-    return startOfRun;
+    } while (table[endOfRun].is_continuation && table[endOfRun].is_shifted);
+
+    while (table[startOfRun].is_continuation) {
+        startOfRun = (startOfRun - 1 + table_size) % table_size;
+    }
+    *predecessor = startOfRun;
+    return endOfRun;
 }
 
-Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * itemsTouched) {
+Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster) {
     Opt opt;
-    std::deque<QuotientFilterElement> backedUpElements;
-    std::stack<int> lastDisplaced;
-    // std::cout << "Separating runs by tombstones\n";
     //Find end of run and push onto queue
-    int nextSlot = findEndOfRun(startOfCluster, itemsTouched); //Really the next thing after the run ends
-    if (nextSlot == startOfCluster) { //Do not do anything because the table is full!
-        // std::cout << "GOT IN HERE WO!"<< table[0].is_shifted << "\n";
+    int predecessor;
+    int successor;
+    int runEnd = findEndOfRun(startOfCluster, &predecessor, &successor); //Really the next thing after the run ends
+    if (runEnd == startOfCluster) { //Do not do anything because the table is full!
         opt.val2 = true;
-        opt.val1 = nextSlot;
+        opt.val1 = runEnd;
         return opt;
     }
+    int nextSlot = runEnd;
+    std::deque<QuotientFilterElement> backedUpElements;
+    std::stack<int> lastDisplaced;
     backedUpElements.push_back(table[nextSlot]);
     lastDisplaced.push(nextSlot);
-
     //Calculate the bucket of run
-    int prevBucket = startOfCluster;
-    int currBucket = findNextBucket(prevBucket);
+    int prevBucket = predecessor;
+    int currBucket = successor;
     do {
         //Place tombstone at the next slot and push index to stack
         table[nextSlot].isTombstone = true;
         table[nextSlot].value = encodeValue(prevBucket, currBucket); //the tombstone is for the preceeding run
-        // table[nextSlot].isEndOfCluster = false; //we are merging clusters!
         table[nextSlot].is_continuation = true;
         table[nextSlot].is_shifted = true;
         // std::cout << "NEW RUN\n";
         //Shift items from the queue into the nextSlot until you hit the end of a run
+        int nextBucket = currBucket;
+        bool nextBucketFound = false;
         do {
             //pop element to place down
             QuotientFilterElement currElement = backedUpElements.front();
-            // std::cout << "NEXT SLOT" << nextSlot << "\n";
-            // std::cout << "CURR ELEMENT" << currElement.value << "\n";
             backedUpElements.pop_front();
 
             //Element may be empty slot
@@ -712,11 +726,15 @@ Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * 
                 opt.val1 = nextSlot;
                 return opt;
             } else { //element is an actual value
-                *(itemsTouched) = *(itemsTouched) + 1; //Count element
                 //Create room to place element
-                nextSlot++;
+                nextSlot = (nextSlot+1)%table_size;
+                //Keep track of next successor
+                if (table[nextSlot].is_occupied && !nextBucketFound) {
+                    nextBucket = nextSlot;
+                    nextBucketFound = true;
+                }
                 //If you wrap around, undo all placements up until necessary and return
-                if (nextSlot == startOfCluster){
+                if (nextSlot == runEnd){
                     //Place elements back in their original position
                     backedUpElements.push_front(currElement);
                     while (!backedUpElements.empty()) {
@@ -729,11 +747,11 @@ Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * 
                         backedUpElements.pop_back();
                     }
                     opt.val2 = true;
-                    opt.val1 = nextSlot;
+                    opt.val1 = (startOfCluster - 1 + table_size)%table_size; //set equal to right before cluster so we break insertion of tombstones
                     return opt;
                 }
                 backedUpElements.push_back(table[nextSlot]);
-                lastDisplaced.push(nextSlot);    lastDisplaced.push(nextSlot);
+                lastDisplaced.push(nextSlot);
                 //Place element making sure to maintain is_occupied bit
                 bool initialIsOccupied = table[nextSlot].is_occupied;
                 table[nextSlot] = currElement;
@@ -742,11 +760,11 @@ Opt QuotientFilterGraveyard::separateRunsByTombstones(int startOfCluster, int * 
             }
         }while (backedUpElements.front().is_continuation && !backedUpElements.front().isTombstone);//Keep putting elements down until we put down a run
         //Make allowance for tombstone at the end of the run
-        nextSlot++;
+        nextSlot = (nextSlot+1)%table_size;
         backedUpElements.push_back(table[nextSlot]);
         lastDisplaced.push(nextSlot);
         prevBucket = currBucket;
-        currBucket = findNextBucket(currBucket);
+        currBucket = nextBucketFound;
     } while (true);
 }
 
@@ -769,19 +787,20 @@ int QuotientFilterGraveyard::findNextBucket(int bucketNum, int endIndex) {
     return bucketNum;
 }
 
-int QuotientFilterGraveyard::reorganizeCluster2(int startOfCluster, int * itemsTouched){
+int QuotientFilterGraveyard::reorganizeCluster2(int startOfCluster){
     //Start by trying to reorganize as in policy1
-    Res res = findStartOfWriteAndCopy(startOfCluster, itemsTouched);
+    Res res = findStartOfWriteAndCopy(startOfCluster);
     switch(res.val4) {
         case all_tombstones:
-        case nothing_to_push:
             return res.val1;
+        case nothing_to_push:
+            return res.val2;
         case no_tombstones:
-            return separateRunsByTombstones(startOfCluster, itemsTouched).val1;
+            return separateRunsByTombstones(startOfCluster).val1;
         default:
-            int initialRes = shiftClusterElementsDown(res, itemsTouched);
+            int initialRes = shiftClusterElementsDown(res);
             if (table[initialRes].is_shifted){ //If we are still within the cluster, then we continue processing
-                return separateRunsByTombstones(initialRes, itemsTouched).val1;
+                return separateRunsByTombstones(initialRes).val1;
             } else{
                 return initialRes;
             }
@@ -796,30 +815,29 @@ int QuotientFilterGraveyard::findStartOfTombstonesInRun(int pos){
 }
 
 bool QuotientFilterGraveyard::insertTombstone(int pos) {
-    //Step 1: Check if position is either a tombstone or empty before doing any work
-    if (table[pos].isTombstone) {
-        return true;
-    } else if (!table[pos].is_occupied && !table[pos].is_shifted) {
+    //Step 1: Check if position is empty
+    if (!table[pos].is_occupied && !table[pos].is_shifted) {
         table[pos].isTombstone = true;
         table[pos].is_continuation = true;
-        // table[pos].isEndOfCluster = true;
+        table[pos].value = encodeValue(pos,pos);
         return true;
-    } else { //Step 2: Otherwise, we must go to the end of the run
-        // std::cout << "POSITION OCCUPIED\n";
-        int endOfRun = findStartOfTombstonesInRun(pos); //next position after just ended
-        // std::cout << "end of run starting at " << pos << ": " << endOfRun << "\n";
-        //Slot may be empty, a tombstone or an element
-        if (!table[endOfRun].is_occupied && !table[endOfRun].is_shifted) { //Case 1: empty
+    } else if (table[pos].isTombstone) {
+        return true;
+    }else  {
+        int successor;
+        int predecessor;
+        int endOfRun = findEndOfRun(pos, &predecessor, &successor);
+        //Case 1: empty
+        if (!table[endOfRun].is_occupied && !table[endOfRun].is_shifted) {
             table[endOfRun].isTombstone = true;
             table[endOfRun].is_continuation = true;
-            // table[endOfRun].isEndOfCluster = true;
             table[endOfRun].is_shifted = true;
+            table[endOfRun].value = encodeValue(predecessor, successor);
             return true;
-        } else if (table[endOfRun].isTombstone) { //Case 2: tombstone
-            // std::cout << "POSITION IS A TOMBSTONE\n";
+        } else if (table[endOfRun].isTombstone) {
             return true;
-        } else { //begin process of shifting elements down after inserting tombstone
-            //Put replaced element in Queue
+        } else {
+            // std::cout << "End of run: " << endOfRun << "\n";
             std::deque<QuotientFilterElement> replacedElements;
             std::stack<int> lastDisplaced;
             QuotientFilterElement replacedElement = table[endOfRun];
@@ -829,15 +847,16 @@ bool QuotientFilterGraveyard::insertTombstone(int pos) {
             //Put tombstone at end of run
             table[endOfRun].isTombstone = true;
             table[endOfRun].is_continuation = true;
-            // table[endOfRun].isEndOfCluster = true;
+            table[endOfRun].value = encodeValue(predecessor, successor); 
             table[endOfRun].is_shifted = true;
 
-            int start = endOfRun+1;
+            int start = (endOfRun+1)%table_size;
             QuotientFilterElement temp = table[start];
-            //until the replaced element is empty, keep shifting element down
-            while (!(!replacedElement.is_occupied && !replacedElement.is_shifted)){
-
-                if (start == pos) { //If we wrap around because we have no more room for tombstones, undo everything
+            //until the replaced element is empty or a tombstone, keep shifting element down
+            while (!(replacedElement.isTombstone || (!replacedElement.is_occupied && !replacedElement.is_shifted))){
+                // std::cout << "Start: " << start << "\n";
+                if (start == endOfRun) { //If we wrap around because we have no more room for tombstones, undo everything
+                    // std::cout << "In here\n";
                     while (!replacedElements.empty()) {
                         int index = lastDisplaced.top();
                         lastDisplaced.pop();
@@ -857,29 +876,101 @@ bool QuotientFilterGraveyard::insertTombstone(int pos) {
                 table[start] = replacedElement;
                 table[start].is_occupied = temp.is_occupied; //maintain is_occupied bit despite shift
                 //Correctly set is_shifted bit
-                int prevStart = (start - 1 + table_size)%table_size;
-                table[start].is_shifted = !(prevStart == start);
+                // int prevStart = (start - 1 + table_size)%table_size;
+                // table[start].is_shifted = !(prevStart == start);
+                table[start].is_shifted = true; //We necessarily remove you from your original place!
                 lastDisplaced.push(start);
                 replacedElements.push_back(temp);
-                start = (start + 1) % table_size;
-            }
-            
-            return true;
+                start = (start + 1) % table_size; 
         }
+        return true;
+    }
+
+    // //Step 1: Check if position is either a tombstone or empty before doing any work
+    // if (table[pos].isTombstone) {
+    //     std::cout <<"HERE\n";
+    //     return true;
+    // } else if (!table[pos].is_occupied && !table[pos].is_shifted) {
+    //     table[pos].isTombstone = true;
+    //     table[pos].is_continuation = true;
+    //     table[pos].value = encodeValue(pos,pos);
+    //     // table[pos].isEndOfCluster = true;
+    //     return true;
+    // } else { //Step 2: Otherwise, we must go to the end of the run
+    //     // std::cout << "POSITION OCCUPIED\n";
+    //     int endOfRun = findStartOfTombstonesInRun(pos); //next position after just ended
+    //     // std::cout << "end of run starting at " << pos << ": " << endOfRun << "\n";
+    //     //Slot may be empty, a tombstone or an element
+    //     if (!table[endOfRun].is_occupied && !table[endOfRun].is_shifted) { //Case 1: empty
+    //         table[endOfRun].isTombstone = true;
+    //         table[endOfRun].is_continuation = true;
+    //         // table[endOfRun].isEndOfCluster = true;
+    //         table[endOfRun].is_shifted = true;
+    //         return true;
+    //     } else if (table[endOfRun].isTombstone) { //Case 2: tombstone
+    //         // std::cout << "POSITION IS A TOMBSTONE\n";
+    //         return true;
+    //     } else { //begin process of shifting elements down after inserting tombstone
+    //         //Put replaced element in Queue
+    //         std::deque<QuotientFilterElement> replacedElements;
+    //         std::stack<int> lastDisplaced;
+    //         QuotientFilterElement replacedElement = table[endOfRun];
+    //         lastDisplaced.push(endOfRun);
+    //         replacedElements.push_back(replacedElement);
+
+    //         //Put tombstone at end of run
+    //         table[endOfRun].isTombstone = true;
+    //         table[endOfRun].is_continuation = true;
+    //         table[endOfRun].value = 
+    //         // table[endOfRun].isEndOfCluster = true;
+    //         table[endOfRun].is_shifted = true;
+
+    //         int start = endOfRun+1;
+    //         QuotientFilterElement temp = table[start];
+    //         //until the replaced element is empty, keep shifting element down
+    //         while (!(!replacedElement.is_occupied && !replacedElement.is_shifted)){
+
+    //             if (start == pos) { //If we wrap around because we have no more room for tombstones, undo everything
+    //                 while (!replacedElements.empty()) {
+    //                     int index = lastDisplaced.top();
+    //                     lastDisplaced.pop();
+    //                     if (!table[index].isTombstone){
+    //                         replacedElements.push_front(table[index]);
+    //                     }
+    //                     table[index] = replacedElements.back();
+    //                     replacedElements.pop_back();
+    //                 }
+    //                 return false; //Tell redistribute func to terminate early!
+    //             }
+    //             //Pop element from the front
+    //             replacedElement = replacedElements.front();
+    //             replacedElements.pop_front();
+
+    //             temp = table[start];
+    //             table[start] = replacedElement;
+    //             table[start].is_occupied = temp.is_occupied; //maintain is_occupied bit despite shift
+    //             //Correctly set is_shifted bit
+    //             int prevStart = (start - 1 + table_size)%table_size;
+    //             table[start].is_shifted = !(prevStart == start);
+    //             lastDisplaced.push(start);
+    //             replacedElements.push_back(temp);
+    //             start = (start + 1) % table_size;
+    //         }
+            
+    //         return true;
+    //     }
     }
 }
 
 int QuotientFilterGraveyard::cleanUpHelper(int clusterStart) {
-    int dummyPointer = 0;
-    Res res = findStartOfWriteAndCopy(clusterStart, &dummyPointer);
-    // std::cout << "Cleaning up\n";
+    Res res = findStartOfWriteAndCopy(clusterStart);
     switch(res.val4) {
         case normal_case:
-        // std::cout << "NORMAL CASE\n";
-        return shiftClusterElementsDown(res, &dummyPointer, true);
-        default:
-            // std::cout << "ALL OTHERS\n";
+            return shiftClusterElementsDown(res, true);
+        case all_tombstones:
             return res.val1;
+        default:
+            return res.val2;
     }   
 }
 
@@ -889,46 +980,38 @@ void QuotientFilterGraveyard::cleanUpTombstones(){
         int currCluster = initialStart; 
         do {
             int endOfCluster = cleanUpHelper(currCluster);
-            // std::cout <<  "Curr cluster: " << currCluster << " End of cluster: " << endOfCluster << "\n";
-            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+            if (currCluster > endOfCluster) { //If we wrap around
                 break;
             }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
-            }
-            // std::cout <<  "Curr cluster: " << currCluster << " End of cluster: " << endOfCluster << "\n";
-            if (currCluster < endOfCluster ){
+            }  
+            else {
                 currCluster = endOfCluster;
-            } else {
-                break;
-            }
+            }   
         } while (true);
         this->delCount = 0;
 }
 
 void QuotientFilterGraveyard::redistributeTombstonesBetweenRuns() {
     if (opCount >= REBUILD_WINDOW_SIZE) {
-        // std::cout << "Rebuilding\n";
+
         //Start by finding a cluster to process
         int initialStart = findClusterStart(0);
-        int currCluster = initialStart; 
-        int itemsTouched = 1;  //count one for the start!
+        int currCluster = initialStart;
         do {
-            int endOfCluster = reorganizeCluster(currCluster, &itemsTouched);
-            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+            int endOfCluster = reorganizeCluster(currCluster);
+            if (currCluster > endOfCluster) { //If we wrap around
                 break;
             }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
-            } 
-            if (currCluster < endOfCluster ){
+            }  
+            else {
                 currCluster = endOfCluster;
-            } else {
-                break;
-            }
-            // std::cout << "ITEMS TOUCHED" << itemsTouched << "\n";
+            }          
         } while (true);
 
         //Update the opcount and rebuild windows appropriately
@@ -940,31 +1023,23 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRuns() {
 }
 
 void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsInsert() {
-    // std::cout << "REDISTRIBUTING!\n";
     if (opCount >= REBUILD_WINDOW_SIZE) {
         //Start by finding a cluster to process
         int initialStart = findClusterStart(0);
-        // std::cout << "Between Runs Insert Started\n";
         int currCluster = initialStart;
-        int itemsTouched = 1; //count one for the start!
         do {
-            int endOfCluster = reorganizeCluster2(currCluster, &itemsTouched);
-            // std::cout << "start: " << currCluster << "end: " << endOfCluster << "\n";
-            if (endOfCluster == table_size-1) { //end of cluster starts from 0 and increases monotonically. The minute it crosses end, we stop
+            int endOfCluster = reorganizeCluster2(currCluster);
+            if (currCluster > endOfCluster) { //If we wrap around
                 break;
             }
             if (currCluster == endOfCluster) {
                 currCluster = (currCluster+1)%table_size;
                 currCluster = findClusterStart(currCluster);
-            }
-            // std::cout << "start after correction: " << currCluster << "end after correction: " << endOfCluster << "\n";
-            if (currCluster < endOfCluster ){
+            } 
+            else {
                 currCluster = endOfCluster;
-            } else {
-                break;
-            }
+            }  
         } while (true);
-        // std::cout << "Between Runs Insert Ended\n";
         //Update the opcount and rebuild windows appropriately
         this->opCount = 0;
         float load_factor =  size/(double)table_size;
@@ -974,19 +1049,15 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsInsert() {
 }
 
 void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsEvenlyDistribute() {
-    // std::cout << "Rebuilding\n";
     if (opCount >= REBUILD_WINDOW_SIZE) {
-        //Start by cleaning up table
-        cleanUpTombstones();
-        // std::cout << "Finished printing out table. Inserting tombstones artificially......\n";
         //Add as many additional tombstones per graveyard hashing algorithm
         float load_factor =  size/(double)table_size;
         float x = 1/(1-load_factor);
         int numNewTombstones = table_size/(2*x);
         for (int i=0; i<numNewTombstones; i++) {
             int insertIndex = 2*i*x;
-            // std::cout << "Inserting tombstone at " << insertIndex << "\n";
             if (!insertTombstone(insertIndex)){
+                // std::cout << "Inserting tombstone at " << insertIndex << "\n"
                 break;
             }
         }
@@ -995,6 +1066,7 @@ void QuotientFilterGraveyard::redistributeTombstonesBetweenRunsEvenlyDistribute(
         x = 1/(1-load_factor);
         this->REBUILD_WINDOW_SIZE = table_size/(4*x);
     }
+
 }
 
 void  QuotientFilterGraveyard::redistribute(){

@@ -55,14 +55,14 @@ class QuotientFilterGraveyard {
         int findRunStartForBucket(int target_bucket, bool stop_at_tombstones);
         int findRunStartForBucket(int target_bucket, bool stop_at_tombstones, PairVal* res);
         int findEndOfCluster(int slot);
-        int findEndOfRun(int startOfRun, int * itemsTouched);
-        void shiftElementsUp(int start);
+        int findEndOfRun(int startOfRun, int * predecessor, int * successor);
+        void shiftElementsUp(int start, int bucketNumber);
         bool isEmptySlot(int slot, int bucket);
 
         int findClusterStart(int pos);
-        int reorganizeCluster(int nextItem, int * itemsTouched);
-        int reorganizeCluster2(int nextItem, int * itemsTouched);
-        int startOfWrite(int start, int * elementCount);
+        int reorganizeCluster(int nextItem);
+        int reorganizeCluster2(int nextItem);
+        int startOfWrite(int start);
         int startOfCopy(int startOfMove);
         int correctStartOfWrite(int startOfMove, int bucketOfToBeCopied);
 
@@ -75,13 +75,13 @@ class QuotientFilterGraveyard {
         void redistributeTombstonesBetweenRunsEvenlyDistribute();
         void resetTombstoneSuccessors(int bucket);
         void redistribute();
-        int shiftClusterElementsDown(Res res, int * itemsTouched, bool noleave_tombstones);
+        int shiftClusterElementsDown(Res res, bool noleave_tombstones);
         bool insertTombstone(int pos);
         bool cleanAndSearch(PairVal cleanUpInfo, int bucketNumber, int remainderToFind);
 
         int findStartOfTombstonesInRun(int pos);
-        Res findStartOfWriteAndCopy(int startOfCluster, int * itemsTouched);
-        Opt separateRunsByTombstones(int startOfCluster, int * itemsTouched);
+        Res findStartOfWriteAndCopy(int startOfCluster);
+        Opt separateRunsByTombstones(int startOfCluster);
 
         QuotientFilterGraveyard(int q, int (*hashFunction)(int), RedistributionPolicy policy);
         ~QuotientFilterGraveyard();
